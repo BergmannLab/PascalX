@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'PascalX'
-copyright = '2020, Bergmann lab and contributors'
+copyright = '2021, Bergmann lab and contributors'
 author = 'Daniel Krefl'
 
 # The full version, including alpha/beta/rc tags
