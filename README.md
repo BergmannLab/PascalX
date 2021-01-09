@@ -10,7 +10,7 @@ High precision gene scoring for GWAS summary statistic in python
 
 ## Documentation
 
-The full documentation can be found [here](https://bergmannlab.github.io/PascalX/). For quickstart, continue below.
+The full documentation can be found [here](https://bergmannlab.github.io/PascalX/index.html). For quickstart, continue below.
 
 ## Citation policy
 
