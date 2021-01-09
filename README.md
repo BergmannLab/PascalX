@@ -14,7 +14,9 @@ The full documentation can be found [here](https://bergmannlab.github.io/PascalX
 
 ## Citation policy
 
-If you make use of PascalX for your research, please cite PascalX via the doi: ...
+If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg)](https://doi.org/10.5281/zenodo.4429922)
 
 
 ## Installation 
