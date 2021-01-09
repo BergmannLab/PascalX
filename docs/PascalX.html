@@ -184,11 +184,11 @@
 <span id="id1"></span><h2>Genome<a class="headerlink" href="#genome" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.genome.genome">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.genome.</code><code class="sig-name descname">genome</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.genome.</code><code class="sig-name descname">genome</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class handles the genome annotation. It provides functionality for import of data from text files and automatic download of annotation data from ensembl.org.</p>
 <dl class="py method">
 <dt id="PascalX.genome.genome.gene_info">
-<code class="sig-name descname">gene_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.gene_info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">gene_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.gene_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints the loaded information for given gene</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -199,7 +199,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genome.genome.get_ensembl_annotation">
-<code class="sig-name descname">get_ensembl_annotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">genetype</span><span class="o">=</span><span class="default_value">'protein_coding'</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">'GRCh38'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.get_ensembl_annotation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_ensembl_annotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">genetype</span><span class="o">=</span><span class="default_value">'protein_coding'</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">'GRCh38'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.get_ensembl_annotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gene annotation download function for ensembl.org BioMart data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -220,7 +220,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genome.genome.load_genome">
-<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.load_genome" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.load_genome" title="Permalink to this definition">¶</a></dt>
 <dd><p>Imports gene annotation from text file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -268,10 +268,10 @@
 <span id="id2"></span><h2>Genescorer<a class="headerlink" href="#genescorer" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.genescorer.chi2sum">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.genescorer.</code><code class="sig-name descname">chi2sum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">50000</span></em>, <em class="sig-param"><span class="n">varcutoff</span><span class="o">=</span><span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">genome</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.genescorer.</code><code class="sig-name descname">chi2sum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">50000</span></em>, <em class="sig-param"><span class="n">varcutoff</span><span class="o">=</span><span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">genome</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.load_refpanel">
-<code class="sig-name descname">load_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -289,7 +289,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.load_genome">
-<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_genome" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_genome" title="Permalink to this definition">¶</a></dt>
 <dd><p>Imports gene annotation from text file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,7 +331,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.load_mapping">
-<code class="sig-name descname">load_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ocol</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_mapping" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ocol</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a SNP to gene mapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -353,7 +353,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.load_GWAS">
-<code class="sig-name descname">load_GWAS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">rscol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">delimiter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">NAid</span><span class="o">=</span><span class="default_value">'NA'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_GWAS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_GWAS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">rscol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">delimiter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">NAid</span><span class="o">=</span><span class="default_value">'NA'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_GWAS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load GWAS summary statistics p-values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -371,7 +371,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.save_GWAS">
-<code class="sig-name descname">save_GWAS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.save_GWAS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_GWAS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.save_GWAS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save GWAS p-values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -382,7 +382,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.save_scores">
-<code class="sig-name descname">save_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.save_scores" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.save_scores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save computed gene scores</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -393,7 +393,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.load_scores">
-<code class="sig-name descname">load_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_scores" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_scores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load computed gene scores</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -409,7 +409,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.score">
-<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">unloadRef</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">1000000</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">unloadRef</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">1000000</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs gene scoring for a given list of gene symbols</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -431,7 +431,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.activateFails">
-<code class="sig-name descname">activateFails</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.activateFails" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">activateFails</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.activateFails" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper method to force activate failed genes to success genes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -446,7 +446,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.rescore">
-<code class="sig-name descname">rescore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'davies'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'128b'</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.rescore" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rescore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'davies'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'128b'</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.rescore" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Function to re-score only the failed gene scorings of a previous scoring run with different scorer settings.</p>
 </div></blockquote>
@@ -468,7 +468,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.score_chr">
-<code class="sig-name descname">score_chr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chrs</span></em>, <em class="sig-param"><span class="n">unloadRef</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_chr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">score_chr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chrs</span></em>, <em class="sig-param"><span class="n">unloadRef</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_chr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform gene scoring for full chromosomes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -490,7 +490,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.score_all">
-<code class="sig-name descname">score_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">score_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform full gene scoring</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -510,7 +510,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.get_topscores">
-<code class="sig-name descname">get_topscores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_topscores" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_topscores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_topscores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints the top gene scores</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -521,7 +521,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.get_geneinfo">
-<code class="sig-name descname">get_geneinfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_geneinfo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_geneinfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_geneinfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows details of the loaded annotation for a gene</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -532,7 +532,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.plot_Manhattan">
-<code class="sig-name descname">plot_Manhattan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ScoringResult</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sigLine</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">logsigThreshold</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">labelSig</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">labelList</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'colorful'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.plot_Manhattan" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_Manhattan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ScoringResult</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sigLine</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">logsigThreshold</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">labelSig</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">labelList</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'colorful'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.plot_Manhattan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a Manhattan plot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -550,7 +550,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.plot_genesnps">
-<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -569,7 +569,7 @@
 <span id="id3"></span><h2>Pathwayscorer<a class="headerlink" href="#pathwayscorer" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.pathway.chi2rank">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.pathway.</code><code class="sig-name descname">chi2rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genescorer</span></em>, <em class="sig-param"><span class="n">mergedist</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.pathway.</code><code class="sig-name descname">chi2rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genescorer</span></em>, <em class="sig-param"><span class="n">mergedist</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pathway scoring via chi2 of ranked gene p-values. Nearby genes can be merged to form meta-genes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -582,7 +582,7 @@
 </dl>
 <dl class="py method">
 <dt id="PascalX.pathway.chi2rank.score">
-<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modules</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modules</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scores a set of pathways/modules</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -601,7 +601,7 @@
 
 <dl class="py method">
 <dt id="PascalX.pathway.chi2rank.get_sigpathways">
-<code class="sig-name descname">get_sigpathways</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0.0001</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.get_sigpathways" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_sigpathways</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0.0001</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.get_sigpathways" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints significant pathways in the result set</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -615,7 +615,7 @@
 
 <dl class="py method">
 <dt id="PascalX.pathway.chi2rank.load_modules">
-<code class="sig-name descname">load_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ncol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fcol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.load_modules" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ncol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fcol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.load_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load modules from tab separated file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -630,7 +630,7 @@
 
 <dl class="py method">
 <dt id="PascalX.pathway.chi2rank.set_genescorer">
-<code class="sig-name descname">set_genescorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.set_genescorer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_genescorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.set_genescorer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the genescorer to use for re-computing p-values of fused genes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -643,7 +643,7 @@
 
 <dl class="py class">
 <dt id="PascalX.pathway.chi2perm">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.pathway.</code><code class="sig-name descname">chi2perm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genescorer</span></em>, <em class="sig-param"><span class="n">mergedist</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.pathway.</code><code class="sig-name descname">chi2perm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genescorer</span></em>, <em class="sig-param"><span class="n">mergedist</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pathway scoring via testing summed inverse chi2 transformed gene p-values against equally size random samples of gene sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -660,7 +660,7 @@
 </div>
 <dl class="py method">
 <dt id="PascalX.pathway.chi2perm.score">
-<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modules</span></em>, <em class="sig-param"><span class="n">samples</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modules</span></em>, <em class="sig-param"><span class="n">samples</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scores a set of pathways/modules</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -679,7 +679,7 @@
 
 <dl class="py method">
 <dt id="PascalX.pathway.chi2perm.get_sigpathways">
-<code class="sig-name descname">get_sigpathways</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0.0001</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.get_sigpathways" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_sigpathways</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0.0001</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.get_sigpathways" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints significant pathways in the result set</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -693,7 +693,7 @@
 
 <dl class="py method">
 <dt id="PascalX.pathway.chi2perm.load_modules">
-<code class="sig-name descname">load_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ncol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fcol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.load_modules" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ncol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fcol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.load_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load modules from tab separated file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -708,7 +708,7 @@
 
 <dl class="py method">
 <dt id="PascalX.pathway.chi2perm.set_genescorer">
-<code class="sig-name descname">set_genescorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.set_genescorer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_genescorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.set_genescorer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the genescorer to use for re-computing p-values of fused genes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -725,10 +725,10 @@
 <span id="id4"></span><h2>Genexprscorer<a class="headerlink" href="#genexprscorer" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.genexpr.genexpr">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.genexpr.</code><code class="sig-name descname">genexpr</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.genexpr.</code><code class="sig-name descname">genexpr</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="PascalX.genexpr.genexpr.get_GTEX_expr">
-<code class="sig-name descname">get_GTEX_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.get_GTEX_expr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_GTEX_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.get_GTEX_expr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads GTEx v8 data and imports.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -743,7 +743,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genexpr.genexpr.load_expr">
-<code class="sig-name descname">load_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.load_expr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.load_expr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the GTEx data for usage</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -754,7 +754,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genexpr.genexpr.load_genome">
-<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.load_genome" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.load_genome" title="Permalink to this definition">¶</a></dt>
 <dd><p>Imports gene annotation from text file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -796,7 +796,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genexpr.genexpr.chi2rank">
-<code class="sig-name descname">chi2rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pathways</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.chi2rank" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">chi2rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pathways</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.chi2rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates tissue enrichment scores for set of genes using GTEx data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -810,7 +810,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genexpr.genexpr.plot_genexpr">
-<code class="sig-name descname">plot_genexpr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genes</span></em>, <em class="sig-param"><span class="n">tzscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cbar_pos</span><span class="o">=</span><span class="default_value">0.0, 0.0, 0.01, 0.5</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.plot_genexpr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_genexpr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genes</span></em>, <em class="sig-param"><span class="n">tzscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cbar_pos</span><span class="o">=</span><span class="default_value">0.0, 0.0, 0.01, 0.5</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.plot_genexpr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots gene expression matrix for list of genes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -831,11 +831,11 @@
 <span id="snpdb"></span><h2>SNP database<a class="headerlink" href="#snp-database" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.snpdb.db">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.snpdb.</code><code class="sig-name descname">db</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.snpdb.</code><code class="sig-name descname">db</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for handling storage of the raw genotype data. The data is indexed and stored for each chromosome individually as zlib compressed pickle. The indexing allows fast random access via SNP ids or positions.</p>
 <dl class="py method">
 <dt id="PascalX.snpdb.db.open">
-<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.open" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.open" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens storage file. A new file is created if not exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -846,7 +846,7 @@
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.insert">
-<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.insert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.insert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores set of rows into the file storage</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -861,7 +861,7 @@
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all stored data for a set of SNPs indexed via positions</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -872,7 +872,7 @@
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getSNPatPos">
-<code class="sig-name descname">getSNPatPos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPatPos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSNPatPos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPatPos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns SNP id at position</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -883,7 +883,7 @@
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getSNPs">
-<code class="sig-name descname">getSNPs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snp</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSNPs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snp</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all stored data for a set of SNPs indexed via SNP ids</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -894,25 +894,25 @@
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getSNPKeys">
-<code class="sig-name descname">getSNPKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPKeys" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSNPKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the SNP ids in storage</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getKeys">
-<code class="sig-name descname">getKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getKeys" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns SNP positions in storage</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getSortedKeys">
-<code class="sig-name descname">getSortedKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSortedKeys" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSortedKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSortedKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a sorted list of SNP positions in storage</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="PascalX.snpdb.db.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.close" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes open storage file.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -928,10 +928,10 @@
 <span id="refpanel"></span><h2>Reference panel<a class="headerlink" href="#reference-panel" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.refpanel.refpanel">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.refpanel.</code><code class="sig-name descname">refpanel</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.refpanel.</code><code class="sig-name descname">refpanel</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="PascalX.refpanel.refpanel.load_pos_reference">
-<code class="sig-name descname">load_pos_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.load_pos_reference" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_pos_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.load_pos_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a snpdb object for a chromosome and a sorted list of SNP positions on the chromosome</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -942,7 +942,7 @@
 
 <dl class="py method">
 <dt id="PascalX.refpanel.refpanel.load_snp_reference">
-<code class="sig-name descname">load_snp_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.load_snp_reference" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_snp_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.load_snp_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a snpdb object for a chromosome</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -953,7 +953,7 @@
 
 <dl class="py method">
 <dt id="PascalX.refpanel.refpanel.set_refpanel">
-<code class="sig-name descname">set_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.set_refpanel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.set_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -971,13 +971,13 @@
 
 <dl class="py method">
 <dt id="PascalX.refpanel.refpanel.getSNPtoChrMap">
-<code class="sig-name descname">getSNPtoChrMap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.getSNPtoChrMap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSNPtoChrMap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.getSNPtoChrMap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary mapping SNP id to corresponding chromosome number</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="PascalX.refpanel.refpanel.getChrSNPs">
-<code class="sig-name descname">getChrSNPs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.getChrSNPs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getChrSNPs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.getChrSNPs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns SNP ids for a chromosome</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -994,10 +994,10 @@
 <span id="id5"></span><h2>Mapper<a class="headerlink" href="#mapper" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="PascalX.mapper.mapper">
-<em class="property">class </em><code class="sig-prename descclassname">PascalX.mapper.</code><code class="sig-name descname">mapper</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/mapper.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.mapper.mapper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.mapper.</code><code class="sig-name descname">mapper</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/mapper.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.mapper.mapper" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="PascalX.mapper.mapper.load_mapping">
-<code class="sig-name descname">load_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ocol</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/mapper.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.mapper.mapper.load_mapping" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ocol</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/mapper.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.mapper.mapper.load_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a SNP to gene mapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
