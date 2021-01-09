@@ -54,9 +54,10 @@ License and citation policy
 
 The PascalX package is an open-source package under AGPLv3. 
 
-If you make use of PascalX for your research, please cite PascalX via the doi:
+If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
 
-...
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg
+   :target: https://doi.org/10.5281/zenodo.4429922
 
 Contact
 -------
