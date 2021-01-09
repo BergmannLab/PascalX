@@ -300,7 +300,7 @@ Scorer.plot_Manhattan(R[0])
 ```labelList=[]```: List of gene symbols to label
 
 ```style='colorful'```:
-![Colorful style](https://github.com/BergmannLab/PascalX/blob/master/misc/style_colorful.png)
+![Colorful style](https://github.com/BergmannLab/PascalX/blob/main/misc/style_colorful.png)
 
 ```style='classic'```: 
-![Classic style](https://github.com/BergmannLab/PascalX/blob/master/misc/style_classic.png)
+![Classic style](https://github.com/BergmannLab/PascalX/blob/main/misc/style_classic.png)
