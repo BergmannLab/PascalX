@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; PascalX 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="prev" title="Welcome to PascalX’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PascalX
+          
+
+          
+            
+            <img src="_static/Xlogo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#multi-platform-docker">Multi-platform (Docker)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debian-ubuntu">Debian/Ubuntu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mac">Mac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#windows">Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PascalX.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PascalX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="multi-platform-docker">
+<span id="dockersec"></span><h2>Multi-platform (Docker)<a class="headerlink" href="#multi-platform-docker" title="Permalink to this headline">¶</a></h2>
+<p>Build a <a class="reference external" href="https://docker.com">Docker</a> image via</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">BergmannLab</span><span class="o">/</span><span class="n">PascalX</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">PascalX</span>
+<span class="n">docker</span> <span class="n">build</span> <span class="o">.</span> <span class="o">-</span><span class="n">t</span> <span class="n">pascalx</span><span class="p">:</span><span class="n">latest</span>
+</pre></div>
+</div>
+<p>The image can be run in interactive mode with the host directory <code class="docutils literal notranslate"><span class="pre">/your/workdir</span></code> mounted as <code class="docutils literal notranslate"><span class="pre">/data</span></code> using the command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">mount</span> <span class="n">src</span><span class="o">=/</span><span class="n">your</span><span class="o">/</span><span class="n">workdir</span><span class="p">,</span><span class="n">target</span><span class="o">=/</span><span class="n">data</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">bind</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">it</span> <span class="n">pascalx</span> <span class="n">bash</span>
+</pre></div>
+</div>
+<p>For data persistance after stopping the image, you should work exlusively in the <code class="docutils literal notranslate"><span class="pre">/data</span></code> directory.</p>
+<p>A jupyter notebook running in the image can be started with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">ip</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span> <span class="o">--</span><span class="n">allow</span><span class="o">-</span><span class="n">root</span>
+</pre></div>
+</div>
+<p>Open on your host machine a browser and visit <a class="reference external" href="http://localhost:8888/">http://localhost:8888/</a> to use PascalX.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should allocate sufficient system resources to the docker runtime. A minimum of 8GB RAM should be made available. For making full use of parallel computation capabilities, at least 64GB of RAM is recommended. However, the precise numbers depend on the size of the GWAS and reference panel used.</p>
+</div>
+</div>
+<div class="section" id="debian-ubuntu">
+<h2>Debian/Ubuntu<a class="headerlink" href="#debian-ubuntu" title="Permalink to this headline">¶</a></h2>
+<p>Use the <a class="reference external" href="https://docker.com">Docker</a> image or compile and install by yourself as follows:</p>
+<dl class="simple">
+<dt>Requirements:</dt><dd><ul class="simple">
+<li><p>Python3 with development headers</p></li>
+<li><p>GNU g++ with libquadmath, make</p></li>
+<li><p><a class="reference external" href="https://www.boost.org">BOOST</a> libraries</p></li>
+</ul>
+</dd>
+</dl>
+<p>Install of requirements (for sudoers):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">python3</span> <span class="n">python3</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">setuptools</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span> <span class="n">g</span><span class="o">++</span> <span class="n">make</span> <span class="n">libboost</span><span class="o">-</span><span class="nb">all</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>Set library path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">&quot;/yourpath/PascalX/build/lib:$LD_LIBRARY_PATH&quot;</span>
+</pre></div>
+</div>
+<p>Or, as sudoer, add to <code class="docutils literal notranslate"><span class="pre">/etc/ld.so.conf.d/</span></code>.</p>
+<p>Install of PascalX:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">BergmannLab</span><span class="o">/</span><span class="n">PascalX</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">PascalX</span>
+<span class="n">make</span> <span class="nb">all</span>
+<span class="n">cd</span> <span class="n">python</span>
+<span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mac">
+<h2>Mac<a class="headerlink" href="#mac" title="Permalink to this headline">¶</a></h2>
+<p>As the default LLVM compiler used by Xcode does not support quadmath at the time being, we recommend to use <a class="reference external" href="https://docker.com">Docker</a> on MacOS.</p>
+</div>
+<div class="section" id="windows">
+<h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
+<p>Please use the <a class="reference external" href="https://docker.com">Docker</a> image.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to PascalX’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Bergmann lab and contributors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

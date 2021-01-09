@@ -1,0 +1,1075 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API documentation &mdash; PascalX 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PascalX
+          
+
+          
+            
+            <img src="_static/Xlogo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#genome">Genome</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genescorer">Genescorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pathwayscorer">Pathwayscorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genexprscorer">Genexprscorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#snp-database">SNP database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-panel">Reference panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapper">Mapper</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PascalX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>API documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/PascalX.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-documentation">
+<h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The PascalX package comes with the following user modules:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#genome">Genome</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.genome</span></code>)</p></li>
+<li><p><a class="reference internal" href="#genescorer">Genescorer</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.genescorer</span></code>)</p></li>
+<li><p><a class="reference internal" href="#pathwayscorer">Pathwayscorer</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.pathway</span></code>)</p></li>
+<li><p><a class="reference internal" href="#genexprscorer">Genexprscorer</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.genexpr</span></code>)</p></li>
+</ul>
+<p>Internal modules:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#snpdb">SNPdb</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.snpdb</span></code>)</p></li>
+<li><p><a class="reference internal" href="#refpanel">RefPanel</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.refpanel</span></code>)</p></li>
+<li><p><a class="reference internal" href="#mapper">Mapper</a> (<code class="code docutils literal notranslate"><span class="pre">PascalX.mapper</span></code>)</p></li>
+</ul>
+<hr class="docutils" />
+<div class="section" id="genome">
+<span id="id1"></span><h2>Genome<a class="headerlink" href="#genome" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.genome.genome">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.genome.</code><code class="sig-name descname">genome</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class handles the genome annotation. It provides functionality for import of data from text files and automatic download of annotation data from ensembl.org.</p>
+<dl class="py method">
+<dt id="PascalX.genome.genome.gene_info">
+<code class="sig-name descname">gene_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.gene_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the loaded information for given gene</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gene</strong> (<em>string</em>) – Symbol of gene to query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genome.genome.get_ensembl_annotation">
+<code class="sig-name descname">get_ensembl_annotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">genetype</span><span class="o">=</span><span class="default_value">'protein_coding'</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">'GRCh38'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.get_ensembl_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gene annotation download function for ensembl.org BioMart data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>string</em>) – File to store downloaded annotation in</p></li>
+<li><p><strong>genetype</strong> (<em>string</em>) – Comma separated list of BioMart genetypes to download (protein_coding, pseudogene, …)</p></li>
+<li><p><strong>version</strong> (<em>string</em>) – GRCh37 | CRCh38</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PascalX.genome</span> <span class="kn">import</span> <span class="n">genome</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">genome</span><span class="p">()</span>
+<span class="n">G</span><span class="o">.</span><span class="n">get_ensemble_annotation</span><span class="p">(</span><span class="s1">&#39;ensemble_hg38.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genome.genome.load_genome">
+<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genome.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genome.genome.load_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports gene annotation from text file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>text</em>) – File to load</p></li>
+<li><p><strong>ccol</strong> (<em>int</em>) – Column containing chromosome number</p></li>
+<li><p><strong>cid</strong> (<em>int</em>) – Column containing gene id</p></li>
+<li><p><strong>csymb</strong> (<em>int</em>) – Column containing gene symbol</p></li>
+<li><p><strong>cstx</strong> (<em>int</em>) – Column containing transcription start</p></li>
+<li><p><strong>cetx</strong> (<em>int</em>) – Column containing transcription end</p></li>
+<li><p><strong>cs</strong> (<em>int</em>) – Column containing strand</p></li>
+<li><p><strong>chrStart</strong> (<em>int</em>) – Number of leading characters to skip in ccol</p></li>
+<li><p><strong>splitchr</strong> (<em>string</em>) – Character used to separate columns in text file</p></li>
+<li><p><strong>NAgeneid</strong> (<em>string</em>) – Identifier for not available gene id</p></li>
+<li><p><strong>useNAgenes</strong> (<em>bool</em>) – Import genes without gene id</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – First line is header</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt><strong>Internal:</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENEID</span></code> (dict) - Contains the raw data with gene id (cid) as key</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENESYMB</span></code> (dict) - Mapping from gene symbols (csymb) to gene ids (cid)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENEIDtoSYMB</span></code> (dict) - Mapping from gene ids (cid) to gene symbols (csymb)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_CHR</span></code> (dict) - Mapping from chromosomes to list of gene symbols</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_SKIPPED</span></code> (dict) - Genes (cid) which could not be imported</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An unique gene id is automatically generated for n/a gene ids if <code class="docutils literal notranslate"><span class="pre">useNAgenes=true</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Identical gene ids occuring in more than one row are merged to a single gene, if on same chromosome and positional gap is &lt; 1Mb. The strand is taken from the longer segment.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+</div>
+<div class="section" id="genescorer">
+<span id="id2"></span><h2>Genescorer<a class="headerlink" href="#genescorer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.genescorer.chi2sum">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.genescorer.</code><code class="sig-name descname">chi2sum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">50000</span></em>, <em class="sig-param"><span class="n">varcutoff</span><span class="o">=</span><span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">genome</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.load_refpanel">
+<code class="sig-name descname">load_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the reference panel to use</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>string</em>) – /path/filename (without .chr#.db ending)</p></li>
+<li><p><strong>parallel</strong> (<em>int</em>) – Number of cores to use for parallel import of reference panel</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.load_genome">
+<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports gene annotation from text file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>text</em>) – File to load</p></li>
+<li><p><strong>ccol</strong> (<em>int</em>) – Column containing chromosome number</p></li>
+<li><p><strong>cid</strong> (<em>int</em>) – Column containing gene id</p></li>
+<li><p><strong>csymb</strong> (<em>int</em>) – Column containing gene symbol</p></li>
+<li><p><strong>cstx</strong> (<em>int</em>) – Column containing transcription start</p></li>
+<li><p><strong>cetx</strong> (<em>int</em>) – Column containing transcription end</p></li>
+<li><p><strong>cs</strong> (<em>int</em>) – Column containing strand</p></li>
+<li><p><strong>chrStart</strong> (<em>int</em>) – Number of leading characters to skip in ccol</p></li>
+<li><p><strong>splitchr</strong> (<em>string</em>) – Character used to separate columns in text file</p></li>
+<li><p><strong>NAgeneid</strong> (<em>string</em>) – Identifier for not available gene id</p></li>
+<li><p><strong>useNAgenes</strong> (<em>bool</em>) – Import genes without gene id</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – First line is header</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt><strong>Internal:</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENEID</span></code> (dict) - Contains the raw data with gene id (cid) as key</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENESYMB</span></code> (dict) - Mapping from gene symbols (csymb) to gene ids (cid)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENEIDtoSYMB</span></code> (dict) - Mapping from gene ids (cid) to gene symbols (csymb)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_CHR</span></code> (dict) - Mapping from chromosomes to list of gene symbols</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_SKIPPED</span></code> (dict) - Genes (cid) which could not be imported</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An unique gene id is automatically generated for n/a gene ids if <code class="docutils literal notranslate"><span class="pre">useNAgenes=true</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Identical gene ids occuring in more than one row are merged to a single gene, if on same chromosome and positional gap is &lt; 1Mb. The strand is taken from the longer segment.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.load_mapping">
+<code class="sig-name descname">load_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ocol</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a SNP to gene mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – File to load</p></li>
+<li><p><strong>gcol</strong> (<em>int</em>) – Column with gene id</p></li>
+<li><p><strong>rcol</strong> (<em>int</em>) – Column with SNP id</p></li>
+<li><p><strong>ocol</strong> (<em>int</em>) – Column with weight</p></li>
+<li><p><strong>splitchr</strong> (<em>string</em>) – Character used to separate columns</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – Header present</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A loaded mapping takes precedence over a loaded positional gene annotation</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.load_GWAS">
+<code class="sig-name descname">load_GWAS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">rscol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">delimiter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">NAid</span><span class="o">=</span><span class="default_value">'NA'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_GWAS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load GWAS summary statistics p-values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – File containing the GWAS summary statistics data. Either as textfile or gzip compressed with ending .gz</p></li>
+<li><p><strong>rscol</strong> (<em>int</em>) – Column of SNP ids</p></li>
+<li><p><strong>pcol</strong> (<em>int</em>) – Column of p-values</p></li>
+<li><p><strong>delimiter</strong> (<em>String</em>) – Split character</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – Header present</p></li>
+<li><p><strong>NAid</strong> (<em>String</em>) – Code for not available (rows are ignored)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.save_GWAS">
+<code class="sig-name descname">save_GWAS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.save_GWAS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save GWAS p-values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>string</em>) – Filename to store data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.save_scores">
+<code class="sig-name descname">save_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.save_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save computed gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>string</em>) – Filename to store data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.load_scores">
+<code class="sig-name descname">load_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load computed gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – Filename of data to load</p></li>
+<li><p><strong>gcol</strong> (<em>int</em>) – Column with gene symbol</p></li>
+<li><p><strong>pcol</strong> (<em>int</em>) – Column with p-value</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – File contains a header (True|False)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">unloadRef</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">1000000</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs gene scoring for a given list of gene symbols</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene</strong> (<em>list</em>) – gene symbols to score.</p></li>
+<li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>unloadRef</strong> (<em>bool</em>) – Keep only reference data for one chromosome in memory (True, False) per core</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’)</p></li>
+<li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
+<li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
+<li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.activateFails">
+<code class="sig-name descname">activateFails</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.activateFails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper method to force activate failed genes to success genes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Result</strong> (<em>list</em>) – Return of scoring function</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only use if you know what you are doing !</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.rescore">
+<code class="sig-name descname">rescore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'davies'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'128b'</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.rescore" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Function to re-score only the failed gene scorings of a previous scoring run with different scorer settings.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RESULT</strong> (<em>list</em>) – Return of one of the gene scorring methods</p></li>
+<li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’)</p></li>
+<li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
+<li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
+<li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
+<li><p><strong>nobar</strong> – Show progress bar</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.score_chr">
+<code class="sig-name descname">score_chr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chrs</span></em>, <em class="sig-param"><span class="n">unloadRef</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_chr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform gene scoring for full chromosomes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chrs</strong> (<em>list</em>) – List of chromosomes to score.</p></li>
+<li><p><strong>unloadRef</strong> (<em>bool</em>) – Keep only reference data for one chromosome in memory (True, False) per core</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’)</p></li>
+<li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
+<li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
+<li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
+<li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.score_all">
+<code class="sig-name descname">score_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">intlimit</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">autorescore</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform full gene scoring</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’)</p></li>
+<li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
+<li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
+<li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.get_topscores">
+<code class="sig-name descname">get_topscores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_topscores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the top gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>N</strong> (<em>int</em>) – # to show</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.get_geneinfo">
+<code class="sig-name descname">get_geneinfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_geneinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows details of the loaded annotation for a gene</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gene</strong> (<em>String</em>) – Gene symbol</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.plot_Manhattan">
+<code class="sig-name descname">plot_Manhattan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ScoringResult</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sigLine</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">logsigThreshold</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">labelSig</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">labelList</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'colorful'</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.plot_Manhattan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a Manhattan plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ScoringResult</strong> (<em>list</em>) – List of gene,p-value pairs [[‘Gene’,p-value],…] (if None, generate from internal _SCORES)</p></li>
+<li><p><strong>sigLine</strong> (<em>float</em>) – Draws a horizontal line at p-value (if &gt; 0)</p></li>
+<li><p><strong>logsigThreshold</strong> (<em>float</em>) – Significance threshold above which to label genes (log(p) values)</p></li>
+<li><p><strong>labelSig</strong> (<em>bool</em>) – Label genes above significance threshold</p></li>
+<li><p><strong>labelList</strong> (<em>list</em>) – List of gene names to label</p></li>
+<li><p><strong>style</strong> (<em>string</em>) – Design of the plot (‘classic’ | ‘colorful’)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genescorer.chi2sum.plot_genesnps">
+<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>list</em>) – List of gene symbols</p></li>
+<li><p><strong>show_correlation</strong> (<em>bool</em>) – Plot the corresponding SNP-SNP correlation matrix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="pathwayscorer">
+<span id="id3"></span><h2>Pathwayscorer<a class="headerlink" href="#pathwayscorer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.pathway.chi2rank">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.pathway.</code><code class="sig-name descname">chi2rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genescorer</span></em>, <em class="sig-param"><span class="n">mergedist</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pathway scoring via chi2 of ranked gene p-values. Nearby genes can be merged to form meta-genes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genescorer</strong> (<em>genescorer</em>) – The initialized genescorer to use to re-compute fused genes</p></li>
+<li><p><strong>mergedist</strong> (<em>int</em>) – Maximum inbetween distance of genes to merge</p></li>
+<li><p><strong>fuse</strong> (<em>bool</em>) – Fuse nearby genes to meta-genes</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="PascalX.pathway.chi2rank.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modules</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scores a set of pathways/modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modules</strong> (<em>list</em>) – List of modules to score</p></li>
+<li><p><strong>samples</strong> (<em>int</em>) – # of random gene sets to draw</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’)</p></li>
+<li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
+<li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.pathway.chi2rank.get_sigpathways">
+<code class="sig-name descname">get_sigpathways</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0.0001</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.get_sigpathways" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints significant pathways in the result set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RESULT</strong> (<em>list</em>) – Return of a pathwayscorer</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – Significance threshold to print pathways</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.pathway.chi2rank.load_modules">
+<code class="sig-name descname">load_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ncol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fcol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.load_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load modules from tab separated file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – path/filename</p></li>
+<li><p><strong>ncol</strong> (<em>int</em>) – Column with name of module</p></li>
+<li><p><strong>fcol</strong> (<em>int</em>) – Column with first gene in module. Remaining genes have to follow          separated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.pathway.chi2rank.set_genescorer">
+<code class="sig-name descname">set_genescorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.set_genescorer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the genescorer to use for re-computing p-values of fused genes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>S</strong> (<em>genescorer</em>) – The initialized genescorer to use</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="PascalX.pathway.chi2perm">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.pathway.</code><code class="sig-name descname">chi2perm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genescorer</span></em>, <em class="sig-param"><span class="n">mergedist</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pathway scoring via testing summed inverse chi2 transformed gene p-values against equally size random samples of gene sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genescorer</strong> (<em>genescorer</em>) – The initialized genescorer to use to re-compute fused genes</p></li>
+<li><p><strong>mergedist</strong> (<em>int</em>) – Maximum inbetween distance of genes to merge</p></li>
+<li><p><strong>fuse</strong> (<em>bool</em>) – Fuse nearby genes to meta-genes</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Genes in the background gene sets are NOT fused.</p>
+</div>
+<dl class="py method">
+<dt id="PascalX.pathway.chi2perm.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modules</span></em>, <em class="sig-param"><span class="n">samples</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">reqacc</span><span class="o">=</span><span class="default_value">1e-100</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nobar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scores a set of pathways/modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modules</strong> (<em>list</em>) – List of modules to score</p></li>
+<li><p><strong>samples</strong> (<em>int</em>) – # of random gene sets to draw</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’)</p></li>
+<li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
+<li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.pathway.chi2perm.get_sigpathways">
+<code class="sig-name descname">get_sigpathways</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">RESULT</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0.0001</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.get_sigpathways" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints significant pathways in the result set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RESULT</strong> (<em>list</em>) – Return of a pathwayscorer</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – Significance threshold to print pathways</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.pathway.chi2perm.load_modules">
+<code class="sig-name descname">load_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ncol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fcol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.load_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load modules from tab separated file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – path/filename</p></li>
+<li><p><strong>ncol</strong> (<em>int</em>) – Column with name of module</p></li>
+<li><p><strong>fcol</strong> (<em>int</em>) – Column with first gene in module. Remaining genes have to follow          separated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.pathway.chi2perm.set_genescorer">
+<code class="sig-name descname">set_genescorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/pathway.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.set_genescorer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the genescorer to use for re-computing p-values of fused genes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>S</strong> (<em>genescorer</em>) – The initialized genescorer to use</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+</div>
+<div class="section" id="genexprscorer">
+<span id="id4"></span><h2>Genexprscorer<a class="headerlink" href="#genexprscorer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.genexpr.genexpr">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.genexpr.</code><code class="sig-name descname">genexpr</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="PascalX.genexpr.genexpr.get_GTEX_expr">
+<code class="sig-name descname">get_GTEX_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.get_GTEX_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads GTEx v8 data and imports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – Filename to store downloaded GTEX data</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The import may take several hours.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genexpr.genexpr.load_expr">
+<code class="sig-name descname">load_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.load_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the GTEx data for usage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – File to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genexpr.genexpr.load_genome">
+<code class="sig-name descname">load_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">ccol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cid</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">csymb</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">cstx</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">cetx</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">cs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">chrStart</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">NAgeneid</span><span class="o">=</span><span class="default_value">'n/a'</span></em>, <em class="sig-param"><span class="n">useNAgenes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.load_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports gene annotation from text file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>text</em>) – File to load</p></li>
+<li><p><strong>ccol</strong> (<em>int</em>) – Column containing chromosome number</p></li>
+<li><p><strong>cid</strong> (<em>int</em>) – Column containing gene id</p></li>
+<li><p><strong>csymb</strong> (<em>int</em>) – Column containing gene symbol</p></li>
+<li><p><strong>cstx</strong> (<em>int</em>) – Column containing transcription start</p></li>
+<li><p><strong>cetx</strong> (<em>int</em>) – Column containing transcription end</p></li>
+<li><p><strong>cs</strong> (<em>int</em>) – Column containing strand</p></li>
+<li><p><strong>chrStart</strong> (<em>int</em>) – Number of leading characters to skip in ccol</p></li>
+<li><p><strong>splitchr</strong> (<em>string</em>) – Character used to separate columns in text file</p></li>
+<li><p><strong>NAgeneid</strong> (<em>string</em>) – Identifier for not available gene id</p></li>
+<li><p><strong>useNAgenes</strong> (<em>bool</em>) – Import genes without gene id</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – First line is header</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt><strong>Internal:</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENEID</span></code> (dict) - Contains the raw data with gene id (cid) as key</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENESYMB</span></code> (dict) - Mapping from gene symbols (csymb) to gene ids (cid)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_GENEIDtoSYMB</span></code> (dict) - Mapping from gene ids (cid) to gene symbols (csymb)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_CHR</span></code> (dict) - Mapping from chromosomes to list of gene symbols</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_SKIPPED</span></code> (dict) - Genes (cid) which could not be imported</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An unique gene id is automatically generated for n/a gene ids if <code class="docutils literal notranslate"><span class="pre">useNAgenes=true</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Identical gene ids occuring in more than one row are merged to a single gene, if on same chromosome and positional gap is &lt; 1Mb. The strand is taken from the longer segment.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genexpr.genexpr.chi2rank">
+<code class="sig-name descname">chi2rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pathways</span></em>, <em class="sig-param"><span class="n">fuse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.chi2rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates tissue enrichment scores for set of genes using GTEx data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pathways</strong> (<em>list</em>) – List of pathways to score [ [‘name’,[‘gene1’,’gene2’,…]],…]</p></li>
+<li><p><strong>fuse</strong> (<em>bool</em>) – Fuse nearby genes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.genexpr.genexpr.plot_genexpr">
+<code class="sig-name descname">plot_genexpr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genes</span></em>, <em class="sig-param"><span class="n">tzscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cbar_pos</span><span class="o">=</span><span class="default_value">0.0, 0.0, 0.01, 0.5</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/genexpr.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genexpr.genexpr.plot_genexpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots gene expression matrix for list of genes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>list</em>) – list of genes</p></li>
+<li><p><strong>tzscore</strong> (<em>bool</em>) – zscore over tissues per gene (true|false)</p></li>
+<li><p><strong>cbar_pos</strong> (<em>list</em>) – Position coordinates of color bar</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+</div>
+<div class="section" id="snp-database">
+<span id="snpdb"></span><h2>SNP database<a class="headerlink" href="#snp-database" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.snpdb.db">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.snpdb.</code><code class="sig-name descname">db</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for handling storage of the raw genotype data. The data is indexed and stored for each chromosome individually as zlib compressed pickle. The indexing allows fast random access via SNP ids or positions.</p>
+<dl class="py method">
+<dt id="PascalX.snpdb.db.open">
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens storage file. A new file is created if not exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – Name to use for the storage file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores set of rows into the file storage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – First storage key is the key in the dictionary. Second storage key is the first element of the inner list.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If all insert calls are done, the close function has to be called once to make the index persistent.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all stored data for a set of SNPs indexed via positions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pos</strong> (<em>list</em>) – Positions of SNPs to retrieve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.getSNPatPos">
+<code class="sig-name descname">getSNPatPos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPatPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns SNP id at position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pos</strong> (<em>list</em>) – Positions of SNPs to retrieve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.getSNPs">
+<code class="sig-name descname">getSNPs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snp</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all stored data for a set of SNPs indexed via SNP ids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>snp</strong> (<em>list</em>) – ids of SNPs to retrieve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.getSNPKeys">
+<code class="sig-name descname">getSNPKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPKeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the SNP ids in storage</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.getKeys">
+<code class="sig-name descname">getKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getKeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns SNP positions in storage</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.getSortedKeys">
+<code class="sig-name descname">getSortedKeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSortedKeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a sorted list of SNP positions in storage</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.snpdb.db.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes open storage file.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>After all inserts are done this function has to be called once to re-generate the index and close the storage file.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+</div>
+<div class="section" id="reference-panel">
+<span id="refpanel"></span><h2>Reference panel<a class="headerlink" href="#reference-panel" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.refpanel.refpanel">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.refpanel.</code><code class="sig-name descname">refpanel</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="PascalX.refpanel.refpanel.load_pos_reference">
+<code class="sig-name descname">load_pos_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.load_pos_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a snpdb object for a chromosome and a sorted list of SNP positions on the chromosome</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cr</strong> (<em>int</em>) – Chromosome number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.refpanel.refpanel.load_snp_reference">
+<code class="sig-name descname">load_snp_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.load_snp_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a snpdb object for a chromosome</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cr</strong> (<em>int</em>) – Chromosome number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.refpanel.refpanel.set_refpanel">
+<code class="sig-name descname">set_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.set_refpanel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the reference panel to use</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>string</em>) – /path/filename (without .chr#.db ending)</p></li>
+<li><p><strong>parallel</strong> (<em>int</em>) – Number of cores to use for parallel import of reference panel</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.refpanel.refpanel.getSNPtoChrMap">
+<code class="sig-name descname">getSNPtoChrMap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.getSNPtoChrMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary mapping SNP id to corresponding chromosome number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="PascalX.refpanel.refpanel.getChrSNPs">
+<code class="sig-name descname">getChrSNPs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cr</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.getChrSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns SNP ids for a chromosome</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cr</strong> (<em>int</em>) – Chromosome number</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+</div>
+<div class="section" id="mapper">
+<span id="id5"></span><h2>Mapper<a class="headerlink" href="#mapper" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="PascalX.mapper.mapper">
+<em class="property">class </em><code class="sig-prename descclassname">PascalX.mapper.</code><code class="sig-name descname">mapper</code><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/mapper.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.mapper.mapper" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="PascalX.mapper.mapper.load_mapping">
+<code class="sig-name descname">load_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">gcol</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rcol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ocol</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">splitchr</span><span class="o">=</span><span class="default_value">'\t'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/master/python/PascalX/mapper.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.mapper.mapper.load_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a SNP to gene mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – File to load</p></li>
+<li><p><strong>gcol</strong> (<em>int</em>) – Column with gene id</p></li>
+<li><p><strong>rcol</strong> (<em>int</em>) – Column with SNP id</p></li>
+<li><p><strong>ocol</strong> (<em>int</em>) – Column with weight</p></li>
+<li><p><strong>splitchr</strong> (<em>string</em>) – Character used to separate columns</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – Header present</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Bergmann lab and contributors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
