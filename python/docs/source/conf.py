@@ -65,4 +65,4 @@ def linkcode_resolve(domain, info):
     if not info['module']:
         return None
     filename = info['module'].replace('.', '/')
-    return "https://github.com/BergmannLab/PascalX/tree/master/python/%s.py" % filename
+    return "https://github.com/BergmannLab/PascalX/tree/main/python/%s.py" % filename
