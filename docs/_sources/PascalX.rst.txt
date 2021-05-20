@@ -6,6 +6,7 @@ The PascalX package comes with the following user modules:
 * Genome_ (:code:`PascalX.genome`)
 * Genescorer_ (:code:`PascalX.genescorer`)
 * Pathwayscorer_ (:code:`PascalX.pathway`)
+* Xscorer_ (:code:`PascalX.xscorer`)
 * Genexprscorer_ (:code:`PascalX.genexpr`)
 
 Internal modules:
@@ -58,6 +59,27 @@ Pathwayscorer
    :inherited-members:
    :exclude-members:
    :member-order: bysource
+
+.. _Xscorer:
+
+Xscorer
+-------------
+
+.. autoclass:: PascalX.xscorer.zsum
+   :members:
+   :inherited-members:
+   :exclude-members:
+   :member-order: bysource
+
+
+.. autoclass:: PascalX.xscorer.rsum
+   :members:
+   :inherited-members:
+   :exclude-members:
+   :member-order: bysource
+
+
+
 
 _______________________
 

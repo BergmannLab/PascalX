@@ -32,7 +32,7 @@ Set the reference panel to use via
 
 .. code-block:: python
     
-    Scorer.load_refpanel("path/filename")
+    Scorer.load_refpanel('path/filename')
 
 
 .. note::
@@ -62,7 +62,7 @@ The downloaded annotation can be imported via
 
 .. code-block:: python
 
-    Scorer.load_genome("path/filename")
+    Scorer.load_genome('path/filename')
 
 It is also possible to load your own annotation. Please refer to the :ref:`Genescorer` API documentation for the required options to set. Instead of using a position wise annotation, a direct SNP to gene mapping can be used instead via the ``load_mapping`` method.
 
@@ -73,7 +73,7 @@ The GWAS summary statistics to score can be imported via
 
 .. code-block:: python
 
-    Scorer.load_GWAS("path/filename",rscol=0,pcol=1,header=False)
+    Scorer.load_GWAS('path/filename',rscol=0,pcol=1,header=False)
 
 The argument ``rscol=`` specifies the column of the variant id and ``pcol=`` the column of the p-value. ``header=`` specifies if the first row is a header or not. The file can be either raw text or gzip compressed with file name ending on ``.gz``.
 
@@ -219,7 +219,7 @@ Sets of gene modules / pathways can be loaded from a tab-separated file via the 
 
 .. code-block:: python
 
-    M = Pscorer.load_modules("filename.tsv",ncol=0,fcol=2)
+    M = Pscorer.load_modules('filename.tsv',ncol=0,fcol=2)
 
 ``ncol=`` is the column with the name of the module and ``fcol=`` the first column with a gene symbol. It is assumed that other member genes follow in subsequent columns. 
 
@@ -239,6 +239,64 @@ The return ``RESULT`` reads
 
 Genes and meta-genes with out a p-value (failed gene scoring) are removed from the pathway before pathway scoring. These genes are marked in ``RESULT`` via ``NaN`` gene p-value.
     
+
+_______________________
+
+
+X scoring
+----------
+
+PascalX offers two different GWAS cross scorers. 
+
+**Coherence scorer:**
+
+
+.. code-block:: python
+    
+    from PascalX import xscorer
+
+    X = xscorer.zsum(leftTail=False)
+    X.load_genome('path/filename')
+
+Note that the default initialization of the gene scoring above are used. ``leftTail=`` sets the side to test. ``False`` corresponds to anti-coherence and ``True`` to coherence.
+A gene annotation has to be loaded as for the standard :ref:`Genescorer`.
+
+.. code-block:: python
+
+    X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,header=False)
+    X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,header=False)
+
+In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ``name=`` argument, and it is necessary to specify the column with the raw betas ``bcol=``.
+
+It is recommended to perform the scoring for jointly QQ normalized p-values: 
+
+.. code-block:: python
+   
+    X.jointlyRank('GWAS A','GWAS B')
+
+
+The scoring is started via calling
+
+.. code-block:: python
+    
+    R = X.score_all(E_A='GWAS A',E_B='GWAS B')
+
+
+The return ``R`` is as for the :ref:`Genescorer` class.
+
+
+**Ratio scorer:**
+
+As above, but with 
+
+.. code-block:: python
+   
+    X = xscorer.rsum(leftTail=False)
+
+
+.. note::
+   
+    As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep ``parallel=1`` at the time being.
 
 _______________________
 

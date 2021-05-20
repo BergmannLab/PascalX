@@ -136,7 +136,7 @@ class db:
         
         return E
     
-    def getSNPs(self,snp):
+    def getSNPs(self,snps):
         """
         Returns all stored data for a set of SNPs indexed via SNP ids
         
@@ -146,7 +146,7 @@ class db:
             
         """
         E = []
-        for R in pos:
+        for R in snps:
             if R in self._idx[1]:
                 p = self._idx[1][R]
                 self._datafile.seek(p[0])
@@ -177,6 +177,21 @@ class db:
         Returns a sorted list of SNP positions in storage
         """
         return SortedList(self._idx[0].keys())
+    
+    def getSNPpos(self,snpid):
+        """
+        Returns the position corresponding to a snpid
+        WARNING: Inefficient
+        """
+        if snpid in self._idx[1]:
+            fseek = self._idx[1][snpid]
+        
+            for pos, fs in self._idx[0].items(): 
+                for i in range(0,len(fs[0])):
+                    if fseek[0] == fs[0][i]:
+                        return pos
+
+        return None
     
     def close(self):
         """

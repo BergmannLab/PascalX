@@ -86,6 +86,151 @@ def onemin_cdf_davies(X, lb, lim=100000, acc=1e-16, mode=''):
     toc = time.time()
     
     return [res,_ifault[0],_trace, round(toc-tic,5)]
+
+def fconstmin_cdf_davies(F,c, X, lb, lim=100000, acc=1e-16, mode=''):
+    """
+    Calculates tail probability for linear combination of chi2 distributed random variables (c-cdf(X))
+    via Davies algorithm 
+    
+    c: Constant
+    X: Point to evaluate
+    lb: weights 
+    lim: Max # integration terms
+    acc: Requested accuracy
+    mode: '','128b','100d' the internal precision to use
+    """
+    _L = np.ascontiguousarray(lb, dtype='float64')
+    _trace = np.zeros(7,dtype='float64')
+    _ifault = np.zeros(1,dtype='int32')
+
+    tic = time.time()
+
+    if mode == '128b':
+        res = F*lib.constminwchissum_m1nc0_davies_128b(
+            c,
+            ffi.cast("double *",_L.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-32),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+    elif mode == '100d':
+    
+        res = F*lib.constminwchissum_m1nc0_davies_100d(
+            c,
+            ffi.cast("double *",_L.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-100),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+    elif mode == 'auto':
+        res = lib.fconstminwchissum_m1nc0_davies_auto(
+            F,
+            c,
+            ffi.cast("double *",_L.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            min(acc,1e-100),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+        
+    else:
+        res = F*lib.constminwchissum_m1nc0_davies(
+            c,
+            ffi.cast("double *",_L.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-16),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+
+    toc = time.time()
+    
+    return [res,_ifault[0],_trace, round(toc-tic,5)]
+    
+
+    
+def onemin_cdf_davies_nc(X, lb, nc, lim=100000, acc=1e-16, mode=''):
+    """
+    Calculates tail probability for linear combination of non-central chi2 distributed random variables (1-cdf(X))
+    via Davies algorithm 
+    
+    X: Point to evaluate
+    lb: weights 
+    nc: non-centrality parameters
+    lim: Max # integration terms
+    acc: Requested accuracy
+    mode: '','128b','100d' the internal precision to use
+    """
+    _L = np.ascontiguousarray(lb, dtype='float64')
+    _nc = np.ascontiguousarray(nc, dtype='float64')
+    _trace = np.zeros(7,dtype='float64')
+    _ifault = np.zeros(1,dtype='int32')
+
+    tic = time.time()
+
+   
+    if mode == '128b':
+        res = lib.oneminwchissum_m1_davies_128b(
+            ffi.cast("double *",_L.ctypes.data),
+            ffi.cast("double *",_nc.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-32),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+    elif mode == '100d':
+    
+        res = lib.oneminwchissum_m1_davies_100d(
+            ffi.cast("double *",_L.ctypes.data),
+            ffi.cast("double *",_nc.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-100),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+    elif mode == 'auto':
+        res = lib.oneminwchissum_m1_davies_auto(
+            ffi.cast("double *",_L.ctypes.data),
+            ffi.cast("double *",_nc.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-100),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+        
+    else:
+        res = lib.oneminwchissum_m1_davies(
+            ffi.cast("double *",_L.ctypes.data),
+            ffi.cast("double *",_nc.ctypes.data),
+            len(_L),
+            X,
+            int(lim),
+            max(acc,1e-16),
+            ffi.cast("int *",_ifault.ctypes.data),
+            ffi.cast("double *",_trace.ctypes.data)
+        )
+
+    toc = time.time()
+    
+    return [res,_ifault[0],_trace, round(toc-tic,5)]    
+    
+    
     
 def onemin_cdf_ruben(X, lb, lim=100000, acc=1e-16, mode=''):
     """
