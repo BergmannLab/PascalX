@@ -23,12 +23,10 @@
 #include "davies.hpp"
 
 
+
 extern "C"
-double oneminwchissum_m1nc0_davies(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+double oneminwchissum_m1_davies(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace) {
 	
-    // Init non-centralities to 0
-    double* nc = (double*) calloc(N, sizeof(double));
-   
     // Init multiplicities to 1
     int* mu = (int*) malloc(N*sizeof(int));
     
@@ -39,17 +37,31 @@ double oneminwchissum_m1nc0_davies(double* lambda, int N, double X, int lim, dou
     double ret = onemin_davies(lambda,mu,nc,N,X,lim,acc,ifault,trace);
 
     free(mu); 
-    free(nc);
     
     return ret;
 }
 
+
 extern "C"
-double oneminwchissum_m1nc0_davies_128b(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+double oneminwchissum_m1nc0_davies(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
 	
     // Init non-centralities to 0
     double* nc = (double*) calloc(N, sizeof(double));
    
+    double ret = oneminwchissum_m1_davies(lambda, nc, N, X, lim, acc, ifault, trace); 
+
+    free(nc); 
+    
+    return ret;
+}
+
+
+
+
+extern "C"
+double oneminwchissum_m1_davies_128b(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
+    
     // Init multiplicities to 1
     int* mu = (int*) malloc(N*sizeof(int));
     
@@ -60,17 +72,27 @@ double oneminwchissum_m1nc0_davies_128b(double* lambda, int N, double X, int lim
     double ret = onemin_davies_128b(lambda,mu,nc,N,X,lim,acc,ifault,trace);
 
     free(mu); 
-    free(nc);
     
     return ret;
 }
 
 extern "C"
-double oneminwchissum_m1nc0_davies_100d(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+double oneminwchissum_m1nc0_davies_128b(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
 	
+    
     // Init non-centralities to 0
     double* nc = (double*) calloc(N, sizeof(double));
-   
+  
+    double ret = oneminwchissum_m1_davies_128b(lambda,nc,N,X,lim,acc,ifault,trace);
+
+    free(nc); 
+    
+    return ret;
+}
+
+extern "C"
+double oneminwchissum_m1_davies_100d(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
     // Init multiplicities to 1
     int* mu = (int*) malloc(N*sizeof(int));
     
@@ -81,16 +103,27 @@ double oneminwchissum_m1nc0_davies_100d(double* lambda, int N, double X, int lim
     double ret = onemin_davies_100d(lambda,mu,nc,N,X,lim,acc,ifault,trace);
 
     free(mu); 
+    
+    return ret;
+}
+
+
+extern "C"
+double oneminwchissum_m1nc0_davies_100d(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
+    // Init non-centralities to 0
+    double* nc = (double*) calloc(N, sizeof(double));
+    
+    double ret = oneminwchissum_m1_davies_100d(lambda,nc,N,X,lim,acc,ifault,trace);
+
     free(nc);
     
     return ret;
 }
 
 extern "C"
-double oneminwchissum_m1nc0_davies_auto(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+double oneminwchissum_m1_davies_auto(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace) {
     
-    // Init non-centralities to 0
-    double* nc = (double*) calloc(N, sizeof(double));
    
     // Init multiplicities to 1
     int* mu = (int*) malloc(N*sizeof(int));
@@ -178,12 +211,201 @@ double oneminwchissum_m1nc0_davies_auto(double* lambda, int N, double X, int lim
     
     
     free(mu); 
+
+    return ret;
+    
+}
+
+extern "C"
+double oneminwchissum_m1nc0_davies_auto(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+    // Init non-centralities to 0
+    double* nc = (double*) calloc(N, sizeof(double));
+    
+    double ret = oneminwchissum_m1_davies_auto(lambda, nc, N, X, lim, acc, ifault, trace); 
+    
+    free(nc);
+  
+    return ret;
+    
+}
+
+
+
+
+extern "C"
+double constminwchissum_m1_davies(double x,double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
+    // Init multiplicities to 1
+    int* mu = (int*) malloc(N*sizeof(int));
+    
+    for(int i = 0; i < N; i++) {
+        mu[i] = 1;
+    }
+    
+    double ret = constmin_davies(x,lambda,mu,nc,N,X,lim,acc,ifault,trace);
+
+    free(mu); 
+    
+    return ret;
+}
+
+
+extern "C"
+double constminwchissum_m1nc0_davies(double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
+    // Init non-centralities to 0
+    double* nc = (double*) calloc(N, sizeof(double));
+   
+    double ret = constminwchissum_m1_davies(x, lambda, nc, N, X, lim, acc, ifault, trace); 
+
+    free(nc); 
+    
+    return ret;
+}
+
+
+extern "C"
+double constminwchissum_m1nc0_davies_128b(double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
+    // Init non-centralities to 0
+    double* nc = (double*) calloc(N, sizeof(double));
+   
+    // Init multiplicities to 1
+    int* mu = (int*) malloc(N*sizeof(int));
+    
+    for(int i = 0; i < N; i++) {
+        mu[i] = 1;
+    }
+    
+    double ret = constmin_davies_128b(x,lambda,mu,nc,N,X,lim,acc,ifault,trace);
+
+    free(mu); 
+    free(nc);
+    
+    return ret;
+}
+
+extern "C"
+double constminwchissum_m1nc0_davies_100d(double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+	
+    // Init non-centralities to 0
+    double* nc = (double*) calloc(N, sizeof(double));
+   
+    // Init multiplicities to 1
+    int* mu = (int*) malloc(N*sizeof(int));
+    
+    for(int i = 0; i < N; i++) {
+        mu[i] = 1;
+    }
+    
+    double ret = constmin_davies_100d(x,lambda,mu,nc,N,X,lim,acc,ifault,trace);
+
+    free(mu); 
+    free(nc);
+    
+    return ret;
+}
+
+extern "C"
+double fconstminwchissum_m1nc0_davies_auto(double F,double x,double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace) {
+    
+    // Init non-centralities to 0
+    double* nc = (double*) calloc(N, sizeof(double));
+   
+    // Init multiplicities to 1
+    int* mu = (int*) malloc(N*sizeof(int));
+    
+    for(int i = 0; i < N; i++) {
+        mu[i] = 1;
+    }
+    
+    double prec = 1e-6;
+    int iterms = (N < 10) ? 100000000 : 1000000;
+    
+    int counter = 0;
+    
+    
+    START:
+     
+    // Try first davies @ low precision
+    double ret;
+    if(prec > 1e-16) {
+        ret = F*constmin_davies(x,lambda,mu,nc,N,X,iterms,prec,ifault,trace);
+    } else {
+        if(prec > 1e-32) {
+            ret = F*constmin_davies_128b(x,lambda,mu,nc,N,X,iterms,prec,ifault,trace); 
+        } else {
+            ret = F*constmin_davies_100d(x,lambda,mu,nc,N,X,iterms,prec,ifault,trace); 
+        }
+    }
+   
+    counter++;
+    
+    if(counter > 8) return ret;
+    
+    switch(ifault[0]) {
+        case 0: {
+           
+            if(ret > 0 && ret > prec*1e3) {
+                
+                // All ok
+                return ret;
+            
+            } else {
+                // Not enough precision
+                prec *= 1e-6;
+                
+                goto START;
+            }
+        }
+            
+        case 1: {
+            // Not enough int terms
+           
+            iterms += 1000000;
+            
+            goto START;
+        }
+            
+        case 2: {
+            // Not accurate, increase interal precision
+            
+           if(prec > 1e-32) {
+               ret = F*constmin_davies_128b(x,lambda,mu,nc,N,X,iterms,prec,ifault,trace); 
+            } else {
+               ret = F*constmin_davies_100d(x,lambda,mu,nc,N,X,iterms,prec,ifault,trace); 
+            }
+            
+            if(ifault[0]==0 && ret > 0 && ret > prec*1e3) {
+                // All ok
+                return ret;
+            } 
+           
+            prec *= 1e-6;
+            
+            goto START;
+        }  
+            
+        case 4: {
+            // Increase # integration terms
+            iterms *= 2;
+            
+            goto START;
+        }      
+            
+    }
+    
+    
+    
+    free(mu); 
     free(nc);
     free(trace);
     
     return ret;
     
 }
+
+
 
 
 extern "C"

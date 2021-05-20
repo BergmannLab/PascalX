@@ -73,3 +73,27 @@ def onemin_cdf_satterthwaite_200d(X, lb):
             X)
   
     return res
+
+def norm_cdf_100d(x, m, s):
+    """
+    normal cdf
+    
+    x : Point to evaluate
+    m : Mean
+    s : Std
+    """
+    
+    return lib.normcdf_100d(x,m,s)
+
+def onemin_norm_cdf_100d(x, m, s):
+    """
+    normal cdf
+    
+    x : Point to evaluate
+    m : Mean
+    s : Std
+    """
+    
+    return lib.onemin_normcdf_100d(x,m,s)
+
+    

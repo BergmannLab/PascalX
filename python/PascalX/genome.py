@@ -60,7 +60,7 @@ class genome:
         
         print("Downloading gene annotation from ensembl.org BioMart [",genetype,"] (",version,")")
         
-        cmd = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Filter name = "chromosome_name" value = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22"/><Filter name = "biotype" value = "'+genetype+'"/><Attribute name = "ensembl_gene_id" /><Attribute name = "chromosome_name" /><Attribute name = "transcript_start" /><Attribute name = "transcript_end" /><Attribute name = "strand" /><Attribute name = "external_gene_name" /></Dataset></Query>'
+        cmd = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Filter name = "chromosome_name" value = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22"/><Filter name = "biotype" value = "'+genetype+'"/><Attribute name = "ensembl_gene_id" /><Attribute name = "chromosome_name" /><Attribute name = "transcript_start" /><Attribute name = "transcript_end" /><Attribute name = "strand" /><Attribute name = "external_gene_name" /><Attribute name = "band"/></Dataset></Query>'
           
         if version == 'GRCh38':
             url = 'http://www.ensembl.org/biomart/martservice?query='
@@ -81,7 +81,7 @@ class genome:
 
         print("done")
     
-    def load_genome(self,file,ccol=1,cid=0,csymb=5,cstx=2,cetx=3,cs=4,chrStart=0,splitchr='\t',NAgeneid='n/a',useNAgenes=False,header=False):
+    def load_genome(self,file,ccol=1,cid=0,csymb=5,cstx=2,cetx=3,cs=4,cb=None,chrStart=0,splitchr='\t',NAgeneid='n/a',useNAgenes=False,header=False):
         """
             Imports gene annotation from text file
             
@@ -93,6 +93,7 @@ class genome:
                 cstx(int): Column containing transcription start
                 cetx(int): Column containing transcription end
                 cs(int): Column containing strand
+                cb(int): Column containing band (None if not supplied)
                 chrStart(int): Number of leading characters to skip in ccol
                 splitchr(string): Character used to separate columns in text file
                 NAgeneid(string): Identifier for not available gene id
@@ -105,6 +106,7 @@ class genome:
                 * ``_GENESYMB`` (dict) - Mapping from gene symbols (csymb) to gene ids (cid)
                 * ``_GENEIDtoSYMB`` (dict) - Mapping from gene ids (cid) to gene symbols (csymb)
                 * ``_CHR`` (dict) - Mapping from chromosomes to list of gene symbols
+                * ``_BAND`` (dict) - Mapping from band to list of gene symbols
                 * ``_SKIPPED`` (dict) - Genes (cid) which could not be imported
             
             Note:
@@ -119,7 +121,7 @@ class genome:
         self._GENESYMB = {}
         self._GENEIDtoSYMB = {}
         self._CHR = {}
-
+        self._BAND = {}
         self._SKIPPED = {}
 
         # Read first onlys not n/a genes
@@ -160,7 +162,16 @@ class genome:
 
                     self._GENEIDtoSYMB[line[cid]] = line[csymb]
                     self._GENESYMB[line[csymb]] = line[cid]
-
+                    
+                    
+                    # Store band info
+                    if cb is not None:
+                        pos = str(line[ccol])+str(line[cb])
+                        if pos not in self._BAND:
+                            self._BAND[pos] = []
+                        
+                        self._BAND[pos].append(line[csymb])
+                        
                 else:
                     # Update
                     if self._GENEID[line[cid]][0] == line[ccol][chrStart:] and self._GENEIDtoSYMB[line[cid]] == line[csymb] and (abs(self._GENEID[line[cid]][1] - int(line[cstx]) ) < 1e6  or abs(self._GENEID[line[cid]][2] - int(line[cetx]) ) < 1e6 ) :

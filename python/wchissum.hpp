@@ -24,6 +24,11 @@ extern double oneminwchissum_m1nc0_davies_128b(double* lambda, int N, double X, 
 extern double oneminwchissum_m1nc0_davies_100d(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace);
 extern double oneminwchissum_m1nc0_davies_auto(double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace);
 
+extern double constminwchissum_m1nc0_davies(double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace);
+extern double constminwchissum_m1nc0_davies_128b(double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace);
+extern double constminwchissum_m1nc0_davies_100d(double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace);
+extern double fconstminwchissum_m1nc0_davies_auto(double F, double x, double* lambda, int N, double X, int lim, double acc, int* ifault, double* trace);
+
 extern double oneminwchissum_m1nc0_ruben(double* lambda, int N, double X, int lim, double acc, int* ifault);
 extern double oneminwchissum_m1nc0_ruben_128b(double* lambda, int N, double X, int lim, double acc, int* ifault);
 extern double oneminwchissum_m1nc0_ruben_100d(double* lambda, int N, double X, int lim, double acc, int* ifault);
@@ -31,3 +36,10 @@ extern double oneminwchissum_m1nc0_ruben_200d(double* lambda, int N, double X, i
 
 extern double oneminwchissum_m1nc0_auto(double* lambda, int N, double X, int lim, double acc, int* ifault);
 
+extern double oneminwchissum_m1_davies(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace);
+extern double oneminwchissum_m1_davies_128b(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace);
+extern double oneminwchissum_m1_davies_100d(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace);
+extern double oneminwchissum_m1_davies_auto(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace);
+
+
+extern double constminwchissum_m1_davies(double x,double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace);

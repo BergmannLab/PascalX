@@ -592,3 +592,7 @@ template <typename REAL> REAL davies(double* lb, int* n, double* nc, int r, doub
 double onemin_davies(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace);
 double onemin_davies_128b(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace);
 double onemin_davies_100d(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace);
+
+double constmin_davies(double x,double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace);
+double constmin_davies_128b(double x,double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace);
+double constmin_davies_100d(double x,double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace);

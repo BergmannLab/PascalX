@@ -38,6 +38,25 @@ double onemin_davies_100d(double* lb, int* n, double* nc, int r, double c, int l
     return tmp.convert_to<double>();
 }
 
+double constmin_davies(double x,double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace) {
+   
+    return  x - davies<double>(lb, n, nc, r, c, lim, acc, ifault, trace);
+}
+
+double constmin_davies_128b(double x,double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace) {
+    float128 tmp =  float128(x) - davies<float128>(lb, n, nc, r, c, lim, acc, ifault, trace);
+    
+    return tmp.convert_to<double>();
+}
+
+double constmin_davies_100d(double x,double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace) {
+    cpp_bin_float_100 tmp =  cpp_bin_float_100(x) - davies<cpp_bin_float_100>(lb, n, nc, r, c, lim, acc, ifault, trace);
+    
+    return tmp.convert_to<double>();
+}
+
+
+
 
 extern "C"
 void onemin_davies_str(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault, double* trace, char* result) {
@@ -70,3 +89,4 @@ void onemin_davies_100d_str(double* lb, int* n, double* nc, int r, double c, int
     
     strcpy(result, s.c_str());      
 }
+
