@@ -7,6 +7,7 @@ High precision gene and pathway scoring for GWAS summary statistics in python
 - Internal quad and multi-precision arithmetic support for high precision gene scoring via exact CDF calculations (up to 100 digits)
 - Fast random access to SNP reference panel genomic data with minimal memory footprint.
 - Parallelization over chromosomes and/or genes
+- Gene-wise coherence test between two GWAS
 
 ## Documentation
 
@@ -17,6 +18,14 @@ The full documentation can be found [here](https://bergmannlab.github.io/PascalX
 If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg)](https://doi.org/10.5281/zenodo.4429922)
+
+If you make use of the X-scorer (gene-wise coherence test between two GWAS), please cite the work 
+
+*Krefl D., Bergmann S.*  
+*Covariance of Interdependent Samples with Application to GWAS*  
+doi.org/10.1101/2021.05.16.21257289
+
+
 
 
 ## Installation 
@@ -284,6 +293,50 @@ RESULT = P.score(M)
 ```RESULT = [ [[name,[symbols],p-value],...], R_FAIL ]```
 
 If the list R_FAIL is not empty, a gene re-scoring for the listed genes and re-scoring of affected pathways is recommended. Note that the genes and meta-genes with out gene score are removed from the pathway before pathway scoring.
+
+### X scoring:
+
+PascalX offers two different GWAS cross scorers.
+
+**Coherence scorer:**
+
+```python
+from PascalX import xscorer
+
+X = xscorer.zsum(leftTail=False)
+X.load_genome('path/filename')
+```
+Note that the default initialization of the gene scoring above are used. ```leftTail=``` sets the side to test. False corresponds to anti-coherence and True to coherence. A gene annotation has to be loaded as for the standard Genescorer.
+
+```python
+X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,header=False)
+X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,header=False)
+```
+In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ```name=``` argument, and it is necessary to specify the column with the raw betas ```bcol=```.
+
+It is recommended to perform the scoring for jointly QQ normalized p-values:
+
+```python
+X.jointlyRank('GWAS A','GWAS B')
+```
+
+The scoring is started via calling
+
+```python
+R = X.score_all(E_A='GWAS A',E_B='GWAS B')
+```
+The return ```R``` is as for the Genescorer class.
+
+**Ratio scorer:**
+
+As above, but with
+
+```python
+X = xscorer.rsum(leftTail=False)
+```
+
+NOTE: As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep ```parallel=1``` at the time being.
+
 
 ### Visualization:
 
