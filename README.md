@@ -294,6 +294,50 @@ RESULT = P.score(M)
 
 If the list R_FAIL is not empty, a gene re-scoring for the listed genes and re-scoring of affected pathways is recommended. Note that the genes and meta-genes with out gene score are removed from the pathway before pathway scoring.
 
+### X scoring:
+
+PascalX offers two different GWAS cross scorers.
+
+**Coherence scorer:**
+
+```python
+from PascalX import xscorer
+
+X = xscorer.zsum(leftTail=False)
+X.load_genome('path/filename')
+```
+Note that the default initialization of the gene scoring above are used. ```leftTail=``` sets the side to test. False corresponds to anti-coherence and True to coherence. A gene annotation has to be loaded as for the standard Genescorer.
+
+```python
+X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,header=False)
+X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,header=False)
+```
+In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ```name=``` argument, and it is necessary to specify the column with the raw betas ```bcol=```.
+
+It is recommended to perform the scoring for jointly QQ normalized p-values:
+
+```python
+X.jointlyRank('GWAS A','GWAS B')
+```
+
+The scoring is started via calling
+
+```python
+R = X.score_all(E_A='GWAS A',E_B='GWAS B')
+```
+The return ```R``` is as for the Genescorer class.
+
+**Ratio scorer:**
+
+As above, but with
+
+```python
+X = xscorer.rsum(leftTail=False)
+```
+
+NOTE: As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep ```parallel=1``` at the time being.
+
+
 ### Visualization:
 
 ```python
