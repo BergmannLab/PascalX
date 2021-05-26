@@ -6,17 +6,16 @@
 Welcome to PascalX's documentation!
 ===================================
 
-PascalX is a python3 library for high precision gene and pathway scoring for GWAS summary statistics. Aggregation of SNP p-values to gene and pathway scores follows the `Pascal <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004714>`_ methodology, which is based on :math:`\chi^2` statistics. The cummulative distribution function of the weighted :math:`\chi^2` distribution is calculated exactly via a multi-precision C++ implementation of Ruben's and Davies algorithm. This allows to apply the Pascal methodology to modern UK BioBank scale GWAS.
+PascalX is a python3 library for high precision gene and pathway scoring for GWAS summary statistics. Aggregation of SNP p-values to gene and pathway scores follows the `Pascal <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004714>`_ methodology, which is based on :math:`\chi^2` statistics. The cummulative distribution function of the weighted :math:`\chi^2` distribution is calculated exactly via a multi-precision C++ implementation of Ruben's and Davies algorithm. This allows to apply the Pascal methodology to modern UK BioBank scale GWAS. In addition, PascalX offers a novel coherence test between two different GWAS on the level of genes, based on the product-normal distribution, as described `here <https://doi.org/10.1101/2021.05.16.21257289>`_.    
 
 **Highlights:**
 
     * Multi-precision weighted :math:`\chi^2` cdf calculation (up to 100 digits) 
     * Parallelization over chromosomes and/or genes
     * Fast random access to reference panel genomic data via own indexed SNP database
+    * Gene-wise coherence test between two GWAS
     * Tissue enrichment test (experimental)
     
-.. note::
-    This is a basic functionality only version of PascalX. New features will be added then ready for publication. 
     
 .. warning::
     PascalX is a research level tool. No warranty or guarantee whatsoever for its correct functionality is given. You should perform your own consistency checks on results PascalX implies.
@@ -58,6 +57,14 @@ If you make use of PascalX for your research, please cite PascalX via the doi: 1
 
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg
    :target: https://doi.org/10.5281/zenodo.4429922
+
+If you make use of the X-scorer (gene-wise coherence test between GWAS), please cite the work:
+
+
+| *Krefl D., Bergmann S.* 
+| *Covariance of Interdependent Samples with Application to GWAS* 
+| *doi:10.1101/2021.05.16.21257289*
+
 
 Contact
 -------
