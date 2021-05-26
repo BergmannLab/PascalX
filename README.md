@@ -7,6 +7,7 @@ High precision gene and pathway scoring for GWAS summary statistics in python
 - Internal quad and multi-precision arithmetic support for high precision gene scoring via exact CDF calculations (up to 100 digits)
 - Fast random access to SNP reference panel genomic data with minimal memory footprint.
 - Parallelization over chromosomes and/or genes
+- Gene-wise coherence test between two GWAS
 
 ## Documentation
 
@@ -17,6 +18,14 @@ The full documentation can be found [here](https://bergmannlab.github.io/PascalX
 If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg)](https://doi.org/10.5281/zenodo.4429922)
+
+If you make use of the X-scorer (gene-wise coherence test between two GWAS), please cite the work 
+
+*Krefl D., Bergmann S.*  
+*Covariance of Interdependent Samples with Application to GWAS*  
+doi.org/10.1101/2021.05.16.21257289
+
+
 
 
 ## Installation 
