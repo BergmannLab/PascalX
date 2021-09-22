@@ -87,7 +87,11 @@ class chi2sum:
             qualityT: Quality threshold for variant to keep (only for .vcf)
         
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files. WARNING: Direct import of .vcf is currently only experimental !     
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files. 
+            
+        Warning: 
+            Direct import of .vcf is currently only experimental !     
+        
         """
         self._ref = refpanel.refpanel()
         self._ref.set_refpanel(filename, parallel,keepfile=None,qualityT=100)

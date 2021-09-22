@@ -182,7 +182,9 @@ class db:
     def getSNPpos(self,snpid):
         """
         Returns the position corresponding to a snpid
-        WARNING: Inefficient
+        
+        Warning: 
+            The current implementation is inefficient.
         """
         if snpid in self._idx[1]:
             fseek = self._idx[1][snpid]

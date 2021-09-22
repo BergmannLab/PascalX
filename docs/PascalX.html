@@ -289,7 +289,11 @@
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files. WARNING: Direct import of .vcf is currently only experimental !</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Direct import of .vcf is currently only experimental !</p>
 </div>
 </dd></dl>
 
@@ -1315,8 +1319,11 @@
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getSNPpos">
 <code class="sig-name descname">getSNPpos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snpid</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPpos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the position corresponding to a snpid
-WARNING: Inefficient</p>
+<dd><p>Returns the position corresponding to a snpid</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The current implementation is inefficient.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -1377,6 +1384,10 @@ WARNING: Inefficient</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz files.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Direct .vcf import is currently only experimental !</p>
 </div>
 </dd></dl>
 

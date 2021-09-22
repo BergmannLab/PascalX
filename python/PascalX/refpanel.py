@@ -77,7 +77,10 @@ class refpanel:
             qualityT: Quality threshold for variant to keep (only for .vcf)
             
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz files.        
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz files.
+            
+        Warning: 
+            Direct .vcf import is currently only experimental !
         """
         self._refData = filename
         
@@ -239,12 +242,14 @@ class refpanel:
         Imports reference data from .tped.gz or .vcf.gz files.
         (Has only to be run once. The imported data is stored on disk for later usage.)
         
-        WARNING: Direct .vcf import is currently only experimental !
-        
         chrs    : List of chromosomes to import
         parallel: # of cores to use (WARNING: Take care that you have sufficient memory!)
         keepfile: File with sample ids (one per line) to keep (only for .vcf) 
         qualityT: Quality threshold for variant to keep (only for .vcf)
+        
+        Warning: 
+            Direct .vcf import is currently only experimental !
+        
         """
         
         # Check if ref exist
