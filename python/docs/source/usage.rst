@@ -26,7 +26,7 @@ Note that the default options of the genescorer are used. In particular, the gen
 
     bash get1KGGRCh38.sh pathtostore/ EUR
 
-The plink converted files will be stored in the ``pathtostore/`` folder and will be named ``EUR.1KGphase3.GRCh38.chr#``. If you want to retain samples of all origin, replace ``EUR`` with ``ALL``. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX :ref:`DockerSec` runtime. 
+The plink converted files will be stored in the ``pathtostore/`` folder and will be named ``EUR.1KGphase3.GRCh38.chr#``. If you want to retain samples of all origin, replace ``EUR`` with ``ALL``. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX :ref:`DockerSec` runtime. For GRCh37 use the script ending with 37.
 
 Set the reference panel to use via
 

@@ -29,3 +29,6 @@ extern double onemin_chi2cdf_100d(double x, int dof);
 
 extern double oneminwchissum_m1nc0_satterthwaite_100d(double* lambda, int N, double X);
 extern double oneminwchissum_m1nc0_satterthwaite_200d(double* lambda, int N, double X);
+
+extern double normcdf_100d(double x, double m, double s);
+extern double onemin_normcdf_100d(double x, double m, double s);

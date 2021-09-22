@@ -86,8 +86,9 @@ class db:
                 self._idx[0][D].append( I )
             
             # Snp based index
-            # ToDo: Have to split ";" <- & re-import !!
-            self._idx[1][data[D][0]] = I
+            rid = data[D][0].split(";")
+            for r in rid:
+                self._idx[1][r] = I
             
             
     def get(self,pos):
