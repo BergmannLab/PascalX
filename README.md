@@ -95,8 +95,9 @@ Options:
 
 1000 Genome Project reference data can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
 ```bash
-bash get1KGGRCh38.sh pathtostore/ EUR
+bash get1KGGRCh38.sh pathtostore/ EUR 4
 ```
+Note that the last number specified the # of cpu cores to utilize. 
 
 The reference data has to be loaded by the gene scorer using the method
 ```python
