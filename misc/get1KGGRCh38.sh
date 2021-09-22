@@ -7,15 +7,14 @@ cp updateRSID.py $1/
 cd $1/
 
 # Download 1KG data
-#wget -r -nd -l1 --no-parent ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20201028_3202_phased/
+wget -r -nd -l1 --no-parent ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20201028_3202_phased/
 
 # Download snpdb
-
-#wget ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/All_20180418.vcf.gz
+wget ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/All_20180418.vcf.gz
 
 # Download plink
-#wget http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20201019.zip
-#unzip *.zip
+wget http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20201019.zip
+unzip *.zip
 
 function pwait() {
     while [ $(jobs -p | wc -l) -ge $1 ]; do
