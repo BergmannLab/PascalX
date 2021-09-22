@@ -23,7 +23,7 @@
 #include <boost/multiprecision/cpp_bin_float.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <boost/math/distributions/gamma.hpp>
-
+#include <boost/math/distributions/normal.hpp>
 using namespace boost::multiprecision;
 using namespace boost::math;
 
@@ -139,4 +139,24 @@ double oneminwchissum_m1nc0_satterthwaite_200d(double* lambda, int N, double X) 
     x = number<cpp_bin_float<200>>(1.) - cdf(gamma,x);
     
     return x.convert_to<double>(); 
+}
+
+extern "C"
+double normcdf_100d(double X, double m, double s) {
+    cpp_bin_float_100 x = cpp_bin_float_100(X);
+    
+    normal_distribution<cpp_bin_float_100> norm(m, s);
+    
+    return cdf(norm,x).convert_to<double>();    
+}
+
+extern "C"
+double onemin_normcdf_100d(double X, double m, double s) {
+    cpp_bin_float_100 x = cpp_bin_float_100(X);
+    
+    normal_distribution<cpp_bin_float_100> norm(m, s);
+    
+    x = cpp_bin_float_100(1.) - cdf(norm,x);
+  
+    return x.convert_to<double>();    
 }

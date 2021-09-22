@@ -275,19 +275,25 @@
 <em class="property">class </em><code class="sig-prename descclassname">PascalX.genescorer.</code><code class="sig-name descname">chi2sum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">50000</span></em>, <em class="sig-param"><span class="n">varcutoff</span><span class="o">=</span><span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">genome</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.load_refpanel">
-<code class="sig-name descname">load_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">keepfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">qualityT</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>string</em>) – /path/filename (without .chr#.db ending)</p></li>
 <li><p><strong>parallel</strong> (<em>int</em>) – Number of cores to use for parallel import of reference panel</p></li>
+<li><p><strong>keepfile</strong> – File with sample ids (one per line) to keep (only for .vcf)</p></li>
+<li><p><strong>qualityT</strong> – Quality threshold for variant to keep (only for .vcf)</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Direct import of .vcf is currently only experimental !</p>
 </div>
 </dd></dl>
 
@@ -528,7 +534,7 @@
 
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.get_geneinfo">
-<code class="sig-name descname">get_geneinfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_geneinfo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_geneinfo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gene</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_geneinfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows details of the loaded annotation for a gene</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1313,8 +1319,11 @@
 <dl class="py method">
 <dt id="PascalX.snpdb.db.getSNPpos">
 <code class="sig-name descname">getSNPpos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snpid</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/snpdb.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.snpdb.db.getSNPpos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the position corresponding to a snpid
-WARNING: Inefficient</p>
+<dd><p>Returns the position corresponding to a snpid</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The current implementation is inefficient.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -1360,19 +1369,25 @@ WARNING: Inefficient</p>
 
 <dl class="py method">
 <dt id="PascalX.refpanel.refpanel.set_refpanel">
-<code class="sig-name descname">set_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.set_refpanel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_refpanel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parallel</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">keepfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">qualityT</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/refpanel.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.refpanel.refpanel.set_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>string</em>) – /path/filename (without .chr#.db ending)</p></li>
 <li><p><strong>parallel</strong> (<em>int</em>) – Number of cores to use for parallel import of reference panel</p></li>
+<li><p><strong>keepfile</strong> – File with sample ids (one per line) to keep (only for .vcf)</p></li>
+<li><p><strong>qualityT</strong> – Quality threshold for variant to keep (only for .vcf)</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz files.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Direct .vcf import is currently only experimental !</p>
 </div>
 </dd></dl>
 

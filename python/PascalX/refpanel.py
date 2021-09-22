@@ -29,6 +29,8 @@ import sys
 import gzip
 import numpy as np
 
+from fastnumbers import int
+
 class refpanel:
     
     def __init__(self):
@@ -62,7 +64,7 @@ class refpanel:
         
         return db
     
-    def set_refpanel(self,filename, parallel=1):
+    def set_refpanel(self,filename, parallel=1,keepfile=None,qualityT=100):
         """
         Sets the reference panel to use
         
@@ -71,8 +73,14 @@ class refpanel:
             filename(string): /path/filename (without .chr#.db ending)
             parallel(int): Number of cores to use for parallel import of reference panel
             
+            keepfile: File with sample ids (one per line) to keep (only for .vcf) 
+            qualityT: Quality threshold for variant to keep (only for .vcf)
+            
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.        
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz files.
+            
+        Warning: 
+            Direct .vcf import is currently only experimental !
         """
         self._refData = filename
         
@@ -84,9 +92,9 @@ class refpanel:
         # Import if missing
         if len(NF) > 0:
             print("Reference panel data not imported. Trying to import...")
-            self._import_reference(chrs=NF,parallel=parallel)
+            self._import_reference(chrs=NF,parallel=parallel,keepfile=None,qualityT=100)
             
-    def _import_reference_thread(self,i):
+    def _import_reference_thread_tped(self,i):
         
         # Load
         with gzip.open(self._refData+'.chr'+str(i)+'.tped.gz','rt') as f:
@@ -95,23 +103,31 @@ class refpanel:
             db.open(self._refData+'.chr'+str(i))
             
             for line in f:
+               
                 L = line.split() # [chr,rid,irrelevant,pos,genotype]
-
+            
                 # Get genotype and dephase
                 if L[1][0:2] == 'rs':
-                    dephased = (np.array(L[4:],dtype='int32') - 1)
+                    
+                    dephased = (np.array(L[4:],dtype='b') - 1)
                     genotype = np.sum(dephased.reshape((int(len(dephased)/2),2)),axis=1)
+                    
+                    # PLINK uses 1 for minor allele -> Convert to minor allele count
+                    genotype[genotype==2] = -1
+                    genotype[genotype==0] = 2
+                    genotype[genotype==-1] = 0
+                    
                     m = np.mean(genotype)
                     s = np.std(genotype)
-
+                    
                     if s!=0:
                         # Compute MAF
                         MAF = m/2.
                         if (MAF > 0.5):
                             MAF = 1.0 - MAF;
 
-                        T = [L[1],MAF,(genotype-m)/s]
-
+                        T = [L[1],round(MAF,3),genotype]
+                    
                         # Store                             
                         db.insert({int(L[3]):T})
                                   
@@ -119,22 +135,133 @@ class refpanel:
             
         return True
         
-    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1):
+    def _import_reference_thread_vcf(self,i,keepfile,qualityT):
+        # Load filter info
+        keep = set([])
+        if keepfile is not None:
+            f = open(keepfile,'r')
+            for line in f:
+                S = line.split("\t")[0]
+                keep.add(S)
+
+            f.close()
+    
+        sampleMap = {}
+        
+        # Load
+        with gzip.open(self._refData+'.chr'+str(i)+'.vcf.gz','rt') as f:
+            
+            # Find header
+            for line in f:
+                # Detect infos and headers
+                if line[:2] == "##":
+                    continue
+
+                # Detect sample names
+                if line[:2] == "#C":
+                    data = line.split("\t")
+                    tmp = data[9:]
+                    for j in range(0,len(tmp)):
+                        if (keepfile is None) or (tmp[j] in keep):
+                            sampleMap[j] = tmp[j]
+
+                    break
+
+            sampleKeys = list(sampleMap.keys())
+
+            
+            db = snpdb.db()
+            db.open(self._refData+'.chr'+str(i))
+            
+            # Main data import loop
+            for line in f:
+
+                # Data line
+                data = line.split("\t")
+
+                # Get GT pos
+                tmp = data[8].split(":")
+                GT = -1
+                for j in range(0,len(tmp)):
+                    if tmp[j] == 'GT':
+                        GT = j
+                        break
+
+                # Checks
+                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS') or (int(data[5]) < qualityT):
+                    continue
+
+                # Read genotype
+                genotypes = data[9:]
+
+                # Infer minor allele
+                counter = np.zeros(len(data[4].split(","))+1,dtype='int')
+
+                # Only read samples in sampleMap
+                for j in sampleMap:
+                    
+                    geno = genotypes[j].split(":")[GT]
+
+                    # Ignore half-calls
+                    if geno[0] != "." and geno[2] != ".":
+                        counter[int(geno[0])] += 1
+                        counter[int(geno[2])] += 1
+
+                minp = str(np.argmin(counter))
+
+                gd = np.zeros(len(sampleKeys),dtype='B')
+
+                for j in range(0,len(sampleKeys)):
+
+                    geno = genotypes[sampleKeys[j]].split(":")[GT]
+
+                    # Ignore half-calls
+                    if geno[0] != '.' and geno[2] != '.':
+
+                        if geno[0] == minp:
+                            gd[j] += 1
+
+                        if geno[2] == minp:
+                            gd[j] += 1
+
+
+                T = [data[2],2*np.sum(gd)/len(gd),gd]
+                
+                db.insert({int(data[1]):T})
+                
+            f.close()
+
+
+            db.close()
+            
+        return True
+        
+
+    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100):
         """
-        Imports reference data from .tped.gz files.
+        Imports reference data from .tped.gz or .vcf.gz files.
         (Has only to be run once. The imported data is stored on disk for later usage.)
         
         chrs    : List of chromosomes to import
         parallel: # of cores to use (WARNING: Take care that you have sufficient memory!)
+        keepfile: File with sample ids (one per line) to keep (only for .vcf) 
+        qualityT: Quality threshold for variant to keep (only for .vcf)
+        
+        Warning: 
+            Direct .vcf import is currently only experimental !
         
         """
         
         # Check if ref exist
         for i in range(1,23):
-            if not os.path.isfile(self._refData+".chr"+str(i)+".tped.gz"):
-                print("ERROR: ", self._refData+".chr"+str(i)+".tped.gz", "not found")   
+            if not os.path.isfile(self._refData+".chr"+str(i)+".tped.gz") and not os.path.isfile(self._refData+".chr"+str(i)+".vcf.gz"):
+                print("ERROR: ", self._refData+".chr"+str(i)+".(tped|vcf).gz", "not found")   
                 return
 
+            if os.path.isfile(self._refData+".chr"+str(i)+".tped.gz"):
+                cmd = 'tped'
+            else:
+                cmd = 'vcf'
             
         # Start import    
         pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
@@ -146,7 +273,11 @@ class refpanel:
 
             res = []
             for i in chrs:
-                res.append(pool.apply_async(self._import_reference_thread, args=(i,), callback=update))
+                if cmd == 'tped':
+                    res.append(pool.apply_async(self._import_reference_thread_tped, args=(i,), callback=update))
+                elif cmd == 'vcf':
+                    res.append(pool.apply_async(self._import_reference_thread_vcf, args=(i,keepfile,qualityT,), callback=update))
+            
                 
             # Wait to finish
             for r in res:
