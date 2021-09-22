@@ -93,7 +93,7 @@ Options:
 
 **Set reference panel:**
 
-1000 Genome Project reference data can be downloaded and converted via executing the script in the PascalX/misc folder as below.
+1000 Genome Project reference data can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
 ```bash
 bash get1KGGRCh38.sh pathtostore/ EUR
 ```
