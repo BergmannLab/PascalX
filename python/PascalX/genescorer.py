@@ -74,7 +74,7 @@ class chi2sum:
             self._SKIPPED = genome._SKIPPED
 
             
-    def load_refpanel(self, filename, parallel=1):
+    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100):
         """
         Sets the reference panel to use
         
@@ -83,11 +83,18 @@ class chi2sum:
             filename(string): /path/filename (without .chr#.db ending)
             parallel(int): Number of cores to use for parallel import of reference panel
             
+            keepfile: File with sample ids (one per line) to keep (only for .vcf) 
+            qualityT: Quality threshold for variant to keep (only for .vcf)
+        
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.        
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files. 
+            
+        Warning: 
+            Direct import of .vcf is currently only experimental !     
+        
         """
         self._ref = refpanel.refpanel()
-        self._ref.set_refpanel(filename, parallel)
+        self._ref.set_refpanel(filename, parallel,keepfile=None,qualityT=100)
 
         
   
@@ -174,6 +181,7 @@ class chi2sum:
             NAid(String): Code for not available (rows are ignored)
         """
         self._GWAS = {}
+        self._GWAS_beta = {}
         
         if file[-3:] == '.gz':
             f = gzip.open(file,'rt')
@@ -308,9 +316,8 @@ class chi2sum:
             #ps = chi2.ppf(1- np.array([GWAS[x] for x in RIDs]),1)
             ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._GWAS[RIDs[i]])
         return np.sum(ps)
-
+    
     def _scoreThread(self,gi,C,S,g,method,mode,reqacc,intlimit):
-      
         L = np.linalg.eigvalsh(C)
         L = L[L>0][::-1]
         N_L = []
@@ -661,7 +668,7 @@ class chi2sum:
         for i in I:
             print(K[i]," ",V[i])
     
-    def get_geneinfo(gene):
+    def get_geneinfo(self,gene):
         """
         Shows details of the loaded annotation for a gene
         
@@ -671,10 +678,11 @@ class chi2sum:
             
         """
         if gene in self._GENESYMB:
-            print( self._GENEID[self._GENESYMB[gene]] )
+            G = self._GENEID[self._GENESYMB[gene]]
+            return G
         else:
             print(gene,"not in annotation")
-    
+            return None
     
     def plot_Manhattan(self,ScoringResult=None,region=None,sigLine=0,logsigThreshold=0,labelSig=True,labelList=[],style='colorful'):
         """
@@ -994,7 +1002,7 @@ class chi2sum:
         
         # Get and calc stats
         z = np.array([np.sign( self._GWAS_beta[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( self._GWAS[x]  )) for x in RID])                   
-        print("Right tail:",hpstats.onemin_norm_cdf_100d(np.sum(z),0,F))
-        print("Left tail :",hpstats.norm_cdf_100d(np.sum(z),0,F))
+        #print("Right tail:",hpstats.onemin_norm_cdf_100d(np.sum(z),0,F))
+        #print("Left tail :",hpstats.norm_cdf_100d(np.sum(z),0,F))
         
-        pass
+        return hpstats.onemin_norm_cdf_100d(np.sum(z),0,F),hpstats.norm_cdf_100d(np.sum(z),0,F)
