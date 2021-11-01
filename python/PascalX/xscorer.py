@@ -362,6 +362,7 @@ class wchi2sum:
 class crosscorer(ABC):
     _ENTITIES_p = {}
     _ENTITIES_b = {}
+    _ENTITIES_a = {}
     
     def __init__(self):
         pass
@@ -427,7 +428,7 @@ class crosscorer(ABC):
         self._SKIPPED = GEN._SKIPPED
         
         
-    def load_GWAS(self,file,rscol=0,pcol=1,bcol=2,idcol=None,name='GWAS',delimiter=None,NAid='n/a',header=False,threshold=1,mincutoff=1e-1000,rank=False):
+    def load_GWAS(self,file,rscol=0,pcol=1,bcol=2,a1col=None,a2col=None,idcol=None,name='GWAS',delimiter=None,NAid='n/a',header=False,threshold=1,mincutoff=1e-1000,rank=False):
         """
         Load GWAS summary statistics p-values and betas
 
@@ -437,6 +438,8 @@ class crosscorer(ABC):
             rscol(int): Column of SNP ids
             pcol(int) : Column of p-values
             bcol(int) : Column of betas
+            a1col(int): Column of effect allele (None for ignorning alleles)
+            a2col(int): Column of other allele (None for ignorning alleles)
             idcol : Column of identifiers, if several different GWAS in one file
             name : Identifier code for GWAS (needs to be unique)
             delimiter(String): Split character 
@@ -477,13 +480,16 @@ class crosscorer(ABC):
                     if not nid in crosscorer._ENTITIES_p:
                         crosscorer._ENTITIES_p[nid] = {}
                         crosscorer._ENTITIES_b[nid] = {}
+                        crosscorer._ENTITIES_a[nid] = {}
 
                     #if L[rscol] in self._ENTITIES_p[nid]:
                     #    c_test += 1
 
                     crosscorer._ENTITIES_p[nid][L[rscol]] = max(p,mincutoff)
                     crosscorer._ENTITIES_b[nid][L[rscol]] = b
-
+                    
+                    if a1col is not None and a2col is not None:
+                        crosscorer._ENTITIES_a[nid][L[rscol]] = [L[a1col],L[a2col]]
 
         f.close()
 
@@ -536,6 +542,43 @@ class crosscorer(ABC):
             
         return C,np.array(RID)
 
+    def matchAlleles(self,E_A,E_B):
+        """
+        Matches alleles between two GWAS 
+        (SNPs with non matching alleles are removed)
+        
+        Args:
+            E_A(str) : Identifier of first GWAS
+            E_B(str) : Identifier of second GWAS
+        """
+        if len(self._ENTITIES_a[E_A]) > 0 and len(self._ENTITIES_a[E_B]) > 0:
+            Ne = 0
+            N = 0
+            
+            todel = []
+            for x in self._ENTITIES_a[E_A]:
+                if x in self._ENTITIES_a[E_B]:
+                    if self._ENTITIES_a[E_A][x] == self._ENTITIES_a[E_B][x]:       
+                        Ne += 1
+                    else:
+                        todel.append(x)
+                        
+                    N +=1
+                    
+            for x in todel:
+                del self._ENTITIES_a[E_A][x]
+                del self._ENTITIES_a[E_B][x]
+                del self._ENTITIES_b[E_A][x]
+                del self._ENTITIES_b[E_B][x]
+                del self._ENTITIES_p[E_A][x]
+                del self._ENTITIES_p[E_B][x]
+                
+            print(N,"common SNPs")
+            print(round(Ne/N*100,1),"% with matching alleles -> ",(N-Ne),"common SNPs removed")
+            
+        else:
+            print("ERROR: Allele information missing !")
+    
     def jointlyRank(self,E_A,E_B):
         """
         Jointly QQ normalizes the p-values of two GWAS
@@ -575,7 +618,7 @@ class crosscorer(ABC):
         for i in range(0,len(SNPs)):
             crosscorer._ENTITIES_p[E_B][SNPs[i]] = wr[i]
         
-        print(len(SNPs),"shared SNPs ( min p:",1./(len(p)+1),")")
+        print(len(SNPs),"shared SNPs ( min p:", round( 1./(len(p)+1),2),")")
     
     def get_topscores(self,N=10):
         """
