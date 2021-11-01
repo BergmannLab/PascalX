@@ -315,7 +315,13 @@ X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,header=False)
 ```
 In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ```name=``` argument, and it is necessary to specify the column with the raw betas ```bcol=```.
 
-It is recommended to perform the scoring for jointly QQ normalized p-values:
+It is recommended to perform the scoring after filtering for matching alleles 
+
+```python
+X.matchAlleles('GWAS A','GWAS B')
+```
+
+and for jointly QQ normalized p-values:
 
 ```python
 X.jointlyRank('GWAS A','GWAS B')
