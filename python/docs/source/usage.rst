@@ -26,7 +26,7 @@ Note that the default options of the genescorer are used. In particular, the gen
 
     bash get1KGGRCh38.sh pathtostore/ EUR 4
 
-The last number specifies the # of cpu cores to utilize. The plink converted files will be stored in the ``pathtostore/`` folder and will be named ``EUR.1KGphase3.GRCh38.chr#``. If you want to retain samples of all origin, replace ``EUR`` with ``ALL``. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX :ref:`DockerSec` runtime.
+The last number specifies the # of cpu cores to utilize. The plink converted files will be stored in the ``pathtostore/`` folder and will be named ``EUR.1KG.GRCh38.chr#``. If you want to retain samples of all origin, replace ``EUR`` with ``ALL``. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX :ref:`DockerSec` runtime.
 
 Set the reference panel to use via
 
@@ -248,6 +248,11 @@ X scoring
 
 PascalX offers two different GWAS cross scorers. 
 
+.. warning:: 
+
+    Gene-wise cross scoring is a new feature which has not been peer-reviewed yet.
+
+
 **Coherence scorer:**
 
 
@@ -268,7 +273,16 @@ A gene annotation has to be loaded as for the standard :ref:`Genescorer`.
 
 In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ``name=`` argument, and it is necessary to specify the column with the raw betas ``bcol=``.
 
-It is recommended to perform the scoring for jointly QQ normalized p-values: 
+
+
+It is recommended to filter for matching alleles between the GWAS via
+
+.. code-block:: python
+
+    X.matchAlleles('GWAS A','GWAS B')
+
+
+and to perform the scoring for jointly QQ normalized p-values: 
 
 .. code-block:: python
    
@@ -293,10 +307,6 @@ As above, but with
    
     X = xscorer.rsum(leftTail=False)
 
-
-.. note::
-   
-    As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep ``parallel=1`` at the time being.
 
 _______________________
 

@@ -179,7 +179,7 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">bash get1KGGRCh38.sh pathtostore/ EUR 4</span>
 </pre></div>
 </div>
-<p>The last number specifies the # of cpu cores to utilize. The plink converted files will be stored in the <code class="docutils literal notranslate"><span class="pre">pathtostore/</span></code> folder and will be named <code class="docutils literal notranslate"><span class="pre">EUR.1KGphase3.GRCh38.chr#</span></code>. If you want to retain samples of all origin, replace <code class="docutils literal notranslate"><span class="pre">EUR</span></code> with <code class="docutils literal notranslate"><span class="pre">ALL</span></code>. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX <a class="reference internal" href="install.html#dockersec"><span class="std std-ref">Multi-platform (Docker)</span></a> runtime.</p>
+<p>The last number specifies the # of cpu cores to utilize. The plink converted files will be stored in the <code class="docutils literal notranslate"><span class="pre">pathtostore/</span></code> folder and will be named <code class="docutils literal notranslate"><span class="pre">EUR.1KG.GRCh38.chr#</span></code>. If you want to retain samples of all origin, replace <code class="docutils literal notranslate"><span class="pre">EUR</span></code> with <code class="docutils literal notranslate"><span class="pre">ALL</span></code>. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX <a class="reference internal" href="install.html#dockersec"><span class="std std-ref">Multi-platform (Docker)</span></a> runtime.</p>
 <p>Set the reference panel to use via</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Scorer</span><span class="o">.</span><span class="n">load_refpanel</span><span class="p">(</span><span class="s1">&#39;path/filename&#39;</span><span class="p">)</span>
 </pre></div>
@@ -313,6 +313,10 @@
 <div class="section" id="x-scoring">
 <h2>X scoring<a class="headerlink" href="#x-scoring" title="Permalink to this headline">¶</a></h2>
 <p>PascalX offers two different GWAS cross scorers.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Gene-wise cross scoring is a new feature which has not been peer-reviewed yet.</p>
+</div>
 <p><strong>Coherence scorer:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PascalX</span> <span class="kn">import</span> <span class="n">xscorer</span>
 
@@ -327,7 +331,11 @@ A gene annotation has to be loaded as for the standard <a class="reference inter
 </pre></div>
 </div>
 <p>In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the <code class="docutils literal notranslate"><span class="pre">name=</span></code> argument, and it is necessary to specify the column with the raw betas <code class="docutils literal notranslate"><span class="pre">bcol=</span></code>.</p>
-<p>It is recommended to perform the scoring for jointly QQ normalized p-values:</p>
+<p>It is recommended to filter for matching alleles between the GWAS via</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">.</span><span class="n">matchAlleles</span><span class="p">(</span><span class="s1">&#39;GWAS A&#39;</span><span class="p">,</span><span class="s1">&#39;GWAS B&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and to perform the scoring for jointly QQ normalized p-values:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">.</span><span class="n">jointlyRank</span><span class="p">(</span><span class="s1">&#39;GWAS A&#39;</span><span class="p">,</span><span class="s1">&#39;GWAS B&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -340,10 +348,6 @@ A gene annotation has to be loaded as for the standard <a class="reference inter
 <p>As above, but with</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">xscorer</span><span class="o">.</span><span class="n">rsum</span><span class="p">(</span><span class="n">leftTail</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep <code class="docutils literal notranslate"><span class="pre">parallel=1</span></code> at the time being.</p>
 </div>
 </div>
 <hr class="docutils" />
