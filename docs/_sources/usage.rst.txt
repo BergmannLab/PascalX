@@ -32,12 +32,15 @@ Set the reference panel to use via
 
 .. code-block:: python
     
-    Scorer.load_refpanel('path/filename')
+    Scorer.load_refpanel('path/EUR.1KG.GRCh38')
 
 
 .. note::
 
-    If the corresponding reference data has not been imported yet, PascalX will try to import the data from ``filename.chr#.tped.gz`` files in ``path/``. The genotype information has to be supplied in gzip compressed 1-2-coded plink tped files. The following `plink <https://www.cog-genomics.org/plink/>`_ options should do the job: ``--recode 12 transpose``. By default PascalX will utilize only one cpu core for the import. You can increase the number of cores used via setting the ``parallel=`` option. 
+    If the corresponding reference data has not been imported yet, PascalX will try to import the data from ``filename.chr#.tped.gz`` or ``filename.chr#.vcf.gz`` files in ``path/``. For .tped files the genotype information has to be supplied in gzip compressed 1-2-coded plink tped files. The following `plink <https://www.cog-genomics.org/plink/>`_ options should do the job: ``--recode 12 transpose``. By default PascalX will utilize only one cpu core for the import. You can increase the number of cores used via setting the ``parallel=`` option. 
+    
+.. note::
+    In order to import allele information into the reference panel, raw .vcf files have to be used for the import. The plink conversion step can be skipped in this case.  
 
 
 **Gene annotation:**
@@ -73,9 +76,9 @@ The GWAS summary statistics to score can be imported via
 
 .. code-block:: python
 
-    Scorer.load_GWAS('path/filename',rscol=0,pcol=1,header=False)
+    Scorer.load_GWAS('path/filename',rscol=0,pcol=1,a1col=None,a2col=None,header=False)
 
-The argument ``rscol=`` specifies the column of the variant id and ``pcol=`` the column of the p-value. ``header=`` specifies if the first row is a header or not. The file can be either raw text or gzip compressed with file name ending on ``.gz``.
+The argument ``rscol=`` specifies the column of the variant id and ``pcol=`` the column of the p-value. The columns ``a1col=`` and ``a2col=`` contain the alternate, respectively, reference allele. If the refernce panel does not contain allele information (.tped import), set both to ``None``. ``header=`` specifies if the first row is a header or not. The file can be either raw text or gzip compressed with file name ending on ``.gz``.
 
 Note that the loaded GWAS SNPs can be visualized gene-wise via the command
 
@@ -246,7 +249,7 @@ _______________________
 X scoring
 ----------
 
-PascalX offers two different GWAS cross scorers. 
+PascalX offers the two different GWAS cross scorers introduced in the preprint `doi:10.1101/2021.05.16.21257289 <https://doi.org/10.1101/2021.05.16.21257289>`_.
 
 .. warning:: 
 
@@ -268,11 +271,13 @@ A gene annotation has to be loaded as for the standard :ref:`Genescorer`.
 
 .. code-block:: python
 
-    X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,header=False)
-    X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,header=False)
+    X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,a1col=None,a2col=None,header=False)
+    X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,a1col=None,a2col=None,header=False)
 
 In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ``name=`` argument, and it is necessary to specify the column with the raw betas ``bcol=``.
 
+.. warning::
+    It is recommended to load allele information via setting ``a1col=`` and ``a2col=``. Note that this requires also a reference panel with allele information (.vcf import). 
 
 
 It is recommended to filter for matching alleles between the GWAS via
@@ -298,7 +303,16 @@ The scoring is started via calling
 
 The return ``R`` is as for the :ref:`Genescorer` class.
 
+Note that the loaded SNPs of a GWAS pair can be visualized gene-wise via the command
 
+.. code-block:: python
+    
+    X.plot_genesnps('TRIM26','GWAS A','GWAS B',mark_window=True,show_correlation=True);
+    
+.. image:: xplot.png
+    
+    
+    
 **Ratio scorer:**
 
 As above, but with 

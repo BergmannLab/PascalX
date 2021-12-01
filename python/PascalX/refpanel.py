@@ -64,7 +64,7 @@ class refpanel:
         
         return db
     
-    def set_refpanel(self,filename, parallel=1,keepfile=None,qualityT=100):
+    def set_refpanel(self,filename, parallel=1, keepfile=None, qualityT=100, SNPonly=False):
         """
         Sets the reference panel to use
         
@@ -73,14 +73,13 @@ class refpanel:
             filename(string): /path/filename (without .chr#.db ending)
             parallel(int): Number of cores to use for parallel import of reference panel
             
-            keepfile: File with sample ids (one per line) to keep (only for .vcf) 
-            qualityT: Quality threshold for variant to keep (only for .vcf)
+            keepfile(string|None): [only for .vcf] File with sample ids (one per line) to keep.  None to keep all.
+            qualityT(int): [only for .vcf] Quality threshold for variant to keep 
+            SNPonly(bool): [only for.vcf] Load only SNPs 
             
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz files.
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.
             
-        Warning: 
-            Direct .vcf import is currently only experimental !
         """
         self._refData = filename
         
@@ -92,7 +91,7 @@ class refpanel:
         # Import if missing
         if len(NF) > 0:
             print("Reference panel data not imported. Trying to import...")
-            self._import_reference(chrs=NF,parallel=parallel,keepfile=None,qualityT=100)
+            self._import_reference(chrs=NF,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
             
     def _import_reference_thread_tped(self,i):
         
@@ -135,7 +134,7 @@ class refpanel:
             
         return True
         
-    def _import_reference_thread_vcf(self,i,keepfile,qualityT):
+    def _import_reference_thread_vcf(self,i,keepfile,qualityT,SNPonly):
         # Load filter info
         keep = set([])
         if keepfile is not None:
@@ -188,56 +187,77 @@ class refpanel:
                         break
 
                 # Checks
-                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS') or (int(data[5]) < qualityT):
+                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS' and (int(data[5]) < qualityT)):
                     continue
 
                 # Read genotype
                 genotypes = data[9:]
 
-                # Infer minor allele
-                counter = np.zeros(len(data[4].split(","))+1,dtype='int')
+                # Infer alternate alleles (pos 0: ref allele)
+                alleles = [data[3]]
+                alleles.extend(data[4].split(","))
+                
+                if SNPonly and (len(data[3]) > 1):
+                    continue
+                               
+                counter = np.zeros(len(alleles),dtype='int') 
 
                 # Only read samples in sampleMap
-                for j in sampleMap:
+                genomap = {}
+                for j in range(0,len(sampleKeys)):
                     
-                    geno = genotypes[j].split(":")[GT]
+                    geno = genotypes[sampleKeys[j]].split(":")[GT]
 
                     # Ignore half-calls
                     if geno[0] != "." and geno[2] != ".":
                         counter[int(geno[0])] += 1
                         counter[int(geno[2])] += 1
-
-                minp = str(np.argmin(counter))
-
-                gd = np.zeros(len(sampleKeys),dtype='B')
-
-                for j in range(0,len(sampleKeys)):
-
-                    geno = genotypes[sampleKeys[j]].split(":")[GT]
-
-                    # Ignore half-calls
-                    if geno[0] != '.' and geno[2] != '.':
-
-                        if geno[0] == minp:
-                            gd[j] += 1
-
-                        if geno[2] == minp:
-                            gd[j] += 1
-
-
-                T = [data[2],2*np.sum(gd)/len(gd),gd]
+                    
+                    genomap[sampleKeys[j]] = geno
+                    
+                # Reference allele
+                refp = 0
                 
-                db.insert({int(data[1]):T})
+                SC = np.argsort(counter) # Sort alleles count
+                for p in SC:
+                    
+                    if p != refp:
+                        if SNPonly and len(alleles[p]) > 1:
+                            continue
+
+                        minp = str(p)
+
+                        gd = np.zeros(len(sampleKeys),dtype='B')
+
+                        for j in range(0,len(sampleKeys)):
+                            #geno = genotypes[sampleKeys[j]].split(":")[GT]
+                            geno = genomap[sampleKeys[j]]
+
+                            # Ignore half-calls
+                            if geno[0] != '.' and geno[2] != '.':
+
+                                if geno[0] == minp:
+                                    gd[j] += 1
+
+                                if geno[2] == minp:
+                                    gd[j] += 1
+
+                        # Compute MAF
+                        MAF = np.mean(gd)/2.
+                        if (MAF > 0.5):
+                            MAF = 1.0 - MAF;
+                        
+                        T = [data[2],MAF,gd,alleles[p],alleles[refp]] # Stores alt and ref allele
+
+                        db.insert({int(data[1]):T})
                 
             f.close()
-
-
             db.close()
             
         return True
         
 
-    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100):
+    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100,SNPonly=False):
         """
         Imports reference data from .tped.gz or .vcf.gz files.
         (Has only to be run once. The imported data is stored on disk for later usage.)
@@ -276,7 +296,7 @@ class refpanel:
                 if cmd == 'tped':
                     res.append(pool.apply_async(self._import_reference_thread_tped, args=(i,), callback=update))
                 elif cmd == 'vcf':
-                    res.append(pool.apply_async(self._import_reference_thread_vcf, args=(i,keepfile,qualityT,), callback=update))
+                    res.append(pool.apply_async(self._import_reference_thread_vcf, args=(i,keepfile,qualityT,SNPonly), callback=update))
             
                 
             # Wait to finish
