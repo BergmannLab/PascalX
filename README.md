@@ -23,7 +23,7 @@ If you make use of the X-scorer (gene-wise coherence test between two GWAS), ple
 
 *Krefl D., Bergmann S.*  
 *Covariance of Interdependent Samples with Application to GWAS*  
-doi.org/10.1101/2021.05.16.21257289
+[doi.org/10.1101/2021.05.16.21257289](https://doi.org/10.1101/2021.05.16.21257289)
 
 
 
@@ -103,13 +103,13 @@ The reference data has to be loaded by the gene scorer using the method
 ```python
 Scorer.load_refpanel("path/filename")
 ```
-The filename is required to not contain the ending ```.chr#....```. If the corresponding reference data has not been imported yet, PascalX will try to import the data from ```filename.chr#.tped.gz``` files in ```path/```. The genotype information has to be supplied in gzip compressed 1-2-coded [plink](https://www.cog-genomics.org/plink/) tped files. The following plink options should do the job:
+The filename is required to not contain the ending ```.chr#....```. If the corresponding reference data has not been imported yet, PascalX will try to import the data from ```filename.chr#.tped.gz``` or ```filename.chr#.vcf.gz``` files in ```path/```. For .tped import the genotype information has to be supplied in gzip compressed 1-2-coded [plink](https://www.cog-genomics.org/plink/) tped files. The following plink options should do the job:
 
 ```bash
 --recode 12 transpose
 ```
 
-By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
+By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. For import of allele information raw .vcf files have to be used. In this case the plink step can be skipped. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
 
 
 
@@ -160,7 +160,7 @@ PascalX matches genes with rsids via position overlap in the loaded reference pa
 
 **Load GWAS summary statistics to score:**
 ```python
-Scorer.load_GWAS("path/filename",rscol=0,pcol=1)
+Scorer.load_GWAS("path/filename",rscol=0,pcol=1,a1col=None,a2col=None)
 ```
 
 ```filename```: Text file containing variant ids and p-values with columns separated by tabs (```\t``` delimiter)
@@ -168,6 +168,10 @@ Scorer.load_GWAS("path/filename",rscol=0,pcol=1)
 ```rscol```: Column containing rsids
 
 ```pcol``` : Column containing p-values
+
+```a1col```: Column containing alternate allele information (None for ignoring)
+
+```a2col```: Column containing reference allele information (None for ignoring)
 
 
 ### Gene scoring:
@@ -310,8 +314,8 @@ X.load_genome('path/filename')
 Note that the default initialization of the gene scoring above are used. ```leftTail=``` sets the side to test. False corresponds to anti-coherence and True to coherence. A gene annotation has to be loaded as for the standard Genescorer.
 
 ```python
-X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,header=False)
-X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,header=False)
+X.load_GWAS('path/filenameA',name='GWAS A',rscol=0,pcol=1,bcol=2,a1col=3,a2col=4,header=False)
+X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,a1col=3,a2col=4,header=False)
 ```
 In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ```name=``` argument, and it is necessary to specify the column with the raw betas ```bcol=```.
 
@@ -321,7 +325,9 @@ It is recommended to perform the scoring after filtering for matching alleles
 X.matchAlleles('GWAS A','GWAS B')
 ```
 
-and for jointly QQ normalized p-values:
+This requires that allele information has been loaded for both GWAS, and for the reference panel (using .vcf import).
+
+Note that it is also recommended to jointly QQ normalize p-values:
 
 ```python
 X.jointlyRank('GWAS A','GWAS B')

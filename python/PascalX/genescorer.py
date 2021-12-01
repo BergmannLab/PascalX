@@ -49,6 +49,7 @@ class chi2sum:
             window(int): Window size around gene tx start and end
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
+            genome(Genome): Set gene annotation 
         """
         
         self._window = window
@@ -57,6 +58,8 @@ class chi2sum:
 
         self._GWAS = {}
         self._GWAS_beta = {}
+        self._GWAS_alleles = {}
+        
         self._GENES = {}
         self._CHR = {}
         self._SKIPPED = {}
@@ -74,7 +77,7 @@ class chi2sum:
             self._SKIPPED = genome._SKIPPED
 
             
-    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100):
+    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100,SNPonly=False):
         """
         Sets the reference panel to use
         
@@ -85,16 +88,14 @@ class chi2sum:
             
             keepfile: File with sample ids (one per line) to keep (only for .vcf) 
             qualityT: Quality threshold for variant to keep (only for .vcf)
-        
+            SNPonly : Import only SNPs (only for .vcf)
+            
         Note:
             One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files. 
-            
-        Warning: 
-            Direct import of .vcf is currently only experimental !     
         
         """
         self._ref = refpanel.refpanel()
-        self._ref.set_refpanel(filename, parallel,keepfile=None,qualityT=100)
+        self._ref.set_refpanel(filename=filename,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
 
         
   
@@ -166,7 +167,7 @@ class chi2sum:
         self._MAP = M._GENEIDtoSNP
         
      
-    def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,delimiter=None,header=False,NAid='NA'):
+    def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,a1col=None,a2col=None,delimiter=None,header=False,NAid='NA'):
         """
         Load GWAS summary statistics p-values
         
@@ -176,12 +177,15 @@ class chi2sum:
             rscol(int): Column of SNP ids
             pcol(int) : Column of p-values
             bcol(int) : Column of betas (optional)
+            a1col(int): Column of alternate allele (None for ignoring) 
+            a2col(int): Column of reference allele (None for ignoring)
             delimiter(String): Split character 
             header(bool): Header present
             NAid(String): Code for not available (rows are ignored)
         """
         self._GWAS = {}
         self._GWAS_beta = {}
+        self._GWAS_alleles = {}
         
         if file[-3:] == '.gz':
             f = gzip.open(file,'rt')
@@ -205,7 +209,10 @@ class chi2sum:
             if bcol is not None:
                 b = float(L[bcol])
                 self._GWAS_beta[L[rscol]] = b
-                
+              
+            if a1col is not None and a2col is not None:
+                self._GWAS_alleles[L[rscol]] = [L[a1col],L[a2col]]
+            
         f.close()
                     
         print(len(self._GWAS),"SNPs loaded")
@@ -281,22 +288,74 @@ class chi2sum:
                 P = []
                 
         DATA = REF[str(cr)][0].get(P)
-            
-        use = []
-        RID = []
+           
+        filtered = {}
+        
+        #use = []
+        #RID = []
         
         # Sort out
         for D in DATA:
             # Select
-            if D is not None and D[1] > self._MAF and D[1] < 1-self._MAF:
-                S = D[0].split(";")
-                for s in S:
-                    if s in self._GWAS or useAll:
-                        use.append(D[2])
-                        RID.append(s)
-                        break
+            if (D[0] in self._GWAS or useAll) and (D[1] > self._MAF) and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+                filtered[D[0]] = [D[1],D[2]]
+                #use.append(D[2])
+                #RID.append(s)
+                
 
         # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
+        use = np.array(use)
+        
+        if len(use) > 1:
+            C = np.corrcoef(use)
+        else:
+            C = np.ones((1,1))
+            
+        
+        return C,np.array(RID)
+
+    
+    def _calcGeneSNPcorr_wAlleles(self,cr,gene,REF,useAll=False):
+        
+        if self._MAP is None:
+            G = self._GENEID[gene]
+
+            P = list(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+
+        else:
+            if gene in self._MAP:
+                P = self._MAP[gene][1]
+            else:
+                P = []
+                
+        DATA = REF[str(cr)][0].get(P)
+            
+        filtered = {}
+        
+        #use = []
+        #RID = []
+        
+        # Sort out
+        for D in DATA:
+            # Select
+            if (D[0] in self._GWAS or useAll) and D[1] > self._MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]) and self._GWAS_alleles[D[0]][0] == D[3] and self._GWAS_alleles[D[0]][1] == D[4]:
+                          
+                filtered[D[0]] = [D[1],D[2]]
+
+                #use.append(D[2])
+                #RID.append(s)
+
+        # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
         use = np.array(use)
         
         if len(use) > 1:
@@ -369,8 +428,11 @@ class chi2sum:
                         REF[cr] = self._ref.load_pos_reference(cr)
                     
                     pbar.set_description(label+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
-                     
-                    C,R = self._calcGeneSNPcorr(cr,G[i],REF)
+                    
+                    if len(self._GWAS_alleles)==0:
+                        C,R = self._calcGeneSNPcorr(cr,G[i],REF)
+                    else:
+                        C,R = self._calcGeneSNPcorr_wAlleles(cr,G[i],REF)
                         
                     if len(R) > 1:
                         # Score
@@ -825,7 +887,9 @@ class chi2sum:
             plt.axhline(y=-np.log10(sigLine), color='r', linestyle='dotted')
     
     
-    def _calcMultiGeneSNPcorr(self,cr,genes,REF):
+    def _calcMultiGeneSNPcorr(self,cr,genes,REF,wAlleles=True):
+        
+        filtered = {}
         
         use = []
         RID = []
@@ -843,17 +907,19 @@ class chi2sum:
             # Sort out
             for D in DATA:
                 # Select
-                if D[1] > self._MAF and D[1] < 1-self._MAF:
-                    S = D[0].split(";")
-                    for s in S:
-                        if s in self._GWAS:
-                            use.append(D[2])
-                            RID.append(s)
-                            break
+                if D[0] in self._GWAS and D[1] > self._MAF and (D[0] not in filtered or filtered[D[0]][0] < D[1]) and (not wAlleles or (self._GWAS_alleles[D[0]][0] == D[3] and self._GWAS_alleles[D[0]][1] == D[4])):
+                    filtered[D[0]] = [D[1],D[2]]
+                    #use.append(D[2])
+                    #RID.append(s)
 
-            pos.append(len(RID))
+            pos.append(len(filtered))
             
         # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
         use = np.array(use)
         
         if len(use) > 1:
@@ -865,7 +931,7 @@ class chi2sum:
         return C,np.array(RID),pos
     
                 
-    def plot_genesnps(self,G,show_correlation=False):
+    def plot_genesnps(self,G,show_correlation=False,tickspacing=10):
         """
         Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix
         
@@ -873,6 +939,7 @@ class chi2sum:
         
             G(list): List of gene symbols
             show_correlation(bool): Plot the corresponding SNP-SNP correlation matrix 
+            tickspacing(int): Spacing of ticks for correlation plot
         """
         print("Window size:",self._window)
 
@@ -891,8 +958,11 @@ class chi2sum:
             REF = {}
             REF[D[0]] = self._ref.load_pos_reference(D[0])
 
-            corr,RID,pos = self._calcMultiGeneSNPcorr(D[0],[self._GENESYMB[G]],REF)
-        
+            if len(self._GWAS_alleles) == 0:
+                corr,RID,pos = self._calcMultiGeneSNPcorr(D[0],[self._GENESYMB[G]],REF,False)
+            else:
+                corr,RID,pos = self._calcMultiGeneSNPcorr(D[0],[self._GENESYMB[G]],REF,True)
+      
         else:
             
             ID = []
@@ -923,6 +993,7 @@ class chi2sum:
         print("# SNP:",len(RID))
         
         
+        
         DICT = {}
         x =  []
         h1 = []
@@ -940,7 +1011,7 @@ class chi2sum:
         if show_correlation:
             plt.subplot(1, 2, 1)
 
-            plt.bar(x,h1)    
+            plt.bar(x,h1,color=plt.get_cmap("tab20")(5))    
             plt.ylabel("$-\log_{10}(p)$")
            
                 
@@ -953,7 +1024,7 @@ class chi2sum:
 
             cmap = sns.diverging_palette(230, 20, as_cmap=True)
 
-            sns.heatmap(corr,cmap=cmap,square=True)
+            sns.heatmap(corr,cmap=cmap,square=True,vmin=-1,vmax=+1,xticklabels=tickspacing,yticklabels=tickspacing)
         
             for i in range(0,len(pos)-1):
                 plt.axvline(x=pos[i], color='black', ls=':')
@@ -986,8 +1057,11 @@ class chi2sum:
         REF = {}
         REF[D[0]] = self._ref.load_pos_reference(D[0])
 
-        C,RID = self._calcGeneSNPcorr(D[0],self._GENESYMB[gene],REF)
-
+        if len(self._GWAS_alleles)==0:
+            C,RID = self._calcGeneSNPcorr(D[0],self._GENESYMB[gene],REF)
+        else:
+            C,RID = self._calcGeneSNPcorr_wAlleles(D[0],self._GENESYMB[gene],REF)
+            
         # Regularize C
         A = (C + C.T)/2
         evalu, evec = np.linalg.eigh(A)
