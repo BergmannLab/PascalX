@@ -319,11 +319,12 @@ X.load_GWAS('path/filenameB',name='GWAS B',rscol=0,pcol=1,bcol=2,a1col=3,a2col=4
 ```
 In the GWAS data loading routine, we have to set in addition a name for each GWAS to be loaded via the ```name=``` argument, and it is necessary to specify the column with the raw betas ```bcol=```.
 
-It is recommended to perform the scoring with matched alleles, using
+It is recommended to perform the scoring after filtering for matching alleles 
 
 ```python
 X.matchAlleles('GWAS A','GWAS B')
 ```
+
 This requires that allele information has been loaded for both GWAS, and for the reference panel (using .vcf import).
 
 Note that it is also recommended to jointly QQ normalize p-values:
