@@ -91,8 +91,9 @@ class chi2sum:
             SNPonly : Import only SNPs (only for .vcf)
             
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files. 
         
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.
+            
         """
         self._ref = refpanel.refpanel()
         self._ref.set_refpanel(filename=filename,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
@@ -712,11 +713,16 @@ class chi2sum:
     
     def get_topscores(self,N=10):
         """
-        Prints the top gene scores
+        Prints and returns the top gene scores
         
         Args:
         
             N(int): # to show
+            
+        Returns:
+        
+            list: Ordered list of top scores
+            
         """
         K = []
         V = []
@@ -727,8 +733,13 @@ class chi2sum:
     
         I = np.argsort(V)[:N]
         
+        R = []
+        
         for i in I:
             print(K[i]," ",V[i])
+            R.append([K[i],V[i]])
+        
+        return R
     
     def get_geneinfo(self,gene):
         """

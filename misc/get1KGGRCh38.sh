@@ -13,8 +13,11 @@ wget -r -nd -l1 --no-parent ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collec
 wget ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/All_20180418.vcf.gz
 
 # Download plink
-wget http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20201019.zip
-unzip *.zip
+if [ $4 = "tped" ];
+then
+	wget http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20201019.zip
+	unzip *.zip
+fi
 
 function pwait() {
     while [ $(jobs -p | wc -l) -ge $1 ]; do
@@ -31,21 +34,31 @@ done
 
 wait
 
-if [ $2 = "EUR" ];
+if [ $4 = "tped" ];
 then
-	for i in {1..22}
-	do
-		./plink --recode 12 transpose --vcf-half-call missing --vcf CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh38.chr$i &
-		pwait $3
-	done
-else
+	if [ $2 = "EUR" ];
+	then
+		for i in {1..22}
+		do
+			./plink --recode 12 transpose --vcf-half-call missing --vcf CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh38.chr$i &
+			pwait $3
+		done
+	else
 	
-	for i in {1..22}
+		for i in {1..22}
+        	do
+                	./plink --recode 12 transpose --vcf-half-call missing --vcf CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz --out ALL.1KG.GRCh38.chr$i &
+			pwait $3
+        	done
+	fi
+
+	wait
+	gzip *.tped
+
+else
+        for i in {1..22}
         do
-                ./plink --recode 12 transpose --vcf-half-call missing --vcf CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz --out ALL.1KG.GRCh38.chr$i &
-		pwait $3
-        done
+		mv CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz $2.1KG.GRCh38.chr$i.vcf.gz
+	done
 fi
 
-wait
-gzip *.tped

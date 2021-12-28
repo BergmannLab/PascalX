@@ -95,13 +95,13 @@ Options:
 
 1000 Genome Project reference data can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
 ```bash
-bash get1KGGRCh38.sh pathtostore/ EUR 4
+bash get1KGGRCh38.sh pathtostore/ EUR 4 tped
 ```
-Note that the last number specified the # of cpu cores to utilize. 
+Note that the third parameter specifies the # of cpu cores to utilize. 
 
 The reference data has to be loaded by the gene scorer using the method
 ```python
-Scorer.load_refpanel("path/filename")
+Scorer.load_refpanel("path/filename",keepfile=None)
 ```
 The filename is required to not contain the ending ```.chr#....```. If the corresponding reference data has not been imported yet, PascalX will try to import the data from ```filename.chr#.tped.gz``` or ```filename.chr#.vcf.gz``` files in ```path/```. For .tped import the genotype information has to be supplied in gzip compressed 1-2-coded [plink](https://www.cog-genomics.org/plink/) tped files. The following plink options should do the job:
 
@@ -111,6 +111,7 @@ The filename is required to not contain the ending ```.chr#....```. If the corre
 
 By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. For import of allele information raw .vcf files have to be used. In this case the plink step can be skipped. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
 
+In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the ```tped``` import script option above with ```vcf```. Note that to keep only a subset of samples under .vcf import, the ```keepfile=``` option has to be set.
 
 
 **Load gene annotation:**

@@ -24,23 +24,24 @@ Note that the default options of the genescorer are used. In particular, the gen
 
 .. code-block:: console
 
-    bash get1KGGRCh38.sh pathtostore/ EUR 4
+    bash get1KGGRCh38.sh pathtostore/ EUR 4 tped
 
-The last number specifies the # of cpu cores to utilize. The plink converted files will be stored in the ``pathtostore/`` folder and will be named ``EUR.1KG.GRCh38.chr#``. If you want to retain samples of all origin, replace ``EUR`` with ``ALL``. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX :ref:`DockerSec` runtime.
+The third parameter specifies the # of cpu cores to utilize. The plink converted files will be stored in the ``pathtostore/`` folder and will be named ``EUR.1KG.GRCh38.chr#``. If you want to retain samples of all origin, replace ``EUR`` with ``ALL``. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX :ref:`DockerSec` runtime.
 
 Set the reference panel to use via
 
 .. code-block:: python
     
-    Scorer.load_refpanel('path/EUR.1KG.GRCh38')
+    Scorer.load_refpanel('path/EUR.1KG.GRCh38',keepfile=None)
 
 
 .. note::
 
     If the corresponding reference data has not been imported yet, PascalX will try to import the data from ``filename.chr#.tped.gz`` or ``filename.chr#.vcf.gz`` files in ``path/``. For .tped files the genotype information has to be supplied in gzip compressed 1-2-coded plink tped files. The following `plink <https://www.cog-genomics.org/plink/>`_ options should do the job: ``--recode 12 transpose``. By default PascalX will utilize only one cpu core for the import. You can increase the number of cores used via setting the ``parallel=`` option. 
     
-.. note::
-    In order to import allele information into the reference panel, raw .vcf files have to be used for the import. The plink conversion step can be skipped in this case.  
+.. warning::
+
+    In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the ``tped`` import script option above with ``vcf``. Note that to keep only a subset of samples under .vcf import, the ``keepfile=`` option has to be set.   
 
 
 **Gene annotation:**
