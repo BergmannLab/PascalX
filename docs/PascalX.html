@@ -290,7 +290,7 @@
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.</p>
 </div>
 </dd></dl>
 
@@ -523,10 +523,16 @@
 <dl class="py method">
 <dt id="PascalX.genescorer.chi2sum.get_topscores">
 <code class="sig-name descname">get_topscores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.get_topscores" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints the top gene scores</p>
+<dd><p>Prints and returns the top gene scores</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>N</strong> (<em>int</em>) – # to show</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Ordered list of top scores</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -758,10 +764,16 @@
 <dl class="py method">
 <dt id="PascalX.xscorer.zsum.get_topscores">
 <code class="sig-name descname">get_topscores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.xscorer.zsum.get_topscores" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints the top gene scores</p>
+<dd><p>Prints and returns the top gene scores</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>N</strong> (<em>int</em>) – # to show</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Ordered list of top scores</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -868,7 +880,7 @@
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.</p>
 </div>
 </dd></dl>
 
@@ -889,7 +901,7 @@
 
 <dl class="py method">
 <dt id="PascalX.xscorer.zsum.plot_genesnps">
-<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">E_A</span></em>, <em class="sig-param"><span class="n">E_B</span></em>, <em class="sig-param"><span class="n">rank</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">zscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mark_window</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.xscorer.zsum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">E_A</span></em>, <em class="sig-param"><span class="n">E_B</span></em>, <em class="sig-param"><span class="n">rank</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">zscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mark_window</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tickspacing</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.xscorer.zsum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -971,10 +983,16 @@
 <dl class="py method">
 <dt id="PascalX.xscorer.rsum.get_topscores">
 <code class="sig-name descname">get_topscores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.xscorer.rsum.get_topscores" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints the top gene scores</p>
+<dd><p>Prints and returns the top gene scores</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>N</strong> (<em>int</em>) – # to show</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Ordered list of top scores</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1081,7 +1099,7 @@
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.</p>
+<p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.</p>
 </div>
 </dd></dl>
 
@@ -1102,7 +1120,7 @@
 
 <dl class="py method">
 <dt id="PascalX.xscorer.rsum.plot_genesnps">
-<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">E_A</span></em>, <em class="sig-param"><span class="n">E_B</span></em>, <em class="sig-param"><span class="n">rank</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">zscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mark_window</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.xscorer.rsum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_genesnps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">G</span></em>, <em class="sig-param"><span class="n">E_A</span></em>, <em class="sig-param"><span class="n">E_B</span></em>, <em class="sig-param"><span class="n">rank</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">zscore</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_correlation</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">mark_window</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">MAF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tickspacing</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PascalX.xscorer.rsum.plot_genesnps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -78,6 +78,7 @@ class refpanel:
             SNPonly(bool): [only for.vcf] Load only SNPs 
             
         Note:
+        
             One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.
             
         """

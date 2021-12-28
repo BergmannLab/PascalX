@@ -176,21 +176,21 @@
 <p>Note that the default options of the genescorer are used. In particular, the gene start and end positions are extended by a window of <code class="docutils literal notranslate"><span class="pre">window=50000</span></code> and the variance cutoff is set to <code class="docutils literal notranslate"><span class="pre">varcutoff=0.99</span></code>.</p>
 <p><strong>Reference panel:</strong></p>
 <p><a class="reference external" href="https://www.internationalgenome.org/data">1000 Genome Project</a> reference data can be downloaded and converted via executing the script in the <code class="docutils literal notranslate"><span class="pre">PascalX/misc</span></code> folder as below (for GRCh37 replace 38 with 37).</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">bash get1KGGRCh38.sh pathtostore/ EUR 4</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">bash get1KGGRCh38.sh pathtostore/ EUR 4 tped</span>
 </pre></div>
 </div>
-<p>The last number specifies the # of cpu cores to utilize. The plink converted files will be stored in the <code class="docutils literal notranslate"><span class="pre">pathtostore/</span></code> folder and will be named <code class="docutils literal notranslate"><span class="pre">EUR.1KG.GRCh38.chr#</span></code>. If you want to retain samples of all origin, replace <code class="docutils literal notranslate"><span class="pre">EUR</span></code> with <code class="docutils literal notranslate"><span class="pre">ALL</span></code>. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX <a class="reference internal" href=".ipynb_checkpoints/install-checkpoint.html#dockersec"><span class="std std-ref">Multi-platform (Docker)</span></a> runtime.</p>
+<p>The third parameter specifies the # of cpu cores to utilize. The plink converted files will be stored in the <code class="docutils literal notranslate"><span class="pre">pathtostore/</span></code> folder and will be named <code class="docutils literal notranslate"><span class="pre">EUR.1KG.GRCh38.chr#</span></code>. If you want to retain samples of all origin, replace <code class="docutils literal notranslate"><span class="pre">EUR</span></code> with <code class="docutils literal notranslate"><span class="pre">ALL</span></code>. Note that execution of the script requires a Linux OS. For instance, you can run it in the PascalX <a class="reference internal" href=".ipynb_checkpoints/install-checkpoint.html#dockersec"><span class="std std-ref">Multi-platform (Docker)</span></a> runtime.</p>
 <p>Set the reference panel to use via</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Scorer</span><span class="o">.</span><span class="n">load_refpanel</span><span class="p">(</span><span class="s1">&#39;path/EUR.1KG.GRCh38&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Scorer</span><span class="o">.</span><span class="n">load_refpanel</span><span class="p">(</span><span class="s1">&#39;path/EUR.1KG.GRCh38&#39;</span><span class="p">,</span><span class="n">keepfile</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If the corresponding reference data has not been imported yet, PascalX will try to import the data from <code class="docutils literal notranslate"><span class="pre">filename.chr#.tped.gz</span></code> or <code class="docutils literal notranslate"><span class="pre">filename.chr#.vcf.gz</span></code> files in <code class="docutils literal notranslate"><span class="pre">path/</span></code>. For .tped files the genotype information has to be supplied in gzip compressed 1-2-coded plink tped files. The following <a class="reference external" href="https://www.cog-genomics.org/plink/">plink</a> options should do the job: <code class="docutils literal notranslate"><span class="pre">--recode</span> <span class="pre">12</span> <span class="pre">transpose</span></code>. By default PascalX will utilize only one cpu core for the import. You can increase the number of cores used via setting the <code class="docutils literal notranslate"><span class="pre">parallel=</span></code> option.</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In order to import allele information into the reference panel, raw .vcf files have to be used for the import. The plink conversion step can be skipped in this case.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the <code class="docutils literal notranslate"><span class="pre">tped</span></code> import script option above with <code class="docutils literal notranslate"><span class="pre">vcf</span></code>. Note that to keep only a subset of samples under .vcf import, the <code class="docutils literal notranslate"><span class="pre">keepfile=</span></code> option has to be set.</p>
 </div>
 <p><strong>Gene annotation:</strong></p>
 <p>If you want to use ensembl gene annotation, it can be automatically downloaded from <a class="reference external" href="https://www.ensembl.org/biomart/martview/">BioMart</a> as follows.</p>
