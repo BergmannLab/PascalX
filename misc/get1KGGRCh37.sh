@@ -9,8 +9,11 @@ cd $1/
 wget -r -nd -l1 --no-parent ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/release/20130502/
 
 # Download plink
-wget http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20201019.zip
-unzip *.zip
+if [ $4 = "tped" ];
+then
+	wget http://s3.amazonaws.com/plink1-assets/plink_linux_x86_64_20201019.zip
+	unzip *.zip
+fi
 
 function pwait() {
     while [ $(jobs -p | wc -l) -ge $3 ]; do
@@ -19,26 +22,35 @@ function pwait() {
 }
 
 
-if [ $2 = "EUR" ];
+if [ $4 = "tped" ];
 then
-	for i in {1..22}
-	do
+	if [ $2 = "EUR" ];
+	then
+		for i in {1..22}
+		do
 
-		# Plink convert
-		./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh37.chr$i &
-		pwait $3
-	done
-else
+			# Plink convert
+			./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh37.chr$i &
+			pwait $3
+		done
+	else
 	
-	for i in {1..22}
-        do
+		for i in {1..22}
+        	do
 
-		# Plink convert
-                ./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz --out ALL.1KG.GRCh37.chr$i &
-		pwait $3
+			# Plink convert
+                	./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz --out ALL.1KG.GRCh37.chr$i &
+			pwait $3
+        	done
+	fi
+
+	wait
+
+	gzip *.tped
+
+else
+        for i in {1..22}
+        do
+                mv ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz $2.1KG.GRCh37.chr$i.vcf.gz
         done
 fi
-
-wait
-
-gzip *.tped

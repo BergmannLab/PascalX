@@ -360,13 +360,15 @@ class wchi2sum:
     
     
 class crosscorer(ABC):
+    # Note: GWAS data is stored statically (same for all instances)
     _ENTITIES_p = {}
     _ENTITIES_b = {}
+    _ENTITIES_a = {}
     
     def __init__(self):
         pass
     
-    def load_refpanel(self,filename, parallel=mp.cpu_count()):
+    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100,SNPonly=False):
         """
         Sets the reference panel to use
         
@@ -375,11 +377,17 @@ class crosscorer(ABC):
             filename(string): /path/filename (without .chr#.db ending)
             parallel(int): Number of cores to use for parallel import of reference panel
             
+            keepfile: File with sample ids (one per line) to keep (only for .vcf) 
+            qualityT: Quality threshold for variant to keep (only for .vcf)
+            SNPonly : Import only SNPs (only for .vcf)
+            
         Note:
-            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, he will automatically try to import from .chr#.tped.gz files.        
+        
+            One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.
+               
         """
         self._ref = refpanel.refpanel()
-        self._ref.set_refpanel(filename, parallel)
+        self._ref.set_refpanel(filename=filename, parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
 
         
     def load_genome(self,file,ccol=1,cid=0,csymb=5,cstx=2,cetx=3,cs=4,cb=None,chrStart=0,splitchr='\t',NAgeneid='n/a',useNAgenes=False,header=False):
@@ -427,7 +435,7 @@ class crosscorer(ABC):
         self._SKIPPED = GEN._SKIPPED
         
         
-    def load_GWAS(self,file,rscol=0,pcol=1,bcol=2,idcol=None,name='GWAS',delimiter=None,NAid='n/a',header=False,threshold=1,mincutoff=1e-1000,rank=False):
+    def load_GWAS(self,file,rscol=0,pcol=1,bcol=2,a1col=None,a2col=None,idcol=None,name='GWAS',delimiter=None,NAid='n/a',header=False,threshold=1,mincutoff=1e-1000,rank=False,SNPonly=False):
         """
         Load GWAS summary statistics p-values and betas
 
@@ -437,11 +445,18 @@ class crosscorer(ABC):
             rscol(int): Column of SNP ids
             pcol(int) : Column of p-values
             bcol(int) : Column of betas
+            a1col(int): Column of alternate allele (None for ignoring alleles)
+            a2col(int): Column of reference allele (None for ignoring alleles)
             idcol : Column of identifiers, if several different GWAS in one file
             name : Identifier code for GWAS (needs to be unique)
             delimiter(String): Split character 
             header(bool): Header present
             NAid(String): Code for not available (rows are ignored)
+            SNPonly(bool): Load only SNPs (only if a1col and a2col is specified)
+        Note:
+           
+           The loaded GWAS data is shared between different xscorer instances !
+
         """
 
         minp = 1
@@ -454,6 +469,15 @@ class crosscorer(ABC):
         if header:
             f.readline()
 
+        if idcol is None:
+            nid = name
+                    
+            crosscorer._ENTITIES_p[nid] = {}
+            crosscorer._ENTITIES_b[nid] = {}
+
+            if a1col is not None and a2col is not None:
+                crosscorer._ENTITIES_a[nid] = {}    
+            
         for line in f:
             if delimiter is None:
                 L = line.split()
@@ -471,20 +495,28 @@ class crosscorer(ABC):
 
                     if not idcol is None:
                         nid = L[idcol]
-                    else:
-                        nid = name
+                    
+                        if not nid in crosscorer._ENTITIES_p:
+                            crosscorer._ENTITIES_p[nid] = {}
+                            crosscorer._ENTITIES_b[nid] = {}
 
-                    if not nid in crosscorer._ENTITIES_p:
-                        crosscorer._ENTITIES_p[nid] = {}
-                        crosscorer._ENTITIES_b[nid] = {}
-
+                            if a1col is not None and a2col is not None:
+                                crosscorer._ENTITIES_a[nid] = {}
+                        
                     #if L[rscol] in self._ENTITIES_p[nid]:
                     #    c_test += 1
 
-                    crosscorer._ENTITIES_p[nid][L[rscol]] = max(p,mincutoff)
-                    crosscorer._ENTITIES_b[nid][L[rscol]] = b
-
-
+                    if a1col is not None and a2col is not None:
+                        
+                        if ( len(L[a1col])==1 and len(L[a2col])==1) or (not SNPonly):
+                            crosscorer._ENTITIES_p[nid][L[rscol]] = max(p,mincutoff)
+                            crosscorer._ENTITIES_b[nid][L[rscol]] = b
+                            crosscorer._ENTITIES_a[nid][L[rscol]] = [L[a1col],L[a2col]]
+                            
+                    else:
+                        crosscorer._ENTITIES_p[nid][L[rscol]] = max(p,mincutoff)
+                        crosscorer._ENTITIES_b[nid][L[rscol]] = b  
+                       
         f.close()
 
         # Rank
@@ -516,17 +548,26 @@ class crosscorer(ABC):
     def _calcSNPcorr(self,SNPs,D,MAF=0.05):
         DATA = D.getSNPs(SNPs)
         
-        use = []
-        RID = []
+        filtered = {}
+        #use = []
+        #RID = []
        
+        # ToDo: Check ref panel for ;
+    
         # Sort out
         for D in DATA:
             # Select
-            if D[1] > MAF and D[1] < 1-MAF:
-                use.append(D[2])
-                RID.append(D[0])
+            if D[1] > MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+                    filtered[D[0]] = [D[1],D[2]]
+                    #use.append(D[2])
+                    #RID.append(D[0])
 
         # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
         use = np.array(use)
         
         if len(use) > 1:
@@ -536,6 +577,178 @@ class crosscorer(ABC):
             
         return C,np.array(RID)
 
+    def _calcSNPcorr_wAlleles(self,SNPs,E_A,D,MAF=0.05):
+        DATA = D.getSNPs(SNPs)
+        
+        filtered = {}
+        
+        #use = []
+        #RID = []
+        
+        # Sort out
+        for D in DATA:
+            # Select
+            if D[1] > MAF: # MAF filter
+                # Allele filter
+                A = self._ENTITIES_a[E_A][D[0]]
+                
+                if A[0] == D[3] and A[1] == D[4] and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+                        filtered[D[0]] = [D[1],D[2]]
+                        #use.append(D[2])
+                        #RID.append(D[0])
+                        #print(D[0],D[3],D[4],"|",A,"(match)")
+                        continue
+
+                #if A[1] == D[3] and A[0] == D[4]:
+                #    # Flip 
+                #    D[2][D[2]==0]=3
+                #    D[2][D[2]==2]=0
+                #    D[2][D[2]==3]=2
+                #    use.append(D[2])
+                #    RID.append(D[0])
+                #    Nf += 1 
+                #    #print(D[0],D[3],D[4],"|",A,"(flip)")
+                #    continue
+                
+            
+        # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
+        use = np.array(use)
+        
+        if len(use) > 1:
+            C = np.corrcoef(use)
+        else:
+            C = np.ones((1,1))
+        
+        return C,np.array(RID)
+    
+    def _calcSNPcorr_wAlleles_out(self,SNPs,E_A,D,MAF=0.05,wAlleles=True):
+        DATA = D.getSNPs(SNPs)
+        
+        filtered = {}
+        
+        #use = []
+        #RID = []
+        #ALLELES = []
+        
+        Na = 0
+        Nf = 0
+        Nk = 0
+        Nn = 0
+        N  = 0
+        # Sort out
+        for D in DATA:
+            # Select
+            if D[1] > MAF: # MAF filter
+                N += 1
+                # Allele filter
+                A = self._ENTITIES_a[E_A][D[0]]
+                
+                if not wAlleles or ( self._ENTITIES_a[E_A][D[0]][0] == D[3] and self._ENTITIES_a[E_A][D[0]][1] == D[4] ):
+                    filtered[D[0]] = [D[1],D[2],[D[3],D[4]]]
+                    #use.append(D[2])
+                    #RID.append(D[0])
+                    #ALLELES.append(A)
+                    
+                    Nk +=1
+                    #print(D[0],D[3],D[4],"|",A,"(match)")
+                    continue
+
+                #if A[1] == D[3] and A[0] == D[4]:
+                #    # Flip 
+                #    D[2][D[2]==0]=3
+                #    D[2][D[2]==2]=0
+                #    D[2][D[2]==3]=2
+                #    use.append(D[2])
+                #    RID.append(D[0])
+                #    Nf += 1 
+                #    #print(D[0],D[3],D[4],"|",A,"(flip)")
+                #    continue
+                
+                Nn +=1
+            else:
+                Na +=1
+            
+        # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        ALLELES = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            ALLELES.append(filtered[RID[i]][2])
+            
+        use = np.array(use)
+        
+        if len(use) > 1:
+            C = np.corrcoef(use)
+        else:
+            C = np.ones((1,1))
+        
+        
+        #print(round(Nf/N*100,2),"% flipped |",round(Nk/N*100,2),"% match |",round(Nn/N*100,2),"% non-match")
+        print(round(Na/len(DATA)*100,2),"% MAF filtered |",round(Nk/N*100,2),"% matching alleles")
+
+        return C,np.array(RID),ALLELES
+    
+    
+    def matchAlleles(self,E_A,E_B):
+        """
+        Matches alleles between two GWAS 
+        (SNPs with non matching alleles are removed)
+        
+        Args:
+            E_A(str) : Identifier of first GWAS
+            E_B(str) : Identifier of second GWAS
+        """
+        if len(self._ENTITIES_a[E_A]) > 0 and len(self._ENTITIES_a[E_B]) > 0:
+            Ne = 0
+            #Nf = 0
+            N = 0
+            
+            todel = []
+            #toflip = []
+            for x in self._ENTITIES_a[E_A]:
+                if x in self._ENTITIES_a[E_B]:
+                    if self._ENTITIES_a[E_A][x] == self._ENTITIES_a[E_B][x]:
+                        # If alleles match, all ok and proceed
+                        pass
+                    else:
+                    # FLIPPING is problematic with multi-alleles
+                    #    if self._ENTITIES_a[E_A][x] == self._ENTITIES_a[E_B][x][::-1] and flip:   
+                    #        # If minor and ref/major match, flip 
+                    #        toflip.append(x)
+                    #        Nf += 1
+                    #    else:
+                    
+                        # Else delete
+                        Ne += 1
+                        todel.append(x)
+                        
+                    N +=1
+                    
+            for x in todel:
+                del self._ENTITIES_a[E_A][x]
+                del self._ENTITIES_a[E_B][x]
+                del self._ENTITIES_b[E_A][x]
+                del self._ENTITIES_b[E_B][x]
+                del self._ENTITIES_p[E_A][x]
+                del self._ENTITIES_p[E_B][x]
+            
+            #for x in toflip:  
+            #    self._ENTITIES_b[E_B][x] = -self._ENTITIES_b[E_B][x]
+            #    self._ENTITIES_a[E_B][x] = self._ENTITIES_a[E_B][x][::-1]
+            
+            print(N,"common SNPs")
+            #print(round(Nf/N*100,2),"% matching flipped alleles -> ", Nf,"SNPs flipped")
+            print(round(Ne/N*100,2),"% non-matching alleles -> ",Ne,"SNPs removed")       
+            
+        else:
+            print("ERROR: Allele information missing !")
+    
     def jointlyRank(self,E_A,E_B):
         """
         Jointly QQ normalizes the p-values of two GWAS
@@ -575,15 +788,19 @@ class crosscorer(ABC):
         for i in range(0,len(SNPs)):
             crosscorer._ENTITIES_p[E_B][SNPs[i]] = wr[i]
         
-        print(len(SNPs),"shared SNPs ( min p:",1./(len(p)+1),")")
+        print(len(SNPs),"shared SNPs ( min p:", round( 1./(len(p)+1),2),")")
     
     def get_topscores(self,N=10):
         """
-        Prints the top gene scores
+        Prints and returns the top gene scores
         
         Args:
         
             N(int): # to show
+            
+        Returns:
+        
+            list: Ordered list of top scores
         """
         K = []
         V = []
@@ -593,13 +810,16 @@ class crosscorer(ABC):
             V.append(value)
     
         I = np.argsort(V)[:N]
+        R = []
         
         for i in I:
             print(K[i]," ",V[i])
+            R.append([K[i],V[i]])
+        
+        return R
+    
             
-            
-            
-    def plot_genesnps(self,G,E_A,E_B,rank=False,zscore=False,show_correlation=False,mark_window=False):
+    def plot_genesnps(self,G,E_A,E_B,rank=False,zscore=False,show_correlation=False,mark_window=False,MAF=None,tickspacing=10):
         """
         Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix
         
@@ -608,7 +828,11 @@ class crosscorer(ABC):
             G(list): List of gene symbols
             show_correlation(bool): Plot the corresponding SNP-SNP correlation matrix 
             mark_window(bool): Mark the gene transcription start and end positions
+            MAF(float): MAF filter (None for value set in class)
         """
+        if MAF is None:
+            MAF = self._MAF
+        
         if G not in self._GENESYMB:
             print(G,"not in annotation!")
             return
@@ -633,7 +857,12 @@ class crosscorer(ABC):
     
         UNIOND = [x for x in DATA if x in SNPs]
         
-        corr,RID = self._calcSNPcorr(UNIOND,DB,self._MAF)
+        ALLELES = None
+        
+        if E_A in self._ENTITIES_a:
+            corr,RID,ALLELES = self._calcSNPcorr_wAlleles_out(UNIOND,E_A,DB,MAF) # Score with alleles
+        else:  
+            corr,RID = self._calcSNPcorr(UNIOND,DB,MAF)
         
         print("# SNP:",len(RID))
         #print("First SNP:",RID[0],"@",DB.getSNPpos(RID[0]))
@@ -724,14 +953,16 @@ class crosscorer(ABC):
 
             x.append(i)
             h1.append(-np.log10(pA))
-            c1.append( np.sign(crosscorer._ENTITIES_b[E_A][RID[i]]) + 1 )
+            c1.append( int(np.sign(crosscorer._ENTITIES_b[E_A][RID[i]])) + 3 +1)
 
             h2.append(np.log10(pB))
-            c2.append( np.sign(crosscorer._ENTITIES_b[E_B][RID[i]]) + 1)
+            c2.append( int(np.sign(crosscorer._ENTITIES_b[E_B][RID[i]])) + 3 +1)
 
-            DICT[i] = [RID[i],pA,pB,np.sign(crosscorer._ENTITIES_b[E_A][RID[i]]),np.sign(crosscorer._ENTITIES_b[E_B][RID[i]])]
+            if ALLELES is not None:
+                DICT[i] = [RID[i],pA,pB,np.sign(crosscorer._ENTITIES_b[E_A][RID[i]]),np.sign(crosscorer._ENTITIES_b[E_B][RID[i]]),ALLELES[i]]
+            else:
+                DICT[i] = [RID[i],pA,pB,np.sign(crosscorer._ENTITIES_b[E_A][RID[i]]),np.sign(crosscorer._ENTITIES_b[E_B][RID[i]])]
                 
-        
         
         if show_correlation:
             plt.subplot(1, 2, 1)
@@ -753,7 +984,7 @@ class crosscorer(ABC):
 
             cmap = sns.diverging_palette(230, 20, as_cmap=True)
 
-            sns.heatmap(corr,cmap=cmap,square=True)
+            sns.heatmap(corr,cmap=cmap,square=True, vmin=-1,vmax=+1,xticklabels=tickspacing,yticklabels=tickspacing)
             
             if mark_window:
                 plt.axvline(x=sid, color='black', ls=':')
@@ -1116,10 +1347,11 @@ class zsum(crosscorer):
                     UNIOND = np.intersect1d(D,DATA)
                     
                     if len(UNIOND) > 0:
-                        corr,RID = self._calcSNPcorr(UNIOND,db,self._MAF)
+                        if E_A in self._ENTITIES_a:
+                            corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,db,self._MAF) # Score with alleles
+                        else:  
+                            corr,RID = self._calcSNPcorr(UNIOND,db,self._MAF)
                        
-                       
-                            
                         w = np.array([np.sign( crosscorer._ENTITIES_b[E_A][x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( crosscorer._ENTITIES_p[E_A][x]  )) for x in RID])
                         z = np.array([np.sign( crosscorer._ENTITIES_b[E_B][x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( crosscorer._ENTITIES_p[E_B][x]  )) for x in RID])                   
                         
@@ -1143,7 +1375,10 @@ class zsum(crosscorer):
             else:
                 # Score on full chromosome
         
-                corr,RID = self._calcSNPcorr(D,db)
+                if E_A in self._ENTITIES_a:
+                    corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,db,self._MAF) # Score with alleles
+                else:  
+                    corr,RID = self._calcSNPcorr(UNIOND,db,self._MAF)
 
 
                 # Get w, z   
@@ -1200,8 +1435,10 @@ class zsum(crosscorer):
                 UNIOND = np.intersect1d(SNPs,DATA)
 
                 if len(UNIOND) > 0:
-                    corr,RID = self._calcSNPcorr(UNIOND,DB[cr])
-
+                    if E_A in self._ENTITIES_a:
+                        corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,DB[cr],self._MAF) # Score with alleles
+                    else:  
+                        corr,RID = self._calcSNPcorr(UNIOND,DB[cr],self._MAF)
                    
                     # Get w, z   
                     w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
@@ -1362,12 +1599,15 @@ class rsum(crosscorer):
                     UNIOND = np.intersect1d(D,DATA)
                     
                     if len(UNIOND) > 0:
-                        corr,RID = self._calcSNPcorr(UNIOND,db,self._MAF)
+                       
+                        if E_A in self._ENTITIES_a:
+                            corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,db,self._MAF) # Score with alleles
+                        else:  
+                            corr,RID = self._calcSNPcorr(UNIOND,db,self._MAF)
                        
                         w = np.array([np.sign( crosscorer._ENTITIES_b[E_A][x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( crosscorer._ENTITIES_p[E_A][x]  )) for x in RID])
                         z = np.array([np.sign( crosscorer._ENTITIES_b[E_B][x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( crosscorer._ENTITIES_p[E_B][x]  )) for x in RID])
-
-                        
+          
                         norm = z.dot(z)
                         
                         if norm != 0:
@@ -1391,10 +1631,11 @@ class rsum(crosscorer):
             
             else:
                 # Score on full chromosome
-        
-                corr,RID = self._calcSNPcorr(D,db)
+                if E_A in self._ENTITIES_a:
+                    corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,db,self._MAF) # Score with alleles
+                else:  
+                    corr,RID = self._calcSNPcorr(UNIOND,db,self._MAF)
 
-              
                 # Get w, z   
                 w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
                 z = np.array([np.sign(E_b_B[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_B[x])) for x in RID])
@@ -1453,8 +1694,12 @@ class rsum(crosscorer):
                 UNIOND = np.intersect1d(SNPs,DATA)
 
                 if len(UNIOND) > 0:
-                    corr,RID = self._calcSNPcorr(UNIOND,DB[cr])
-
+                    
+                    if E_A in self._ENTITIES_a:
+                        corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,DB[cr],self._MAF) # Score with alleles
+                    else:  
+                        corr,RID = self._calcSNPcorr(UNIOND,DB[cr],self._MAF)
+                   
                     # Get w, z   
                     w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
 

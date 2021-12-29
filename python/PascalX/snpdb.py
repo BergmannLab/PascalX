@@ -88,7 +88,10 @@ class db:
             # Snp based index
             rid = data[D][0].split(";")
             for r in rid:
-                self._idx[1][r] = I
+                if r not in self._idx[1]:
+                    self._idx[1][r] = [ I ]
+                else:
+                    self._idx[1][r].append( I )
             
             
     def get(self,pos):
@@ -149,11 +152,11 @@ class db:
         E = []
         for R in snps:
             if R in self._idx[1]:
-                p = self._idx[1][R]
-                self._datafile.seek(p[0])
-                data = self._datafile.read(p[1]-p[0])
+                for p in self._idx[1][R]:
+                    self._datafile.seek(p[0])
+                    data = self._datafile.read(p[1]-p[0])
 
-                E.append( pickle.loads(zlib.decompress(data) ) )
+                    E.append( pickle.loads(zlib.decompress(data) ) )
             else:
                 #print("Error:",R,"not found in index")
                 E.append(None)
@@ -187,7 +190,7 @@ class db:
             The current implementation is inefficient.
         """
         if snpid in self._idx[1]:
-            fseek = self._idx[1][snpid]
+            fseek = self._idx[1][snpid][0]
         
             for pos, fs in self._idx[0].items(): 
                 for i in range(0,len(fs[0])):
