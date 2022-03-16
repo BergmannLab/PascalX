@@ -38,9 +38,17 @@ import os.path
 
 from scipy.stats import norm
 
+try:
+    import cupy as cp
+    pool = cp.cuda.MemoryPool(cp.cuda.malloc_managed)
+    cp.cuda.set_allocator(pool.malloc)
+except ModuleNotFoundError:
+    cp = None
+
+
 class chi2sum:
     
-    def __init__(self,window=50000,varcutoff=0.99,MAF=0.05,genome=None):
+    def __init__(self,window=50000,varcutoff=0.99,MAF=0.05,genome=None, gpu=False):
         """
         Gene scoring via sum of chi2
         
@@ -49,7 +57,9 @@ class chi2sum:
             window(int): Window size around gene tx start and end
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
-            genome(Genome): Set gene annotation 
+            genome(Genome): Set gene annotation
+            gpu(bool): Use GPU for linear algebra operations (requires cupy library)
+            
         """
         
         self._window = window
@@ -67,6 +77,13 @@ class chi2sum:
         
         self._MAP = None
         
+        if gpu and cp is not None:
+            self._useGPU = True
+        else:
+            self._useGPU = False
+            if gpu and cp is None:
+                print("Error: Cupy library not detected => Using CPUs")
+                
         # Set annotation
         if genome is not None:
             self._GENEID = genome._GENEID
@@ -313,7 +330,10 @@ class chi2sum:
         use = np.array(use)
         
         if len(use) > 1:
-            C = np.corrcoef(use)
+            if self._useGPU:
+                C = cp.asnumpy(cp.corrcoef(cp.asarray(use)))
+            else:
+                C = np.corrcoef(use)
         else:
             C = np.ones((1,1))
             
@@ -360,7 +380,10 @@ class chi2sum:
         use = np.array(use)
         
         if len(use) > 1:
-            C = np.corrcoef(use)
+            if self._useGPU:
+                C = cp.asnumpy(cp.corrcoef(cp.asarray(use)))
+            else:
+                C = np.corrcoef(use)
         else:
             C = np.ones((1,1))
             
@@ -378,7 +401,10 @@ class chi2sum:
         return np.sum(ps)
     
     def _scoreThread(self,gi,C,S,g,method,mode,reqacc,intlimit):
-        L = np.linalg.eigvalsh(C)
+        if self._useGPU:
+            L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
+        else:
+            L = np.linalg.eigvalsh(C)
         L = L[L>0][::-1]
         N_L = []
 
@@ -934,7 +960,10 @@ class chi2sum:
         use = np.array(use)
         
         if len(use) > 1:
-            C = np.corrcoef(use)
+            if self._useGPU:
+                C = cp.asnumpy(cp.corrcoef(cp.asarray(use)))
+            else:
+                C = np.corrcoef(use)
         else:
             C = np.ones((1,1))
             

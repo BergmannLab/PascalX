@@ -50,7 +50,6 @@ class genome:
             version(string): GRCh37 | CRCh38
             
         Example:
-        ::
             from PascalX.genome import genome
             G = genome()
             G.get_ensemble_annotation('ensemble_hg38.txt')
