@@ -405,6 +405,7 @@ class chi2sum:
             L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
         else:
             L = np.linalg.eigvalsh(C)
+            
         L = L[L>0][::-1]
         N_L = []
 

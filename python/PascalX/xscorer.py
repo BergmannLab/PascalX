@@ -41,6 +41,14 @@ from abc import ABC
 
 import time
 
+try:
+    import cupy as cp
+    pool = cp.cuda.MemoryPool(cp.cuda.malloc_managed)
+    cp.cuda.set_allocator(pool.malloc)
+except ModuleNotFoundError:
+    cp = None
+    
+    
 class wchi2sum:
 
     def __init__(self, window=50000, varcutoff=0.99, MAF=0.05):
@@ -571,7 +579,10 @@ class crosscorer(ABC):
         use = np.array(use)
         
         if len(use) > 1:
-            C = np.corrcoef(use)
+            if self._useGPU:
+                C = cp.asnumpy(cp.corrcoef(cp.asarray(use)))
+            else:
+                C = np.corrcoef(use)
         else:
             C = np.ones((1,1))
             
@@ -620,7 +631,10 @@ class crosscorer(ABC):
         use = np.array(use)
         
         if len(use) > 1:
-            C = np.corrcoef(use)
+            if self._useGPU:
+                C = cp.asnumpy(cp.corrcoef(cp.asarray(use)))
+            else:
+                C = np.corrcoef(use)
         else:
             C = np.ones((1,1))
         
@@ -1236,7 +1250,7 @@ class zsum(crosscorer):
     """This class implements the cross scorer based on SNP coherence over gene windows.
     """
    
-    def __init__(self, window=50000, varcutoff=0.99, MAF=0.05, leftTail=False):
+    def __init__(self, window=50000, varcutoff=0.99, MAF=0.05, leftTail=False, gpu=False):
         """
         Initialization:
         
@@ -1246,7 +1260,9 @@ class zsum(crosscorer):
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
             leftTail(bool): Perform a test on the left or right tail (True|False)
+            gpu(bool): Use GPU for linear algebra operations (requires cupy library)
         """ 
+        
         self._CHR = {}
         
         self._window = window
@@ -1261,11 +1277,22 @@ class zsum(crosscorer):
         
         self._leftTail = leftTail
         
+        if gpu and cp is not None:
+            self._useGPU = True
+        else:
+            self._useGPU = False
+            if gpu and cp is None:
+                print("Error: Cupy library not detected => Using CPUs")
+                
     
     def _scoreThread(self,gi,C,S,g,mode,reqacc,intlimit,varcutoff,window,MAF):
       
         if len(C) > 1:
-            L = np.linalg.eigvalsh(C)
+            if self._useGPU:
+                L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
+            else:
+                L = np.linalg.eigvalsh(C)
+            
             L = L[L>0][::-1]
             VT = varcutoff*np.sum(L)
             
@@ -1493,7 +1520,7 @@ class rsum(crosscorer):
     """This class implements the ratio cross scorer based on SNP coherence/variance over gene windows.
     """
 
-    def __init__(self, window=50000, varcutoff=0.99, MAF=0.05, leftTail=False):
+    def __init__(self, window=50000, varcutoff=0.99, MAF=0.05, leftTail=False, gpu=False):
         """
         Args:
         
@@ -1501,6 +1528,7 @@ class rsum(crosscorer):
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
             leftTail(bool): Perform a test on the left or right tail (True|False)
+            gpu(bool): Use GPU for linear algebra operations (requires cupy library)
         """
         self._CHR = {}
         
@@ -1516,11 +1544,22 @@ class rsum(crosscorer):
         
         self._leftTail = leftTail
         
+        if gpu and cp is not None:
+            self._useGPU = True
+        else:
+            self._useGPU = False
+            if gpu and cp is None:
+                print("Error: Cupy library not detected => Using CPUs")
+                
 
     def _scoreThread(self,gi,C,S,g,mode,reqacc,intlimit,varcutoff,window,MAF):
       
         if len(C) > 1:
-            L = np.linalg.eigvalsh(C)
+            if self._useGPU:
+                L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
+            else:
+                L = np.linalg.eigvalsh(C)
+                
             L = L[L>0][::-1]
             VT = varcutoff*np.sum(L)
             
