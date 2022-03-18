@@ -8,6 +8,7 @@ High precision gene and pathway scoring for GWAS summary statistics in python
 - Fast random access to SNP reference panel genomic data with minimal memory footprint.
 - Parallelization over chromosomes and/or genes
 - Gene-wise coherence test between two GWAS
+- GPU acceleration support via cupy
 
 ## Documentation
 
