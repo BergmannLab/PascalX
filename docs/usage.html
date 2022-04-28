@@ -13,8 +13,6 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,11 +29,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -91,7 +88,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
@@ -99,6 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#pathway-scoring">Pathway scoring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#x-scoring">X scoring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tissue-scoring">Tissue scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#snp-gene-scoring">SNP-gene scoring</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PascalX.html">API documentation</a></li>
@@ -413,6 +411,43 @@ A gene annotation has to be loaded as for the standard <a class="reference inter
 </pre></div>
 </div>
 <p>with <code class="docutils literal notranslate"><span class="pre">FAILS</span></code> the list of (meta)-genes without TPM value, <code class="docutils literal notranslate"><span class="pre">GENES</span></code> the list of genes after fusion, and the last list of dictionaries listsing the individual gene inverse cdf transformed values.</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="snp-gene-scoring">
+<h2>SNP-gene scoring<a class="headerlink" href="#snp-gene-scoring" title="Permalink to this headline">¶</a></h2>
+<p>PascalX supports external SNP-gene base information, such as eQTLs or chromatin interaction datasets, to complement the default distance based SNP-gene association. This requires external datasets containing rsids (variant id) and the gene Ensembl id they are associated with.</p>
+<p><strong>Initialization:</strong></p>
+<p>First, as for standard gene scoring, the genescorer has to be initialized and reference panel, ensembl gene annotation and GWAS SNPs have to be loaded.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PascalX</span> <span class="kn">import</span> <span class="n">genescorer</span>
+
+<span class="n">Scorer</span> <span class="o">=</span> <span class="n">genescorer</span><span class="o">.</span><span class="n">chi2sum</span><span class="p">()</span>
+<span class="n">Scorer</span><span class="o">.</span><span class="n">load_refpanel</span><span class="p">(</span><span class="s2">&quot;path/filename&quot;</span><span class="p">)</span>
+<span class="n">Scorer</span><span class="o">.</span><span class="n">load_genome</span><span class="p">(</span><span class="s2">&quot;path/filename&quot;</span><span class="p">)</span>
+
+<span class="n">Scorer</span><span class="o">.</span><span class="n">load_GWAS</span><span class="p">(</span><span class="s2">&quot;path/filename&quot;</span><span class="p">,</span><span class="n">rscol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">pcol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Importing the external SNP-gene datasets:</strong></p>
+<p>The additional external SNP-gene annotation can be loaded via</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Scorer</span><span class="o">.</span><span class="n">load_mapping</span><span class="p">(</span><span class="s2">&quot;path/filename&quot;</span><span class="p">,</span> <span class="n">rcol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gcol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">joint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The arguments <code class="docutils literal notranslate"><span class="pre">rscol=</span></code> and <code class="docutils literal notranslate"><span class="pre">gcol=</span></code> specify, respectively, the columns of the SNP rsid and the ensembl gene id. The <code class="docutils literal notranslate"><span class="pre">header=</span></code> specifies if the first row is a header or not. The <code class="docutils literal notranslate"><span class="pre">joint=</span></code> argument is used to select if the gene and pathway scoring is done using only the external SNPs (False) or if it should also include the SNPs in the windowed gene transcription side (True). The SNP-gene information file can either be a raw text file or a gzip compressed file (with ending .gz).</p>
+<p><strong>Scoring:</strong></p>
+<p>The gene and pathway scoring can then be executed as for standard gene scoring:</p>
+<p><em>Gene scoring:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">Scorer</span><span class="o">.</span><span class="n">score_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><em>Pathway scoring:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PascalX</span> <span class="kn">import</span> <span class="n">pathway</span>
+
+<span class="n">Pscorer</span> <span class="o">=</span> <span class="n">pathway</span><span class="o">.</span><span class="n">chi2rank</span><span class="p">(</span><span class="n">Scorer</span><span class="p">)</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">Pscorer</span><span class="o">.</span><span class="n">load_modules</span><span class="p">(</span><span class="s2">&quot;filename.tsv&quot;</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">fcol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">RESULT</span> <span class="o">=</span> <span class="n">Pscorer</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 

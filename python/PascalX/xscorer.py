@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from PascalX import  wchissum,tools,refpanel,hpstats,genome
+from PascalX.mapper import mapper
 
 import numpy as np
 import gzip
@@ -43,11 +44,10 @@ import time
 
 try:
     import cupy as cp
-    pool = cp.cuda.MemoryPool(cp.cuda.malloc_managed)
-    cp.cuda.set_allocator(pool.malloc)
+    mpool = cp.cuda.MemoryPool(cp.cuda.malloc_managed)
+    cp.cuda.set_allocator(mpool.malloc)
 except ModuleNotFoundError:
     cp = None
-    
     
 class wchi2sum:
 
@@ -372,6 +372,9 @@ class crosscorer(ABC):
     _ENTITIES_p = {}
     _ENTITIES_b = {}
     _ENTITIES_a = {}
+    _MAP = None
+    _iMAP = None
+    _gMAP = None
     
     def __init__(self):
         pass
@@ -443,7 +446,7 @@ class crosscorer(ABC):
         self._SKIPPED = GEN._SKIPPED
         
         
-    def load_GWAS(self,file,rscol=0,pcol=1,bcol=2,a1col=None,a2col=None,idcol=None,name='GWAS',delimiter=None,NAid='n/a',header=False,threshold=1,mincutoff=1e-1000,rank=False,SNPonly=False):
+    def load_GWAS(self,file,rscol=0,pcol=1,bcol=2,a1col=None,a2col=None,idcol=None,name='GWAS',delimiter=None,NAid='n/a',header=False,threshold=1,mincutoff=1e-1000,rank=False,SNPonly=False,log10p=False):
         """
         Load GWAS summary statistics p-values and betas
 
@@ -460,7 +463,9 @@ class crosscorer(ABC):
             delimiter(String): Split character 
             header(bool): Header present
             NAid(String): Code for not available (rows are ignored)
+            threshold(float): Only load data with p-value < threshold
             SNPonly(bool): Load only SNPs (only if a1col and a2col is specified)
+            log10p(bool): p-values are -log10 transformed
         Note:
            
            The loaded GWAS data is shared between different xscorer instances !
@@ -495,7 +500,10 @@ class crosscorer(ABC):
             if L[bcol] != NAid and L[pcol] != NAid:
                 b = float(L[bcol])
                 p = float(L[pcol])
-
+               
+                if log10p:
+                    p = 10**(-p)
+                    
                 if p > 0 and p < 1 and p < threshold:
 
                     if p < minp:
@@ -519,7 +527,7 @@ class crosscorer(ABC):
                         if ( len(L[a1col])==1 and len(L[a2col])==1) or (not SNPonly):
                             crosscorer._ENTITIES_p[nid][L[rscol]] = max(p,mincutoff)
                             crosscorer._ENTITIES_b[nid][L[rscol]] = b
-                            crosscorer._ENTITIES_a[nid][L[rscol]] = [L[a1col],L[a2col]]
+                            crosscorer._ENTITIES_a[nid][L[rscol]] = [L[a1col].upper(),L[a2col].upper()]
                             
                     else:
                         crosscorer._ENTITIES_p[nid][L[rscol]] = max(p,mincutoff)
@@ -543,9 +551,31 @@ class crosscorer(ABC):
 
         print(name,len(crosscorer._ENTITIES_p[nid]),"SNPs loaded ( min p:",minp,")")
 
-
+        
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,bcol=None,delimiter="\t",a1col=None,a2col=None,pfilter=1,header=False):
+        """
+        Loads a SNP to gene mapping
+        
+        Args:
+            
+            file(string): File to load
+            gcol(int): Column with gene id
+            rcol(int): Column with SNP id
+            wcol(int): Column with weight
+            bcol(int): Column with additional weight
+            splitchr(string): Character used to separate columns
+            header(bool): Header present
+            
+        """
+        M = mapper()
+        M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,delimiter,pfilter,header)
+        self._MAP = M._GENEIDtoSNP
+        self._iMAP = M._SNPtoGENEID
+        self._gMAP = M._GENEDATA
+        
 
     def unload_entity(self, nid):
+        del crosscorer._ENTITIES_a[nid]
         del crosscorer._ENTITIES_p[nid]
         del crosscorer._ENTITIES_b[nid]
         self._SCORES={}
@@ -565,7 +595,7 @@ class crosscorer(ABC):
         # Sort out
         for D in DATA:
             # Select
-            if D[1] > MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+            if D is not None and D[1] > MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
                     filtered[D[0]] = [D[1],D[2]]
                     #use.append(D[2])
                     #RID.append(D[0])
@@ -599,7 +629,7 @@ class crosscorer(ABC):
         # Sort out
         for D in DATA:
             # Select
-            if D[1] > MAF: # MAF filter
+            if D is not None and D[1] > MAF: # MAF filter
                 # Allele filter
                 A = self._ENTITIES_a[E_A][D[0]]
                 
@@ -709,7 +739,7 @@ class crosscorer(ABC):
         return C,np.array(RID),ALLELES
     
     
-    def matchAlleles(self,E_A,E_B):
+    def matchAlleles(self,E_A,E_B,matchRefPanel=False):
         """
         Matches alleles between two GWAS 
         (SNPs with non matching alleles are removed)
@@ -718,18 +748,42 @@ class crosscorer(ABC):
             E_A(str) : Identifier of first GWAS
             E_B(str) : Identifier of second GWAS
         """
+        
+        if matchRefPanel:
+            db = {}
+            for i in range(1,23):
+                db[i] = self._ref.load_snp_reference(i)
+        
         if len(self._ENTITIES_a[E_A]) > 0 and len(self._ENTITIES_a[E_B]) > 0:
             Ne = 0
             #Nf = 0
             N = 0
-            
+            Nr = 0
+           
             todel = []
             #toflip = []
             for x in self._ENTITIES_a[E_A]:
                 if x in self._ENTITIES_a[E_B]:
                     if self._ENTITIES_a[E_A][x] == self._ENTITIES_a[E_B][x]:
-                        # If alleles match, all ok and proceed
-                        pass
+                        # If alleles match, check if match with ref panel
+                        if matchRefPanel:
+                            found = False
+                            for c in db:
+                                snp = db[c].getSNPs([x])
+                                if len(snp) > 0:
+                                    for s in snp:
+                                        if s is not None and [s[3],s[4]] == self._ENTITIES_a[E_A][x]: 
+                                            found = True
+                                            break
+
+                                if found:
+                                    break
+
+                            if not found:
+                                # Remove if alles do not match to ref panel
+                                Nr += 1
+                                todel.append(x)
+                            
                     else:
                     # FLIPPING is problematic with multi-alleles
                     #    if self._ENTITIES_a[E_A][x] == self._ENTITIES_a[E_B][x][::-1] and flip:   
@@ -744,13 +798,20 @@ class crosscorer(ABC):
                         
                     N +=1
                     
+                else:
+                    # Delete if not a common
+                    todel.append(x)
+                
             for x in todel:
-                del self._ENTITIES_a[E_A][x]
-                del self._ENTITIES_a[E_B][x]
-                del self._ENTITIES_b[E_A][x]
-                del self._ENTITIES_b[E_B][x]
-                del self._ENTITIES_p[E_A][x]
-                del self._ENTITIES_p[E_B][x]
+                if x in self._ENTITIES_a[E_A]:
+                    del self._ENTITIES_a[E_A][x]
+                    del self._ENTITIES_b[E_A][x]
+                    del self._ENTITIES_p[E_A][x]
+                
+                if x in self._ENTITIES_a[E_B]:
+                    del self._ENTITIES_a[E_B][x]
+                    del self._ENTITIES_b[E_B][x]
+                    del self._ENTITIES_p[E_B][x]
             
             #for x in toflip:  
             #    self._ENTITIES_b[E_B][x] = -self._ENTITIES_b[E_B][x]
@@ -758,10 +819,115 @@ class crosscorer(ABC):
             
             print(N,"common SNPs")
             #print(round(Nf/N*100,2),"% matching flipped alleles -> ", Nf,"SNPs flipped")
-            print(round(Ne/N*100,2),"% non-matching alleles -> ",Ne,"SNPs removed")       
+            print(round(Ne/N*100,2),"% non-matching alleles        -> ",Ne,"SNPs removed")       
+            print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
             
         else:
             print("ERROR: Allele information missing !")
+    
+        if matchRefPanel:
+            del db
+    
+    
+    def matchAlleles_mapper(self,E_A,matchRefPanel=False):
+        """
+        Matches alleles between GWAS and Mapper loaded data 
+        (SNPs with non matching alleles are removed)
+        
+        Args:
+            E_A(str)            : Identifier of GWAS
+            matchRefPanel(bool) : Match also with reference panel alleles
+        """
+        
+        if matchRefPanel:
+            db = {}
+            for i in range(1,23):
+                db[i] = self._ref.load_snp_reference(i)
+        
+        if len(self._ENTITIES_a[E_A]) > 0 and len(self._iMAP) > 0:
+            Ne = 0
+            #Nf = 0
+            N = 0
+            Nr = 0
+           
+            todel = []
+            #toflip = []
+            for x in self._ENTITIES_a[E_A]:
+                if x in self._iMAP:             
+                    # Find SNP
+                    T = self._MAP[self._iMAP[x][0]].keys()
+
+                    if x in T:
+                        L = self._MAP[self._iMAP[x][0]][x]
+                        if self._ENTITIES_a[E_A][x] == [L[1],L[2]]:
+                            # If alleles match, check if match with ref panel
+                            if matchRefPanel:
+                                found = False
+                                for c in db:
+                                    snp = db[c].getSNPs([x])
+                                    if len(snp) > 0:
+                                        for s in snp:
+                                            if s is not None and [s[3],s[4]] == self._ENTITIES_a[E_A][x]: 
+                                                found = True
+                                                break
+
+                                    if found:
+                                        break
+
+                                if not found:
+                                    # Remove if alles do not match to ref panel
+                                    Nr += 1
+                                    todel.append(x)
+
+                        else:
+                        # FLIPPING is problematic with multi-alleles
+                        #    if self._ENTITIES_a[E_A][x] == self._ENTITIES_a[E_B][x][::-1] and flip:   
+                        #        # If minor and ref/major match, flip 
+                        #        toflip.append(x)
+                        #        Nf += 1
+                        #    else:
+
+                            # Else delete
+                            Ne += 1
+                            todel.append(x)
+
+                    N +=1
+                    
+                else:
+                    # Delete if not a common
+                    todel.append(x)
+                
+            for x in todel:
+                if x in self._ENTITIES_a[E_A]:
+                    del self._ENTITIES_a[E_A][x]
+                    del self._ENTITIES_b[E_A][x]
+                    del self._ENTITIES_p[E_A][x]
+                
+                if x in self._iMAP:
+                    G = self._iMAP[x]
+                    for g in G:
+                        T = self._MAP[g].keys()
+                        
+                        if x in T:
+                            del self._MAP[g][x]
+                            
+                    del self._iMAP[x]  
+            
+            #for x in toflip:  
+            #    self._ENTITIES_b[E_B][x] = -self._ENTITIES_b[E_B][x]
+            #    self._ENTITIES_a[E_B][x] = self._ENTITIES_a[E_B][x][::-1]
+            
+            print(N,"common SNPs")
+            #print(round(Nf/N*100,2),"% matching flipped alleles -> ", Nf,"SNPs flipped")
+            print(round(Ne/N*100,2),"% non-matching alleles        -> ",Ne,"SNPs removed")       
+            print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
+            
+        else:
+            print("ERROR: Allele information missing !")
+    
+        if matchRefPanel:
+            del db
+      
     
     def jointlyRank(self,E_A,E_B):
         """
@@ -802,7 +968,62 @@ class crosscorer(ABC):
         for i in range(0,len(SNPs)):
             crosscorer._ENTITIES_p[E_B][SNPs[i]] = wr[i]
         
-        print(len(SNPs),"shared SNPs ( min p:", round( 1./(len(p)+1),2),")")
+        print(len(SNPs),"shared SNPs ( min p:", f'{1./(len(p)+1):.2e}',")")
+    
+    def jointlyRank_mapper(self,E_A,invert=False):
+        """
+        Jointly QQ normalizes the p-values of GWAS and Mapper
+        
+        Args:
+            E_A(str) : Identifier of first GWAS
+
+        """
+        SNPs = np.array(list(crosscorer._ENTITIES_p[E_A].keys() & self._iMAP.keys()))
+        
+        # Build up data from mapper
+        pB = []
+        pA = []
+        for i in range(0,len(SNPs)):
+            for j in range(0,len(self._iMAP[SNPs[i]])):
+                if SNPs[i] in self._MAP[self._iMAP[SNPs[i]][j]]:                
+                    pB.append(self._MAP[self._iMAP[SNPs[i]][j]][SNPs[i]][0])
+                    pA.append(crosscorer._ENTITIES_p[E_A][SNPs[i]])
+                    
+        
+        # Rank
+        rA = np.argsort(pA)
+        rB = np.argsort(pB)
+        map_A = {}
+        map_B = {}
+        for i in range(0,len(rA)):
+            map_A[rA[i]] = (i+1.)/(len(rA)+1.) 
+            map_B[rB[i]] = (i+1.)/(len(rB)+1.) 
+        
+        # Set data in mapper
+        # Generate new dataset based on hashmaps
+        c = 0
+        for i in range(0,len(SNPs)):
+            G = self._iMAP[SNPs[i]]
+            for j in range(0,len(G)):
+                if SNPs[i] in self._MAP[G[j]]:
+
+                    if G[j] not in self._gMAP:
+                        self._gMAP[G[j]] = {}
+
+                    if not invert:
+                        self._gMAP[G[j]][SNPs[i]] = [map_B[c],np.sign(self._MAP[G[j]][SNPs[i]][3]),map_A[c],np.sign(crosscorer._ENTITIES_b[E_A][SNPs[i]])]
+                    else:
+                        self._gMAP[G[j]][SNPs[i]] = [map_A[c],np.sign(crosscorer._ENTITIES_b[E_A][SNPs[i]]),map_B[c],np.sign(self._MAP[G[j]][SNPs[i]][3])]
+                    c += 1
+        
+        
+        self.unload_entity(E_A)
+        self._MAP = None
+        self._iMAP = None
+        print(len(SNPs),"shared SNPs ( min p:", f'{1./(len(rA)+1):.2e}',")")
+       
+    
+    
     
     def get_topscores(self,N=10):
         """
@@ -1116,7 +1337,7 @@ class crosscorer(ABC):
         return R
         
     
-    def score_all(self,E_A=None,E_B=None,threshold=1,parallel=1,method=None,mode=None,nobar=None,reqacc=None):
+    def score_all(self,E_A=None,E_B=None,threshold=1,parallel=1,pcorr=0,method=None,mode=None,nobar=None,reqacc=None):
         """
         Performs cross scoring for all gene symbols
         
@@ -1133,16 +1354,16 @@ class crosscorer(ABC):
         """
         self._SCORES = {}
         
-        if E_A is None:
+        if E_A is None and self._gMAP is None:
             if self._last_EA is not None:
-                E_A = self._last_EA
+                E_A = self._last_EA     
             else:
                 print("Entity A needs to be specified (parameter E_A='name')")
                 return
         else:
             self._last_EA = E_A
             
-        if E_B is None:
+        if E_B is None and self._gMAP is None:
             if self._last_EA is not None:
                 E_B = self._last_EB
             else:
@@ -1151,12 +1372,14 @@ class crosscorer(ABC):
         else:
             self._last_EB = E_B    
         
-        
-        Clist = self.score_chr(E_A, E_B, parallel=parallel,threshold=threshold)
-           
+        if self._gMAP is None:
+            Clist = self.score_chr(E_A, E_B, parallel=parallel,threshold=threshold,pcorr=pcorr)
+        else:
+            Clist = self.score_map(parallel=parallel)
+            
         return Clist
 
-    def score_chr(self,E_A,E_B,chrs=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'],threshold=1,parallel=1):
+    def score_chr(self,E_A,E_B,chrs=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'],threshold=1,parallel=1,pcorr=0):
         """
         Performs cross scoring for gene symbols on given chromosomes
         
@@ -1184,7 +1407,7 @@ class crosscorer(ABC):
                 
                 for i in chrs:
                     
-                    C = self._score_chr_thread(i,E_A,E_B,threshold)
+                    C = self._score_chr_thread(i,E_A,E_B,threshold,pcorr)
                     
                     RESULT.extend(C[0])
                     FAIL.extend(C[1])
@@ -1207,7 +1430,7 @@ class crosscorer(ABC):
             for i in chrs:
                
                 #res.append(pool.apply_async(self._score_chr_thread, args=(i,E_A,E_B,threshold), callback=update))
-                res.append(pool.apply_async(self._score_chr_thread, args=(i,E_A,E_B,threshold)))
+                res.append(pool.apply_async(self._score_chr_thread, args=(i,E_A,E_B,threshold,pcorr)))
 
             # Wait to finish
             for i in range(0,len(res)):
@@ -1226,20 +1449,77 @@ class crosscorer(ABC):
         
         return RESULT,FAIL,TOTALFAIL
     
+
+    def score_map(self,parallel=1):
+        """
+        Performs cross scoring for gene symbols given by mapper
+        
+        Args:
+        
+            parallel(int) : # of cores to use
+          
+        """
+            
+        RESULT = []
+        FAIL = []
+        TOTALFAIL = []
+       
+        if parallel<=1:
+            
+            with tqdm(total=len(self._gMAP), desc="cross scoring [mapper]", bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]",file=sys.stdout) as pbar:
+                    
+                for c in range(1,23,1):
+                    
+                    C = self._score_map_thread(c,)
+                    
+                    RESULT.extend(C[0])
+                    FAIL.extend(C[1])
+                    TOTALFAIL.extend(C[2])
+                    
+                    pbar.update(1)
+        else:
+            pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
+            #with tqdm(total=len(chrs), desc="cross scoring ["+str(E_A).ljust(20)+" -> "+str(E_B).ljust(20)+"]", bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]",file=sys.stdout) as pbar:
+                
+                #def update(*a):
+                #    pbar.update(1)
+            res = []
+           
+            for c in range(1,23,1): 
+                #res.append(pool.apply_async(self._score_chr_thread, args=(i,E_A,E_B,threshold), callback=update))
+                res.append(pool.apply_async(self._score_map_thread, args=(c,)))
+
+            # Wait to finish
+            for i in range(0,len(res)):
+                C = res[i].get()
+
+                RESULT.extend(C[0])
+                FAIL.extend(C[1])
+                TOTALFAIL.extend(C[2])
+                    
+            pool.close()
+        
+        
+        # Store in _SCORES:
+        for X in RESULT:
+            self._SCORES[X[0]] = float(X[1])
+        
+        return RESULT,FAIL,TOTALFAIL
+
 #@njit
-def _zsum_EV_cutoff(S,VT,L):
+def _zsum_EV_cutoff(S,VT,L,pcorr):
     N_L = []
 
     # Leading EV
     c = L[0]
-    N_L.append(0.5*L[0])
-    N_L.append(-0.5*L[0])
+    N_L.append(0.5*(1+pcorr)*L[0])
+    N_L.append(-0.5*(1-pcorr)*L[0])
 
     # Cutoff variance for remaining EVs
     for i in range(1,len(L)):
         c = c + L[i]
-        N_L.append(0.5*L[i])
-        N_L.append(-0.5*L[i])
+        N_L.append(0.5*L[i]*(1+pcorr))
+        N_L.append(-0.5*L[i]*(1-pcorr))
 
         if c >= VT:
             break
@@ -1285,18 +1565,18 @@ class zsum(crosscorer):
                 print("Error: Cupy library not detected => Using CPUs")
                 
     
-    def _scoreThread(self,gi,C,S,g,mode,reqacc,intlimit,varcutoff,window,MAF):
+    def _scoreThread(self,gi,C,S,g,mode,reqacc,intlimit,varcutoff,window,MAF,pcorr):
       
         if len(C) > 1:
             if self._useGPU:
                 L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
             else:
                 L = np.linalg.eigvalsh(C)
-            
+                
             L = L[L>0][::-1]
             VT = varcutoff*np.sum(L)
             
-            N_L = _zsum_EV_cutoff(S,VT,L)
+            N_L = _zsum_EV_cutoff(S,VT,L,pcorr)
           
             if not self._leftTail:
                 return [g,wchissum.onemin_cdf_davies(S,N_L,acc=reqacc,mode=mode,lim=intlimit)] 
@@ -1304,7 +1584,7 @@ class zsum(crosscorer):
                 return [g,wchissum.fconstmin_cdf_davies(-1,0,S,N_L,acc=reqacc,mode=mode,lim=intlimit)] 
             
         else:
-           
+             
             if not self._leftTail:
                 if S > 0:
                     r = (0.5*np.pi - iti0k0(abs(S))[1])/np.pi # abs due to symmetry
@@ -1322,7 +1602,7 @@ class zsum(crosscorer):
            
             return [g,[r,0]]
    
-    def _score_chr_thread(self, C, E_A, E_B, threshold):
+    def _score_chr_thread(self, C, E_A, E_B, threshold, pcorr):
         
        
         SNPs = crosscorer._ENTITIES_p[E_A].keys() & crosscorer._ENTITIES_p[E_B].keys()
@@ -1384,7 +1664,7 @@ class zsum(crosscorer):
                         
                         sumr = z.dot(w)
 
-                        score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF)
+                        score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF,pcorr)
 
                         if score[1][1] !=0 or score[1][0] <= 0.0:
                             #print("[WARNING]( chr",C,"):",score)
@@ -1415,7 +1695,7 @@ class zsum(crosscorer):
                 
                 sumr = z.dot(w)
 
-                score = self._scoreThread(0,corr,sumr,E_B,'128b',1e-16,1000000,0.99,50000,0.05)
+                score = self._scoreThread(0,corr,sumr,E_B,'128b',1e-16,1000000,0.99,50000,0.05,pcorr)
 
                 if score[1][1] !=0 or score[1][0] <= 0.0:
                     return [],[[C,score]],[]
@@ -1426,7 +1706,58 @@ class zsum(crosscorer):
             return [],[],[C,"No SNPs"]
     
 
-    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False):
+    def _score_map_thread(self, C):
+        
+        RESULT = []
+        FAIL = []
+        TOTALFAIL = []
+        
+        db  = self._ref.load_snp_reference(C)
+        REF = db.getSortedKeys()
+            
+        # Run over genes on chromosome
+        if len(self._CHR[str(C)]) > 0:
+         
+            # Loop over genes
+            for gene in self._CHR[str(C)][0]:
+
+                G = self._GENEID[gene]
+                
+                if gene in self._gMAP:
+                    
+                    snps = list(self._gMAP[gene].keys()) # List to prevent blocking ?
+                    
+                    corr,RID = self._calcSNPcorr(snps,db,self._MAF)
+                    data = self._gMAP[gene]
+                    w = np.array([data[x][1]*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( data[x][0]  )) for x in RID])
+                    z = np.array([data[x][3]*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( data[x][2]  )) for x in RID])                   
+
+                    sumr = z.dot(w)
+
+                    score = self._scoreThread(0,corr,sumr,None,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF,0.)
+
+                    if score[1][1] !=0 or score[1][0] <= 0.0:
+                        #print("[WARNING]( chr",C,"):",score)
+                        FAIL.append([G[4],score,len(w),sumr])
+
+                    else:
+                        RESULT.append([G[4],score[1][0],len(w),np.sign(sumr)])
+                        #RESULT.append([G[4],score[1][0],len(w),np.sign(sumr),sumr,score[1]])
+
+                else:
+                    TOTALFAIL.append([G[4],"No SNPs"])
+
+
+            return RESULT,FAIL,TOTALFAIL
+
+            
+        
+        else:
+            return [],[],[C,"No SNPs"]
+    
+    
+    
+    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False,pcorr=0):
         RESULT = []
         FAIL = []
         TOTALFAIL = []
@@ -1476,7 +1807,7 @@ class zsum(crosscorer):
                       
                     sumr = z.dot(w)
 
-                    score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05)
+                    score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05,pcorr)
 
                     if score[1][1] !=0 or score[1][0] <= 0.0:
                         #print("[WARNING]( chr",C,"):",score)
@@ -1497,19 +1828,19 @@ class zsum(crosscorer):
     
             
 #@njit        
-def _rsum_EV_cutoff(S,VT,L):
+def _rsum_EV_cutoff(S,VT,L,pcorr):
     N_L = []
 
     # Leading EV
     c = L[0]
-    N_L.append( L[0]*(1-S/np.sqrt((1+S**2)))/2*np.sqrt(1+S**2) )
-    N_L.append(-L[0]*(1+S/np.sqrt((1+S**2)))/2*np.sqrt(1+S**2) )
+    N_L.append( L[0]*(1 +(pcorr -S)/np.sqrt((1+S**2 -pcorr*S)))/2 * np.sqrt(1+S**2 -pcorr*S) )
+    N_L.append(-L[0]*(1 -(pcorr -S)/np.sqrt((1+S**2 -pcorr*S)))/2 * np.sqrt(1+S**2 -pcorr*S) )
 
     # Cutoff variance for remaining EVs
     for i in range(1,len(L)):
         c = c + L[i]
-        N_L.append( L[i]*(1-S/np.sqrt((1+S**2)))/2*np.sqrt(1+S**2)  )
-        N_L.append( -L[i]*(1+S/np.sqrt((1+S**2)))/2*np.sqrt(1+S**2) )
+        N_L.append( L[i]*(1 +(pcorr -S)/np.sqrt((1+S**2 -pcorr*S)))/2 * np.sqrt(1+S**2 -pcorr*S)  )
+        N_L.append( -L[i]*(1 -(pcorr -S)/np.sqrt((1+S**2 -pcorr*S)))/2 * np.sqrt(1+S**2 -pcorr*S) )
 
         if c >= VT:
             break
@@ -1552,7 +1883,7 @@ class rsum(crosscorer):
                 print("Error: Cupy library not detected => Using CPUs")
                 
 
-    def _scoreThread(self,gi,C,S,g,mode,reqacc,intlimit,varcutoff,window,MAF):
+    def _scoreThread(self,gi,C,S,g,mode,reqacc,intlimit,varcutoff,window,MAF,pcorr):
       
         if len(C) > 1:
             if self._useGPU:
@@ -1563,7 +1894,7 @@ class rsum(crosscorer):
             L = L[L>0][::-1]
             VT = varcutoff*np.sum(L)
             
-            N_L = _rsum_EV_cutoff(S,VT,L)
+            N_L = _rsum_EV_cutoff(S,VT,L,pcorr)
                     
             if not self._leftTail:
                 return [g,wchissum.onemin_cdf_davies(0,N_L,acc=reqacc,mode=mode,lim=intlimit)] 
@@ -1574,9 +1905,9 @@ class rsum(crosscorer):
             # Use 1d case (Cauchy)
             
             if not self._leftTail:
-                ret = 1-(0.5+(np.arctan( S )/np.pi))
+                ret = 1-(0.5+(np.arctan( (S-pcorr)/np.sqrt(1-pcorr**2) )/np.pi))
             else:
-                ret = (0.5+(np.arctan( S )/np.pi))
+                ret = (0.5+(np.arctan( (S-pcorr)/np.sqrt(1-pcorr**2) )/np.pi))
             
             # Precision cutoff
             if ret == 0:
@@ -1587,7 +1918,7 @@ class rsum(crosscorer):
        
      
   
-    def _score_chr_thread(self, C, E_A, E_B, threshold):
+    def _score_chr_thread(self, C, E_A, E_B, threshold, pcorr):
         
         SNPs = crosscorer._ENTITIES_p[E_A].keys() & crosscorer._ENTITIES_p[E_B].keys()
 
@@ -1652,7 +1983,7 @@ class rsum(crosscorer):
                         if norm != 0:
                             sumr = z.dot(w)/norm
 
-                            score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF)
+                            score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF,pcorr)
 
                             if score[1][1] !=0 or score[1][0] <= 0.0:
                                 #print("[WARNING]( chr",C,"):",score)
@@ -1686,7 +2017,7 @@ class rsum(crosscorer):
                 #sumn = z.dot(z)
                 
                 
-                score = self._scoreThread(0,corr,sumr,E_B,'128b',1e-16,1000000,0.99,50000,0.05)
+                score = self._scoreThread(0,corr,sumr,E_B,'128b',1e-16,1000000,0.99,50000,0.05,pcorr)
 
                 if score[1][1] !=0 or score[1][0] <= 0.0:
                     return [],[[C,score]],[]
@@ -1696,8 +2027,57 @@ class rsum(crosscorer):
         else:
             return [],[],[C,"No SNPs"]
     
+    
+    def _score_map_thread(self, C):
+        RESULT = []
+        FAIL = []
+        TOTALFAIL = []
+        
+        db  = self._ref.load_snp_reference(C)
+        REF = db.getSortedKeys()
+            
+        # Run over genes on chromosome
+        if len(self._CHR[str(C)]) > 0:
+            # Loop over genes
+            for gene in self._CHR[str(C)][0]:
 
-    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False):
+                G = self._GENEID[gene]
+                if gene in self._gMAP:
+                    snps = list(self._gMAP[gene].keys()) # List to prevent blocking ?
+                    corr,RID = self._calcSNPcorr(snps,db,self._MAF)
+                    data = self._gMAP[gene]
+    
+                    w = np.array([data[x][1]*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( data[x][0]  )) for x in RID])
+                    z = np.array([data[x][3]*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( data[x][2]  )) for x in RID])                   
+
+                    norm = z.dot(z)
+                        
+                    if norm != 0:
+                        sumr = z.dot(w)/norm
+
+                        score = self._scoreThread(0,corr,sumr,None,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF,0.)
+
+                        if score[1][1] !=0 or score[1][0] <= 0.0:
+                            #print("[WARNING]( chr",C,"):",score)
+                            FAIL.append([G[4],score,len(w),sumr])
+
+                        else:
+                            RESULT.append([G[4],score[1][0],len(w),np.sign(sumr)])
+                            #RESULT.append([G[4],score[1][0],len(w),np.sign(sumr),sumr,score[1]])
+                    else:
+                        TOTALFAIL.append([G[4],"NaN for denom"])
+                else:
+                    TOTALFAIL.append([G[4],"No SNPs"])
+
+            return RESULT,FAIL,TOTALFAIL
+        
+        else:
+            return [],[],[C,"No SNPs"]
+                
+                
+                
+
+    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False,pcorr=0):
         RESULT = []
         FAIL = []
         TOTALFAIL = []
@@ -1748,7 +2128,7 @@ class rsum(crosscorer):
                     if norm != 0:
                         sumr = z.dot(w)/norm
 
-                        score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05)
+                        score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05,pcorr)
 
                         if score[1][1] !=0 or score[1][0] <= 0.0:
                             #print("[WARNING]( chr",C,"):",score)

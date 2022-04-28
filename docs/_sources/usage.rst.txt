@@ -392,3 +392,56 @@ with ``FAILS`` the list of (meta)-genes without TPM value, ``GENES`` the list of
 
 .. toctree:
     :maxdepth: 2
+    
+_______________________
+
+
+SNP-gene scoring
+-----------------
+
+PascalX supports external SNP-gene base information, such as eQTLs or chromatin interaction datasets, to complement the default distance based SNP-gene association. This requires external datasets containing rsids (variant id) and the gene Ensembl id they are associated with.
+
+**Initialization:**
+
+First, as for standard gene scoring, the genescorer has to be initialized and reference panel, ensembl gene annotation and GWAS SNPs have to be loaded.
+
+.. code-block:: python
+
+    from PascalX import genescorer
+
+    Scorer = genescorer.chi2sum()
+    Scorer.load_refpanel("path/filename")
+    Scorer.load_genome("path/filename")
+
+    Scorer.load_GWAS("path/filename",rscol=0,pcol=1,header=False)
+
+**Importing the external SNP-gene datasets:**
+
+The additional external SNP-gene annotation can be loaded via
+
+.. code-block:: python
+
+    Scorer.load_mapping("path/filename", rcol=0, gcol=1, delimiter=',', header=True, joint=True)
+
+The arguments ``rscol=`` and ``gcol=`` specify, respectively, the columns of the SNP rsid and the ensembl gene id. The ``header=`` specifies if the first row is a header or not. The ``joint=`` argument is used to select if the gene and pathway scoring is done using only the external SNPs (False) or if it should also include the SNPs in the windowed gene transcription side (True). The SNP-gene information file can either be a raw text file or a gzip compressed file (with ending .gz).
+
+**Scoring:**
+
+The gene and pathway scoring can then be executed as for standard gene scoring:
+
+*Gene scoring:*
+
+.. code-block:: python
+
+    R = Scorer.score_all()
+
+*Pathway scoring:*
+
+.. code-block:: python
+
+    from PascalX import pathway
+
+    Pscorer = pathway.chi2rank(Scorer)
+    M = Pscorer.load_modules("filename.tsv",ncol=0,fcol=2)
+
+    RESULT = Pscorer.score(M)
