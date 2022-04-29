@@ -12,8 +12,10 @@ PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_
 
     * Multi-precision weighted :math:`\chi^2` cdf calculation (up to 100 digits) 
     * Parallelization over chromosomes and/or genes
+    * GPU support for acceleration of linear algebra operations
     * Fast random access to reference panel genomic data via own indexed SNP database
     * Gene-wise coherence test between two GWAS
+    * Support for SNP selection via external data
     * Tissue enrichment test (experimental)
     
     

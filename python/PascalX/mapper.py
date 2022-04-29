@@ -29,15 +29,17 @@ class mapper:
     def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,delimiter="\t",pfilter=1,header=False):
         """
         Loads a SNP to gene mapping
+        
         Args:
             file(string): File to load
             gcol(int): Column with gene id
             rcol(int): Column with SNP id
             wcol(int): Column with weight
+            a1col(int): Column of alternate allele (None for ignoring alleles)
+            a2col(int): Column of reference allele (None for ignoring alleles)
             bcol(int): Column with additional weight
             delimiter(string): Character used to separate columns
             header(bool): Header present
-            clear(bool): 
             pfilter(float): Only include rows with wcol < pfilter
         """
         self._GENEIDtoSNP = {}
