@@ -1159,6 +1159,7 @@ class chi2sum:
         
             G(list): List of gene symbols
             show_correlation(bool): Plot the corresponding SNP-SNP correlation matrix 
+            mark_window(bool): Mark the gene transcription start and end positions
             tickspacing(int): Spacing of ticks for correlation plot
         """
         print("Window size:",self._window)
