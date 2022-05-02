@@ -7,8 +7,9 @@ High precision gene and pathway scoring for GWAS summary statistics in python
 - Internal quad and multi-precision arithmetic support for high precision gene scoring via exact CDF calculations (up to 100 digits)
 - Fast random access to SNP reference panel genomic data with minimal memory footprint.
 - Parallelization over chromosomes and/or genes
-- Gene-wise coherence test between two GWAS
 - GPU acceleration support via cupy
+- Gene-wise coherence test between two GWAS
+- Support for SNP selection via external data
 
 ## Documentation
 
