@@ -19,44 +19,75 @@
 
 import gzip
 
+
 class mapper:
-    
     def __init__(self):
         self._GENEIDtoSNP = {}
+        self._SNPtoGENEID = {}
+        self._GENEDATA = {}
         
-    
-    def load_mapping(self,file,gcol=0,rcol=1,ocol=3,splitchr="\t",header=False):
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,delimiter="\t",pfilter=1,header=False):
         """
         Loads a SNP to gene mapping
         
         Args:
-            
             file(string): File to load
             gcol(int): Column with gene id
             rcol(int): Column with SNP id
-            ocol(int): Column with weight
-            splitchr(string): Character used to separate columns
+            wcol(int): Column with weight
+            a1col(int): Column of alternate allele (None for ignoring alleles)
+            a2col(int): Column of reference allele (None for ignoring alleles)
+            bcol(int): Column with additional weight
+            delimiter(string): Character used to separate columns
             header(bool): Header present
-            
+            pfilter(float): Only include rows with wcol < pfilter
         """
         self._GENEIDtoSNP = {}
-        with gzip.open(file,'rt') as f:
+        self._SNPtoGENEID = {}
+        self._GENEDATA = {}
+        
+        try:
+            f = gzip.open(file, "rt")
             if header:
                 f.readline()
-            
-            c = 0
-            for line in f:
-                line = line.rstrip().split(splitchr)
-                
+            else:
+                f.readline()
+                f.seek(0)
+        except OSError:
+            f = open(file, "r")
+            if header:
+                f.readline()
+
+        c = 0
+        for line in f:
+            line = line.rstrip().split(delimiter)
+
+            if wcol is None or float(line[wcol]) <= pfilter:
+
                 gid = line[gcol]
-                
+
                 if gid not in self._GENEIDtoSNP:
-                    self._GENEIDtoSNP[gid] = [[],[]]
-                    
+                    self._GENEIDtoSNP[gid] = {} #[[],[],[],[],[]]
+
                     c = c + 1
-                    
-                self._GENEIDtoSNP[gid][0].append(line[rcol])
-                self._GENEIDtoSNP[gid][1].append(int(line[ocol]))
                 
-            print(c,"gene to SNP mappings loaded")
-        
+                rid = line[rcol]
+                
+                self._GENEIDtoSNP[gid][rid] = [None,None,None,None]
+                
+                if wcol is not None:
+                    self._GENEIDtoSNP[gid][rid][0] = float(line[wcol])
+                
+                if a1col is not None and a2col is not None:
+                    self._GENEIDtoSNP[gid][rid][1] = line[a1col]
+                    self._GENEIDtoSNP[gid][rid][2] = line[a2col]
+
+                if bcol is not None:
+                    self._GENEIDtoSNP[gid][rid][3] = float(line[bcol])
+                                 
+                if line[rcol] not in self._SNPtoGENEID:
+                    self._SNPtoGENEID[line[rcol]] = [gid]
+                else:
+                    self._SNPtoGENEID[line[rcol]].append(gid)
+
+        print(c,"gene to SNP mappings loaded")

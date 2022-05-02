@@ -32,7 +32,7 @@ class db:
     
     def __init__(self):
         self._modified = False;
-        self._idx = [{},{}]
+        self._idx = [{},{},{}]
     
         pass
         
@@ -52,7 +52,7 @@ class db:
             self._idx = pickle.load(fp)
             fp.close()
         else:
-            self._idx = [{},{}]
+            self._idx = [{},{},{}]
         
         # open file
         self._datafile = open(filename+".db","a+b")
@@ -93,6 +93,9 @@ class db:
                 else:
                     self._idx[1][r].append( I )
             
+                # Snp to pos mapping
+                self._idx[2][r] = D
+                
             
     def get(self,pos):
         """
@@ -139,7 +142,35 @@ class db:
                 E.append(None)
         
         return E
-    
+        
+    def getPosatSNPs(self,snpids):
+        """
+        Returns the position corresponding to a snpid
+        WARNING: Inefficient
+        """
+        positions = []
+        for snpid in snpids:
+            if snpid in self._idx[1]:
+                fseek = self._idx[1][snpid]
+        
+                for pos, fs in self._idx[0].items(): 
+                    for i in range(0,len(fs[0])):
+                        if fseek[0] == fs[0][i]:
+                            positions.append(pos)
+                            break
+                            
+        return positions
+        
+    def getSNPsPos(self,snpids):
+        positions = []
+        for snpid in snpids:
+            if snpid in self._idx[2]:
+                positions.append(self._idx[2][snpid])
+            #else:
+                #positions.append(None)
+        
+        return positions
+
     def getSNPs(self,snps):
         """
         Returns all stored data for a set of SNPs indexed via SNP ids
@@ -181,24 +212,7 @@ class db:
         Returns a sorted list of SNP positions in storage
         """
         return SortedList(self._idx[0].keys())
-    
-    def getSNPpos(self,snpid):
-        """
-        Returns the position corresponding to a snpid
         
-        Warning: 
-            The current implementation is inefficient.
-        """
-        if snpid in self._idx[1]:
-            fseek = self._idx[1][snpid][0]
-        
-            for pos, fs in self._idx[0].items(): 
-                for i in range(0,len(fs[0])):
-                    if fseek[0] == fs[0][i]:
-                        return pos
-
-        return None
-    
     def close(self):
         """
         Closes open storage file. 
@@ -211,7 +225,7 @@ class db:
             pickle.dump(self._idx, fp, protocol=pickle.HIGHEST_PROTOCOL)
             fp.close()
         
-        self._idx = [{},{}]
+        self._idx = [{},{},{}]
         
         # close 
         self._datafile.close()

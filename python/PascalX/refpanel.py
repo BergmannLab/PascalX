@@ -74,7 +74,7 @@ class refpanel:
             parallel(int): Number of cores to use for parallel import of reference panel
             
             keepfile(string|None): [only for .vcf] File with sample ids (one per line) to keep.  None to keep all.
-            qualityT(int): [only for .vcf] Quality threshold for variant to keep 
+            qualityT(int): [only for .vcf] Quality threshold for variant to keep (None to ignore)
             SNPonly(bool): [only for.vcf] Load only SNPs 
             
         Note:
@@ -188,7 +188,7 @@ class refpanel:
                         break
 
                 # Checks
-                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS' and (int(data[5]) < qualityT)):
+                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS' and qualityT is not None and (int(data[5]) < qualityT)):
                     continue
 
                 # Read genotype
@@ -266,7 +266,7 @@ class refpanel:
         chrs    : List of chromosomes to import
         parallel: # of cores to use (WARNING: Take care that you have sufficient memory!)
         keepfile: File with sample ids (one per line) to keep (only for .vcf) 
-        qualityT: Quality threshold for variant to keep (only for .vcf)
+        qualityT: Quality threshold for variant to keep (only for .vcf) (None to ignore)
         
         Warning: 
             Direct .vcf import is currently only experimental !

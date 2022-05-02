@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Index &mdash; PascalX 0.0.2 documentation</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -50,7 +52,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PascalX
+            <a href="index.html" class="icon icon-home"> PascalX
           
 
           
@@ -129,6 +131,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -140,7 +144,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
         
       </li>
     
@@ -243,11 +247,11 @@
 </li>
       <li><a href="PascalX.html#PascalX.snpdb.db.getKeys">getKeys() (PascalX.snpdb.db method)</a>
 </li>
+      <li><a href="PascalX.html#PascalX.snpdb.db.getPosatSNPs">getPosatSNPs() (PascalX.snpdb.db method)</a>
+</li>
       <li><a href="PascalX.html#PascalX.snpdb.db.getSNPatPos">getSNPatPos() (PascalX.snpdb.db method)</a>
 </li>
       <li><a href="PascalX.html#PascalX.snpdb.db.getSNPKeys">getSNPKeys() (PascalX.snpdb.db method)</a>
-</li>
-      <li><a href="PascalX.html#PascalX.snpdb.db.getSNPpos">getSNPpos() (PascalX.snpdb.db method)</a>
 </li>
       <li><a href="PascalX.html#PascalX.snpdb.db.getSNPs">getSNPs() (PascalX.snpdb.db method)</a>
 </li>
@@ -273,6 +277,14 @@
 
       <ul>
         <li><a href="PascalX.html#PascalX.xscorer.zsum.jointlyRank">(PascalX.xscorer.zsum method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="PascalX.html#PascalX.xscorer.rsum.jointlyRank_mapper">jointlyRank_mapper() (PascalX.xscorer.rsum method)</a>
+
+      <ul>
+        <li><a href="PascalX.html#PascalX.xscorer.zsum.jointlyRank_mapper">(PascalX.xscorer.zsum method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -303,14 +315,18 @@
         <li><a href="PascalX.html#PascalX.xscorer.zsum.load_GWAS">(PascalX.xscorer.zsum method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="PascalX.html#PascalX.genescorer.chi2sum.load_mapping">load_mapping() (PascalX.genescorer.chi2sum method)</a>
 
       <ul>
         <li><a href="PascalX.html#PascalX.mapper.mapper.load_mapping">(PascalX.mapper.mapper method)</a>
 </li>
+        <li><a href="PascalX.html#PascalX.xscorer.rsum.load_mapping">(PascalX.xscorer.rsum method)</a>
+</li>
+        <li><a href="PascalX.html#PascalX.xscorer.zsum.load_mapping">(PascalX.xscorer.zsum method)</a>
+</li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="PascalX.html#PascalX.pathway.chi2perm.load_modules">load_modules() (PascalX.pathway.chi2perm method)</a>
 
       <ul>
@@ -339,12 +355,20 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="PascalX.html#PascalX.mapper.mapper">mapper (class in PascalX.mapper)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="PascalX.html#PascalX.xscorer.rsum.matchAlleles">matchAlleles() (PascalX.xscorer.rsum method)</a>
+      <li><a href="PascalX.html#PascalX.genescorer.chi2sum.matchAlleles">matchAlleles() (PascalX.genescorer.chi2sum method)</a>
 
       <ul>
+        <li><a href="PascalX.html#PascalX.xscorer.rsum.matchAlleles">(PascalX.xscorer.rsum method)</a>
+</li>
         <li><a href="PascalX.html#PascalX.xscorer.zsum.matchAlleles">(PascalX.xscorer.zsum method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="PascalX.html#PascalX.xscorer.rsum.matchAlleles_mapper">matchAlleles_mapper() (PascalX.xscorer.rsum method)</a>
+
+      <ul>
+        <li><a href="PascalX.html#PascalX.xscorer.zsum.matchAlleles_mapper">(PascalX.xscorer.zsum method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -381,10 +405,14 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="PascalX.html#PascalX.refpanel.refpanel">refpanel (class in PascalX.refpanel)</a>
+      <li><a href="PascalX.html#PascalX.genescorer.chi2sum.rank">rank() (PascalX.genescorer.chi2sum method)</a>
+</li>
+      <li><a href="PascalX.html#PascalX.genescorer.chi2sum.rank_mapper">rank_mapper() (PascalX.genescorer.chi2sum method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="PascalX.html#PascalX.refpanel.refpanel">refpanel (class in PascalX.refpanel)</a>
+</li>
       <li><a href="PascalX.html#PascalX.genescorer.chi2sum.rescore">rescore() (PascalX.genescorer.chi2sum method)</a>
 </li>
       <li><a href="PascalX.html#PascalX.xscorer.rsum">rsum (class in PascalX.xscorer)</a>
@@ -429,6 +457,12 @@
         <li><a href="PascalX.html#PascalX.xscorer.zsum.score_chr">(PascalX.xscorer.zsum method)</a>
 </li>
       </ul></li>
+      <li><a href="PascalX.html#PascalX.xscorer.rsum.score_map">score_map() (PascalX.xscorer.rsum method)</a>
+
+      <ul>
+        <li><a href="PascalX.html#PascalX.xscorer.zsum.score_map">(PascalX.xscorer.zsum method)</a>
+</li>
+      </ul></li>
       <li><a href="PascalX.html#PascalX.pathway.chi2perm.set_genescorer">set_genescorer() (PascalX.pathway.chi2perm method)</a>
 
       <ul>
@@ -462,28 +496,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2021, Bergmann lab and contributors
+        &#169; Copyright 2021, Bergmann lab and contributors.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

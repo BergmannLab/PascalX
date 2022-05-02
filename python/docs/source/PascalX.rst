@@ -14,6 +14,7 @@ Internal modules:
 * SNPdb_ (:code:`PascalX.snpdb`)
 * RefPanel_ (:code:`PascalX.refpanel`)
 * Mapper_ (:code:`PascalX.mapper`)
+
 _______________________
 
 .. _Genome:
