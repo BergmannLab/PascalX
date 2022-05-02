@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to PascalX’s documentation! &mdash; PascalX 0.0.2 documentation</title>
+  <title>Welcome to PascalX’s documentation! &mdash; PascalX 0.0.3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,10 +31,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
@@ -167,8 +170,10 @@
 <div><ul class="simple">
 <li><p>Multi-precision weighted <span class="math notranslate nohighlight">\(\chi^2\)</span> cdf calculation (up to 100 digits)</p></li>
 <li><p>Parallelization over chromosomes and/or genes</p></li>
+<li><p>GPU support for acceleration of linear algebra operations</p></li>
 <li><p>Fast random access to reference panel genomic data via own indexed SNP database</p></li>
 <li><p>Gene-wise coherence test between two GWAS</p></li>
+<li><p>Support for SNP selection via external data</p></li>
 <li><p>Tissue enrichment test (experimental)</p></li>
 </ul>
 </div></blockquote>
@@ -181,7 +186,7 @@
 <img alt="_images/SatterthwaiteVsRuben.png" src="_images/SatterthwaiteVsRuben.png" />
 <p>In the second row, the ratio of p-values is plotted at various fixed arguments, sampled from different weights. The bullet point marks the mean and the error bar the range of values observed. We infer that the Satterthwaite-Welch approximation tends to overestimate the significance, in particular for small <span class="math notranslate nohighlight">\(N\)</span>. Note that the error can go beyond several orders of magnitude.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#multi-platform-docker">Multi-platform (Docker)</a></li>
@@ -251,7 +256,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Bergmann lab and contributors.
+        &#169; Copyright 2021-2022, Bergmann lab and contributors.
 
     </p>
   </div>
