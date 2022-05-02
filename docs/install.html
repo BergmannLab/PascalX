@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; PascalX 0.0.2 documentation</title>
+  <title>Installation &mdash; PascalX 0.0.3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,10 +31,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -88,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#multi-platform-docker">Multi-platform (Docker)</a></li>
@@ -182,7 +184,7 @@
 </div>
 <p>For data persistance after stopping the image, you should work exlusively in the <code class="docutils literal notranslate"><span class="pre">/data</span></code> directory.</p>
 <p>A jupyter notebook running in the image can be started with</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">ip</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span> <span class="o">--</span><span class="n">allow</span><span class="o">-</span><span class="n">root</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">ip</span> <span class="mf">0.0.0.0</span> <span class="o">--</span><span class="n">allow</span><span class="o">-</span><span class="n">root</span>
 </pre></div>
 </div>
 <p>Open on your host machine a browser and visit <a class="reference external" href="http://localhost:8888/">http://localhost:8888/</a> to use PascalX.</p>
@@ -244,7 +246,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Bergmann lab and contributors.
+        &#169; Copyright 2021-2022, Bergmann lab and contributors.
 
     </p>
   </div>
