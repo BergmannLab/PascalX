@@ -43,6 +43,7 @@ setup(
     "fastnumbers>=3.1.0",
 	"seaborn>=0.11.0",
 	"progressbar>=2.5",
+	"docutils<0.18",
 	"sphinx>=3.2.1",
 	"sphinx-rtd-theme>=0.5.0"
     ],
