@@ -40,7 +40,6 @@ setup(
 	"tqdm>=4.43.0",
 	"scipy>=1.4.0",
 	"numpy>=1.18.0",
-    "fastnumbers>=3.1.0",
 	"seaborn>=0.11.0",
 	"progressbar>=2.5",
 	"docutils<0.18",
