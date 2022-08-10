@@ -34,6 +34,29 @@ extern double oneminwchissum_m1nc0_ruben_128b(double* lambda, int N, double X, i
 extern double oneminwchissum_m1nc0_ruben_100d(double* lambda, int N, double X, int lim, double acc, int* ifault);
 extern double oneminwchissum_m1nc0_ruben_200d(double* lambda, int N, double X, int lim, double acc, int* ifault);
 
+extern double oneminwchissum_m1nc0_satterthwaite_auto(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_satterthwaite(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_satterthwaite_float128(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_satterthwaite_100d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_satterthwaite_200d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_satterthwaite_500d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_satterthwaite_1000d(double* lambda, int N, double X);
+
+extern double oneminwchissum_m1nc0_pearson_auto(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_pearson(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_pearson_float128(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_pearson_100d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_pearson_200d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_pearson_500d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_pearson_1000d(double* lambda, int N, double X);
+
+extern double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_saddle(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_saddle_float128(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_saddle_100d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_saddle_200d(double* lambda, int N, double X);
+extern double oneminwchissum_m1nc0_saddle_500d(double* lambda, int N, double X);
+    
 extern double oneminwchissum_m1nc0_auto(double* lambda, int N, double X, int lim, double acc, int* ifault);
 
 extern double oneminwchissum_m1_davies(double* lambda, double* nc, int N, double X, int lim, double acc, int* ifault, double* trace);

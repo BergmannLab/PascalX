@@ -82,64 +82,7 @@ double onemin_chi2cdf_100d(double x, int dof) {
 }
 
 
-/*
-    Satterthwaite-Welch approximation
-    
-    following Box 1956: 
-    "Some Theorems on Quadratic Forms Applied in the Study of Analysis of Variance Problems, I. Effect of Inequality of Variance in the One-Way Classification "
-    
-    Ann. Math. Statist.
-    Volume 25, Number 2 (1954), 290-302.
-    
-     ~ g*chi(2) ~ Gamma(k=h/2,theta=2g)
-*/
-extern "C"
-double oneminwchissum_m1nc0_satterthwaite_100d(double* lambda, int N, double X) {
-    
-    // Calc g,h
-    double sum1 = 0;
-    double sum2 = 0;
-    for(int i =0; i < N; i++) {
-        sum1 += lambda[i];
-        sum2 += lambda[i]*lambda[i];
-    }
-    
-    double g = sum2/sum1;
-    double h = sum1*sum1/sum2;
-   
-    // Calc cdf
-    cpp_bin_float_100 x = cpp_bin_float_100(X);
-    
-    gamma_distribution<cpp_bin_float_100> gamma(h/2,2*g);
-   
-    x = cpp_bin_float_100(1.) - cdf(gamma,x);
-    
-    return x.convert_to<double>(); 
-}
 
-extern "C"
-double oneminwchissum_m1nc0_satterthwaite_200d(double* lambda, int N, double X) {
-    
-    // Calc g,h
-    double sum1 = 0;
-    double sum2 = 0;
-    for(int i =0; i < N; i++) {
-        sum1 += lambda[i];
-        sum2 += lambda[i]*lambda[i];
-    }
-    
-    double g = sum2/sum1;
-    double h = sum1*sum1/sum2;
-   
-    // Calc cdf
-    number<cpp_bin_float<200>> x = number<cpp_bin_float<200>>(X);
-    
-    gamma_distribution<number<cpp_bin_float<200>>> gamma(h/2,2*g);
-   
-    x = number<cpp_bin_float<200>>(1.) - cdf(gamma,x);
-    
-    return x.convert_to<double>(); 
-}
 
 extern "C"
 double normcdf_100d(double X, double m, double s) {

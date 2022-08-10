@@ -45,6 +45,7 @@
  *   4: required accuracy not obtained
  *   5: not in range [0,1]
  *   6: dnsty is negative
+ *   7: Not enough internal precision
  *   9: 4 + 5
  *  10: 4 + 6 
  *   0: ok
@@ -116,8 +117,8 @@ template <typename REAL> REAL ruben(double* lambda, int* mult, double* delta, in
 				return -7.0;
 			}
             
-			if(beta > hold) beta = hold;
-			if(sum < hold) sum = hold;
+			if(beta > hold) beta = hold; // min
+			if(sum < hold) sum = hold;   // max
 		}
 
 		// Set beta
@@ -143,8 +144,17 @@ template <typename REAL> REAL ruben(double* lambda, int* mult, double* delta, in
             theta[i] = 1.0;
         }
 	
-        REAL ao = exp(0.5*(log(sum)-sum1));
+        if(sum < 1e-318 && TOL == -200) {
+            ifault[0] = 7;
+            dnsty[0] = 0.0;
+            delete(theta);
+            delete(gamma);
+            
+            return 0.0;
+        }
         
+        REAL ao = exp(0.5*(log(sum)-sum1));
+   
         if(ao <= 0.0) {
             ifault[0] = 1;
             dnsty[0] = 0.0;
@@ -251,11 +261,11 @@ template <typename REAL> REAL ruben(double* lambda, int* mult, double* delta, in
                     return -3.0;
                 }
                 
-                
-                if(abs(pans*sum) < eps2 && abs(sum1) < eps2) {
+               
+                if(abs(pans*sum) < eps2 && abs(sum1) < eps2) { 
                     // Done
                     ifault[0] = 0;
-                   
+                    
                     // Cleanup
                     delete(a);
                     delete(b);
@@ -282,7 +292,7 @@ template <typename REAL> REAL ruben(double* lambda, int* mult, double* delta, in
       
         dnsty[0] *= ao/(2*beta);
         prbty *= ao;
-        
+            
         if(prbty < 0.0 || prbty > 1.0 ) {
             ifault[0] += 5;
         } else {
@@ -304,15 +314,16 @@ template <typename REAL> REAL ruben(double* lambda, int* mult, double* delta, in
 double onemin_ruben(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault) {
     double density;
     
-    return 1 - ruben<double>(lb, n, nc, r, c, 1, lim, acc, &density, ifault);
+    return 1 - ruben<double>(lb, n, nc, r, c, -1, lim, acc, &density, ifault);
 }
+
 
 /*
     Ruben, quad precision
 */
 double onemin_ruben_128b(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault) {
     float128 density;
-    float128 tmp =  1 - ruben<float128>(lb, n, nc, r, c, 1, lim, acc, &density, ifault);
+    float128 tmp =  1 - ruben<float128>(lb, n, nc, r, c, -1, lim, acc, &density, ifault);
     
     return tmp.convert_to<double>();
 }
@@ -322,17 +333,17 @@ double onemin_ruben_128b(double* lb, int* n, double* nc, int r, double c, int li
 */
 double onemin_ruben_100d(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault) {
     cpp_bin_float_100 density;
-    cpp_bin_float_100  tmp =  1 - ruben<cpp_bin_float_100>(lb, n, nc, r, c, 1, lim, acc, &density, ifault);
+    cpp_bin_float_100  tmp =  1 - ruben<cpp_bin_float_100>(lb, n, nc, r, c, -1, lim, acc, &density, ifault);
     
     return tmp.convert_to<double>();
 }
 
 /*
-    Ruben, 100d precision
+    Ruben, 200d precision
 */
 double onemin_ruben_200d(double* lb, int* n, double* nc, int r, double c, int lim, double acc, int* ifault) {
     number<cpp_bin_float<200>> density;
-    number<cpp_bin_float<200>> tmp =  1 - ruben<number<cpp_bin_float<200>>>(lb, n, nc, r, c, 1, lim, acc, &density, ifault);
+    number<cpp_bin_float<200>> tmp =  1 - ruben<number<cpp_bin_float<200>>>(lb, n, nc, r, c, -1, lim, acc, &density, ifault);
     
     return tmp.convert_to<double>();
 }

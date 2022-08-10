@@ -60,7 +60,7 @@ class pathwayscorer(ABC):
         
             file(string): path/filename
             ncol(int): Column with name of module
-            fcol(int): Column with first gene in module. Remaining genes have to follow \t separated
+            fcol(int): Column with first gene (symbol) in module. Remaining genes have to follow \t separated
         
         """
         F = []
@@ -81,7 +81,7 @@ class pathwayscorer(ABC):
     
     def _genefusion_fuse(self,modules):
         FUSION_SET = []
-        COMPUTE_SET = []
+        COMPUTE_SET = {}
         
         for M in modules:
             
@@ -146,10 +146,13 @@ class pathwayscorer(ABC):
                     self._genescorer._GENESYMB[G[4]] = G[4]
                     self._genescorer._GENEID[G[4]] = G
                     self._genescorer._GENEIDtoSYMB[G[4]] = G[4]
-
-                if not G[4] in self._genescorer._SCORES and not G[4] in COMPUTE_SET:
-                    # to Score
-                    COMPUTE_SET.append(G[4]) 
+                
+                if G[0] not in COMPUTE_SET:
+                    COMPUTE_SET[G[0]] = []
+                   
+                if not G[4] in self._genescorer._SCORES and not G[4] in COMPUTE_SET[G[0]]:     
+                    # Store for each chr so that we process later more efficiently (I/O fileseek)
+                    COMPUTE_SET[G[0]].append(G[4]) 
                     
                     # Debug:    
                     #if len(G[4].split("_")) > 10:
@@ -161,19 +164,24 @@ class pathwayscorer(ABC):
         
         return COMPUTE_SET, FUSION_SET
     
-    def _genefusion(self,modules,method='auto',mode='',reqacc=1e-100,threshold=True,parallel=1,nobar=False):
+    def _genefusion(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
         
         COMPUTE_SET, FUSION_SET = self._genefusion_fuse(modules)
         
-        print("Scoring",len(COMPUTE_SET),"missing (meta)-genes")
-       
+        # Generate ordered list:
+        SET = []
+        for C in COMPUTE_SET:
+            SET.extend(COMPUTE_SET[C])
+        
+        print("Scoring",len(SET),"missing (meta)-genes")
+        
         # Compute missing (meta)-genes
-        R = self._genescorer.score(COMPUTE_SET,method=method,mode=mode,reqacc=reqacc,threshold=threshold,parallel=parallel,nobar=nobar,autorescore=True)
+        R = self._genescorer.score(SET,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,autorescore=True)
       
         #print(R)
         #print(FUSION_SET)
         
-        return COMPUTE_SET, FUSION_SET, R
+        return SET, FUSION_SET, R
     
     
     
@@ -208,7 +216,7 @@ class chi2rank(pathwayscorer):
         
     """
        
-    def score(self,modules,method='auto',mode='',reqacc=1e-100,threshold=False,parallel=1,nobar=False):
+    def score(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
         """
         Scores a set of pathways/modules
         
@@ -216,16 +224,15 @@ class chi2rank(pathwayscorer):
         
             modules(list): List of modules to score
             samples(int): # of random gene sets to draw
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
-            threshold(bool): Threshold p-value to reqacc
             nobar(bool): Show progress bar
             
         """
         # Compute fusion sets
         if self._fuse:
-            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,threshold=threshold,parallel=parallel,nobar=nobar)
+            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar)
         else:
             COMPUTE_SET,FUSION_SET,R = self._nogenefusion(modules)
             
@@ -334,7 +341,7 @@ class chi2perm(pathwayscorer):
         Genes in the background gene sets are NOT fused.
     """
     
-    def score(self,modules,samples=100000,method='auto',mode='',reqacc=1e-100,threshold=False,parallel=1,nobar=False):
+    def score(self,modules,samples=100000,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
         """
         Scores a set of pathways/modules
         
@@ -342,16 +349,15 @@ class chi2perm(pathwayscorer):
         
             modules(list): List of modules to score
             samples(int): # of random gene sets to draw
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
-            threshold(bool): Threshold p-value to reqacc
             nobar(bool): Show progress bar
             
         """
         # Compute fusion sets
         if self._fuse:
-            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,threshold=threshold,parallel=parallel,nobar=nobar)
+            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar)
         else:
             COMPUTE_SET,FUSION_SET,R = self._nogenefusion(modules)
         

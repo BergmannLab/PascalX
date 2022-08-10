@@ -25,7 +25,8 @@ import pickle
 
 import numpy as np
 
-from tqdm import tqdm
+#from tqdm import tqdm
+from tqdm.auto import tqdm
 
 import multiprocessing as mp
 
@@ -63,7 +64,7 @@ class chi2sum:
             MAF(double): MAF cutoff 
             genome(Genome): Set gene annotation
             gpu(bool): Use GPU for linear algebra operations (requires cupy library)
-            
+
         """
         
         self._window = window
@@ -177,13 +178,9 @@ class chi2sum:
             file(string): File to load
             gcol(int): Column with gene id
             rcol(int): Column with SNP id
-            wcol(int): Column with weight
-            a1col(int): Column of alternate allele (None for ignoring alleles)
-            a2col(int): Column of reference allele (None for ignoring alleles)
-            bcol(int): Column with additional weight
-            delimiter(string): Character used to separate columns
+            ocol(int): Column with weight
+            splitchr(string): Character used to separate columns
             header(bool): Header present
-            pfilter(float): Only include rows with wcol < pfilter
             
         Note:
             * A loaded mapping takes precedence over a loaded positional gene annotation
@@ -212,6 +209,7 @@ class chi2sum:
             header(bool): Header present
             NAid(String): Code for not available (rows are ignored)
             log10p(bool): p-values are given -log10 transformed 
+            
         """
         self._GWAS = {}
         self._GWAS_beta = {}
@@ -255,10 +253,15 @@ class chi2sum:
         print(len(self._GWAS),"SNPs loaded")
 
     
-    def matchAlleles(self):
+    def matchAlleles(self, SNPonly=False):
         """
         Matches alleles between loaded GWAS and reference panel 
         (SNPs with non matching alleles are removed)
+        
+        Args:
+        
+            SNPonly(bool) : Keep only SNPs
+            
         """
         db = {}
         for i in range(1,23):
@@ -266,23 +269,30 @@ class chi2sum:
     
         todel = []
         Nr = 0
+        Ns = 0
         N = 0
         for x in self._GWAS_alleles:
             N += 1
             found = False
-            for c in db:
-                snp = db[c].getSNPs([x])
-                if len(snp) > 0:
-                    for s in snp:
-                        if s is not None and [s[3],s[4]] == self._GWAS_alleles[x]: 
-                            found = True
-                            break
+            
+            A = self._GWAS_alleles[x]
+            if SNPonly == False or (len(A[0])==1 and len(A[1])==1):  
+            
+                for c in db:
+                    snp = db[c].getSNPs([x])
+                    if len(snp) > 0:
+                        for s in snp:
+                            if s is not None and [s[3],s[4]] == A: 
+                                found = True
+                                break
 
-                if found:
-                    break
-
+                    if found:
+                        break
+            else:
+                Ns += 1
+                
             if not found:
-                # Remove if alles do not match to ref panel
+                # Remove if alleles do not match to ref panel
                 Nr += 1
                 todel.append(x)
             
@@ -301,9 +311,13 @@ class chi2sum:
 
             
         print(N,"GWAS SNPs")
-        print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
-
-    
+        
+        if SNPonly:
+            print(Ns,"Non-SNPs removed")
+            
+        if (N-Ns) != 0:
+            print(round(Nr/(N-Ns)*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")    
+       
     def rank(self):
         """
         QQ normalizes the p-values of loaded GWAS
@@ -557,7 +571,8 @@ class chi2sum:
             ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._GWAS[RIDs[i]])
         return np.sum(ps)
     
-    def _scoreThread(self,gi,C,S,g,method,mode,reqacc,intlimit):
+    def _calcAndFilterEV(self,C):
+    
         if self._useGPU:
             L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
         else:
@@ -575,19 +590,27 @@ class chi2sum:
             c = c + L[i]
             if c < self._varcutoff*np.sum(L):
                 N_L.append(L[i])
-
+                
+        return N_L
+    
+    def _scoreThread(self,N_L,S,g,method,mode,reqacc,intlimit):
+        
         if method=='davies':
             RESULT = [g,wchissum.onemin_cdf_davies(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
         elif method=='ruben':
             RESULT = [g,wchissum.onemin_cdf_ruben(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
         elif method=='satterthwaite':
             RESULT = [g,wchissum.onemin_cdf_satterthwaite(S,N_L,mode=mode)]
+        elif method=='pearson':
+            RESULT = [g,wchissum.onemin_cdf_pearson(S,N_L,mode=mode)]
+        elif method=='saddle':
+            RESULT = [g,wchissum.onemin_cdf_saddle(S,N_L,mode=mode)]        
         else:
             RESULT = [g,wchissum.onemin_cdf_auto(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
 
         return RESULT
         
-    def _scoremain(self,gene,unloadRef=False,method='auto',mode='',reqacc=1e-100,intlimit=100000,label='',baroffset=0,nobar=False,threshold=True):
+    def _scoremain(self,gene,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,label='',baroffset=0,nobar=False,lock=None):
         
         G = np.array(gene)
         RESULT = []
@@ -598,70 +621,79 @@ class chi2sum:
         REF = {}
         
         #print("# cores:",max(1,min(parallel,mp.cpu_count())))
-        with tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", file=sys.stdout, position=baroffset, leave=True,disable=nobar) as pbar:
-            for i in range(pbar.total):
-                #print(i)
-                if G[i] in self._GENEID:
-                    cr = self._GENEID[G[i]][0]
+        #with tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", file=sys.stdout, position=baroffset, leave=True,disable=nobar) as pbar:
+       
+        if not nobar:
+            print(' ', end='', flush=True) # Hack to work with jupyter notebook 
+       
+        with lock:
+            pbar = tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", position=baroffset, leave=True,disable=nobar)
+            pbar.set_description(label)#+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
 
-                    if not cr in REF:
-                        pbar.set_description(label+"(loading       )")
-                        
-                        if unloadRef:
-                            REF = {}
-                            
-                        REF[cr] = self._ref.load_pos_reference(cr)
+        for i in range(pbar.total):
+            #print(i)
+            if G[i] in self._GENEID:
+                cr = self._GENEID[G[i]][0]
+
+                if not cr in REF:
+                    #with lock:
+                        #pbar.set_description(label+"(loading       )")
+
+                    if unloadRef:
+                        REF = {}
+
+                    REF[cr] = self._ref.load_pos_reference(cr)
+
                     
-                    pbar.set_description(label+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
-                    
-                    if len(self._GWAS_alleles)==0:
-                        C,R = self._calcGeneSNPcorr(cr,G[i],REF)
-                    else:
-                        C,R = self._calcGeneSNPcorr_wAlleles(cr,G[i],REF)
-                        
-                    if len(R) > 1:
-                        # Score
-                        if self._MAP is not None and self._joint == False:
-                            S = self._getChi2Sum_mapper(R,G[i]) 
-                        else:
-                            S = self._getChi2Sum(R)
-                        
-                        RES = self._scoreThread(i,C,S,G[i],method,mode,reqacc,intlimit)
-                        
-                        if RES[1][1]==0 and (RES[1][0] > reqacc*1e3 or ( (method=='auto' or method=='satterthwaite') and RES[1][0] > 0 )):
-                            RESULT.append( [self._GENEIDtoSYMB[RES[0]],float(RES[1][0]),len(R)] )
-                                
-                        else:
-                            if threshold and (RES[1][1] == 0 or RES[1][1] == 2 or RES[1][1] == 4 or RES[1][1] == 5) and abs(RES[1][0]) <= reqacc*1e3:
-                                # If threshold, set to reqacc
-                                RESULT.append( [self._GENEIDtoSYMB[RES[0]],reqacc,len(R)] )
-                              
-                            else:
-                                FAIL.append([self._GENEIDtoSYMB[RES[0]],len(R),RES[1]])
-                            
-                        pbar.update(1)
-
-                    else:
-
-                        if len(R) == 1:
-                            if self._MAP is not None and self._joint == False:
-                                if R[0] in self._MAP[G[i]]:
-                                    RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._MAP[G[i]][R[0]][0]),1] )
-                            else:
-                                RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._GWAS[R[0]]),1] )
-                        else:
-                            TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"No SNPs"])
-                           
-                        pbar.update(1)
+                if len(self._GWAS_alleles)==0:
+                    C,R = self._calcGeneSNPcorr(cr,G[i],REF)
                 else:
-                    TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"Not in annotation"])
+                    C,R = self._calcGeneSNPcorr_wAlleles(cr,G[i],REF)
+
+                if len(R) > 1:
+                    # Score
+                    if self._MAP is not None and self._joint == False:
+                        S = self._getChi2Sum_mapper(R,G[i]) 
+                    else:
+                        S = self._getChi2Sum(R)
+
+                    RES = self._scoreThread(self._calcAndFilterEV(C),S,G[i],method,mode,reqacc,intlimit)
+
+                    if (RES[1][1]==0 or RES[1][1]==5) and RES[1][0] > 0 and RES[1][0] <= 1 and (RES[1][0] > reqacc*1e3 or ( (method=='auto' or method=='satterthwaite' or method=='pearson' or method=='saddle')  )):
+                        RESULT.append( [self._GENEIDtoSYMB[RES[0]],float(RES[1][0]),len(R)])
+                    else:
+                            FAIL.append([self._GENEIDtoSYMB[RES[0]],len(R),RES[1]])
+
+                    with lock:
+                        pbar.update(1)
+
+                else:
+
+                    if len(R) == 1:
+                        if self._MAP is not None and self._joint == False:
+                            if R[0] in self._MAP[G[i]]:
+                                RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._MAP[G[i]][R[0]][0]),1] )
+                        else:
+                            RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._GWAS[R[0]]),1] )
+                    else:
+                        TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"No SNPs"])
+
+                    with lock:
+                        pbar.update(1)
+            else:
+                TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"Not in annotation"])
+
+                with lock:
                     pbar.update(1)
-            
-            pbar.set_description(label+"(done          )")
-            
+
+                    
+        with lock:
+            pbar.close()
+            #pbar.set_description(label+"(done          )")
+        
         return RESULT,FAIL,TOTALFAIL
     
-    def score(self,gene,parallel=1,unloadRef=False,method='auto',mode='',reqacc=1e-100,intlimit=1000000,nobar=False,threshold=True,autorescore=False):
+    def score(self,gene,parallel=1,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False):
         """
         Performs gene scoring for a given list of gene symbols
         
@@ -670,13 +702,12 @@ class chi2sum:
             gene(list): gene symbols to score.
             parallel(int) : # of cores to use
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
-            threshold(bool): Threshold p-value to reqacc
             nobar(bool): Show progress bar
-            autorescore(bool): Automatically try to re-score failed genes
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
         G = []
@@ -684,11 +715,15 @@ class chi2sum:
         for i in range(0,len(gene)):
             if gene[i] in self._GENESYMB:
                 G.append(self._GENESYMB[gene[i]])
+            elif gene[i] in self._GENEID:
+                G.append(gene[i])        
             else:
                 print("[WARNING]: "+gene[i]+" not in annotation -> ignoring")
         
+        lock = mp.Manager().Lock()
+        
         if parallel <= 1:
-            R = self._scoremain(G,unloadRef,method,mode,reqacc,intlimit,'',0,nobar,threshold)
+            R = self._scoremain(G,unloadRef,method,mode,reqacc,intlimit,'',0,nobar,lock)
         else:
             R = [[],[],[]]
             S = np.array_split(G,parallel)
@@ -698,7 +733,7 @@ class chi2sum:
                 
             for i in range(0,len(S)): 
 
-                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,threshold))
+                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock))
                 result_objs.append(result)
 
             results = [result.get() for result in result_objs]    
@@ -723,7 +758,7 @@ class chi2sum:
                
         if autorescore and len(R[1]) > 0:
             print("Rescoreing failed genes")
-            R = self.rescore(R,method='ruben',mode='100d',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar)
+            R = self.rescore(R,method='pearson',mode='auto',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar)
             if len(R[1])>0:
                 print(len(R[1]),"genes failed to be scored")
                 
@@ -746,7 +781,7 @@ class chi2sum:
             
         RESULT[1].clear()
         
-    def rescore(self,RESULT,method='davies',mode='128b',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,threshold=True):
+    def rescore(self,RESULT,method='davies',mode='128b',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False):
         """
         Function to re-score only the failed gene scorings of a previous scoring run with different scorer settings. 
        
@@ -754,11 +789,10 @@ class chi2sum:
        
             RESULT(list): Return of one of the gene scorring methods
             parallel(int) : # of cores to use
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
-            threshold(bool): Threshold p-value to reqacc
             nobar(bool): Show progress bar
         
         Warning:
@@ -774,8 +808,10 @@ class chi2sum:
             else:
                 print("[WARNING]: "+GENES[i]+" not in annotation -> ignoring")
         
+        lock = mp.Manager().Lock()
+        
         if parallel <= 1:
-            RES = self._scoremain(G,True,method,mode,reqacc,intlimit)
+            RES = self._scoremain(G,True,method,mode,reqacc,intlimit,lock)
         else:
             RES = [[],[],[]]
             S = np.array_split(G,parallel)
@@ -786,7 +822,7 @@ class chi2sum:
                 
             for i in range(0,len(S)): 
 
-                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar))
+                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock))
                 result_objs.append(result)
 
             results = [result.get() for result in result_objs]    
@@ -812,7 +848,7 @@ class chi2sum:
         
         return RESULT
     
-    def score_chr(self,chrs,unloadRef=False,method='auto',mode='',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,threshold=True,autorescore=False):
+    def score_chr(self,chrs,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False):
         """
         Perform gene scoring for full chromosomes
         
@@ -820,14 +856,13 @@ class chi2sum:
         
             chrs(list): List of chromosomes to score.
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             parallel(int) : # of cores to use
             nobar(bool): Show progress bar
-            threshold(bool): Threshold p-value to reqacc
-            autorescore(bool): Automatically try to re-score failed genes
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
         
@@ -837,72 +872,109 @@ class chi2sum:
         FAIL = []
         TOTALFAIL = []
         
-        if parallel==1:
-            for c in S:
-                RES = self._scoremain(self._CHR[str(c)][0],unloadRef,method,mode,reqacc,intlimit,label='[chr'+str(c)+'] ',nobar=nobar)
-                RESULT.extend(RES[0])
-                FAIL.extend(RES[1])
-                TOTALFAIL.extend(RES[2])
-        else: 
-            pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
-            
-            result_objs = []
-            for i in range(0,len(S)): 
-                c = S[i]
-                result = pool.apply_async(self._scoremain, (self._CHR[str(c)][0],True,method,mode,reqacc,intlimit,'[chr'+str(c)+'] ',i,nobar,threshold))
-                result_objs.append(result)
-
-            results = [result.get() for result in result_objs]    
-
-            for r in results:
-                RESULT.extend(r[0])
-                FAIL.extend(r[1])
-                TOTALFAIL.extend(r[2])
+        lock = mp.Manager().Lock()
         
-            pool.close()
+        # Build list of genes for chromosomes
+        G = []
+        for c in S:
+            G.extend(self._CHR[str(c)][0])
             
-      
-        print(len(RESULT),"genes scored")
-        if len(FAIL)>0:
-            print(len(FAIL),"genes failed (try to .rescore with other settings)")
-        if len(TOTALFAIL)>0:
-            print(len(TOTALFAIL),"genes can not be scored (check annotation)")
-      
-        # Store in _SCORES:
-        for X in RESULT:
-            self._SCORES[X[0]] = float(X[1])
-          
-        
-        if autorescore and len(FAIL) > 0:
-            print("Trying to rescore failed genes")
-            R = self.rescore((RESULT,FAIL,TOTALFAIL),method='ruben',mode='100d',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar)
-            
-            return R
-     
-        return RESULT, FAIL, TOTALFAIL
+        return self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore)
    
+        
 
-    def score_all(self,parallel=1,method='auto',mode='',reqacc=1e-100,intlimit=100000,nobar=False,threshold=True,autorescore=False):
+    def score_all(self,parallel=1,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False):
         """
         Perform full gene scoring
         
         Args:
         
             parallel(int) : # of cores to use
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             nobar(bool): Show progress bar
-            threshold(bool): Threshold p-value to reqacc
-            autorescore(bool): Automatically try to re-score failed genes
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
         
         self._SCORES = {}
         
-        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,threshold,autorescore)
-      
+        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore)
+    
+    def score_gene_bulk_chr(self,chrs,gene,data,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,autorescore=False):
+        """
+        Perform scoring in bulk for supplied set of SNPs
+        
+        Args:
+            chrs(int) : Chromosome number the supplied SNPs are located on
+            gene(string): Gene symbol for the SNPs
+            data(list} : List of SNP data in format [ [rsid1,rsid2,...], [GWASid1, GWASid2,...], M ] with M a pvalue matrix (rows: GWAS, cols: rsid)
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
+            mode(string): Precision mode to use ('','128b','100d')
+            reqacc(float): requested accuracy 
+            intlimit(int) : Max # integration terms to use
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
+        
+        """
+        
+        # Prepare ref panel
+        if not hasattr(self, '_REF') or not chrs in self._REF:
+                
+            if not hasattr(self, '_REF') or unloadRef:
+                self._REF = {}
+
+            self._REF[chrs] = self._ref.load_pos_reference(chrs)
+
+        # Init GWAS dummy data
+        self._GWAS = {}
+        for rsid in data[0]:
+            self._GWAS[rsid]= None
+        
+        
+        # Calc SNP-SNP correlation
+        C,R = self._calcGeneSNPcorr(chrs,self._GENESYMB[gene],self._REF)
+        
+        # Calc and filter EV
+        EVL = self._calcAndFilterEV(C)
+        
+        # Loop over GWAS
+        RESULT = {}
+        for i in range(0,len(data[1])):
+            GID = data[1][i]
+            RESULT[GID] = [[],[],[]]
+            
+            if gene not in self._GENESYMB:
+                RESULT[GID][2].append([self._GENEIDtoSYMB[G[i]],"Not in annotation"])
+                continue
+                
+            # Set SNP data
+            for j in range(0,len(data[0])):
+                self._GWAS[data[0][j]] = data[2][i,j]
+            
+            if len(R) > 1:
+                S = self._getChi2Sum(R)
+
+                RES = self._scoreThread(EVL,S,self._GENESYMB[gene],method,mode,reqacc,intlimit)
+
+                if (RES[1][1]==0 or RES[1][1]==5) and RES[1][0] > 0 and RES[1][0] <= 1 and (RES[1][0] > reqacc*1e3 or ( (method=='auto' or method=='satterthwaite' or method=='pearson' or method=='saddle')  )):
+                    RESULT[GID][0].append( [self._GENEIDtoSYMB[RES[0]],float(RES[1][0]),len(R)])
+                else:
+                    RESULT[GID][1].append([self._GENEIDtoSYMB[RES[0]],len(R),RES[1]])
+
+            
+            else:
+
+                if len(R) == 1:
+                    RESULT[GID][0].append( [self._GENEIDtoSYMB[G[i]],float(self._GWAS[R[0]]),1] )
+                else:
+                    RESULT[GID][2].append([self._GENEIDtoSYMB[G[i]],"No SNPs"])
+
+        
+                
+        return RESULT
+        
     
     def get_topscores(self,N=10):
         """
@@ -1159,7 +1231,6 @@ class chi2sum:
         
             G(list): List of gene symbols
             show_correlation(bool): Plot the corresponding SNP-SNP correlation matrix 
-            mark_window(bool): Mark the gene transcription start and end positions
             tickspacing(int): Spacing of ticks for correlation plot
         """
         print("Window size:",self._window)
