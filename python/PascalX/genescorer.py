@@ -178,9 +178,14 @@ class chi2sum:
             file(string): File to load
             gcol(int): Column with gene id
             rcol(int): Column with SNP id
-            ocol(int): Column with weight
-            splitchr(string): Character used to separate columns
+            wcol(int): Column with weight
+            a1col(int): Column of alternate allele (None for ignoring alleles)
+            a2col(int): Column of reference allele (None for ignoring alleles)
+            bcol(int): Column with additional weight
+            delimiter(string): Character used to separate columns
+            pfilter(float): Only include rows with wcol < pfilter
             header(bool): Header present
+            joint(bool): Use mapping SNPs and gene window based SNPs
             
         Note:
             * A loaded mapping takes precedence over a loaded positional gene annotation
