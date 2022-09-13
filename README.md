@@ -4,7 +4,7 @@ High precision gene and pathway scoring for GWAS summary statistics in python
 
 ## Features
 
-- Internal quad and multi-precision arithmetic support for high precision gene scoring via exact CDF calculations (up to 100 digits)
+- Internal quad and multi-precision arithmetic support for high precision gene scoring via exact (up to 100 digits) or approximative CDF calculations  
 - Fast random access to SNP reference panel genomic data with minimal memory footprint.
 - Parallelization over chromosomes and/or genes
 - GPU acceleration support via cupy
@@ -375,3 +375,8 @@ Scorer.plot_Manhattan(R[0])
 
 ```style='classic'```: 
 ![Classic style](https://github.com/BergmannLab/PascalX/blob/main/misc/style_classic.png)
+
+
+### Disclaimer:
+
+PascalX is a research level tool. No warranty or guarantee whatsoever for its correct functionality is given. You should perform your own consistency checks on results PascalX implies.
