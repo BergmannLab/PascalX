@@ -1,6 +1,6 @@
 # PascalX
 
-High precision gene and pathway scoring for GWAS summary statistics in python
+High precision gene, pathway and cross scoring for GWAS summary statistics in python
 
 ## Features
 
