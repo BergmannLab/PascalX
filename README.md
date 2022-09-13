@@ -239,7 +239,7 @@ R = Scorer.rescore(R,method='ruben',mode='128b',reqacc=1e-32,intlimit=100000)
 
 NOTE:
 
-```ruben``` and ```davies``` compute exactly up to requested precision (```reqacc```). ```satterthwaite``` is a second order approximation. ```auto``` tries to automatically select for given gene between davies and ruben to maximize throughput. ```auto``` is the default setting for the gene scorer. If it fails, it is recommended to rescore with ```ruben```.
+```ruben``` and ```davies``` compute exactly up to requested precision (```reqacc```). ```satterthwaite``` is a second order approximation and ```pearson``` a third order approximation. ```saddle``` uses a saddle-point approximation and is for most use cases a good choice as it is fast and its accuracy comes close to the exact calculation. ```auto``` tries to automatically select for given gene between davies and ruben to maximize throughput. If ```auto``` fails, it is recommended to rescore the missing genes with ```ruben``` and a very high ```intlimit``` setting. ```auto``` is the default setting for the gene scorer. 
 
 
 TIP:
@@ -248,7 +248,7 @@ Ruben converges very slowly if the ratio between the largest and smallest eigenv
 
 **Output:**
 
-The scoring results ```R_SUCCESS``` can be saved in a a tab separated file via:
+The scoring results ```R_SUCCESS``` can be saved in a tab separated file via:
 
 ```python
 scorer.save_scores('filename')
@@ -350,8 +350,6 @@ As above, but with
 ```python
 X = xscorer.rsum(leftTail=False)
 ```
-
-NOTE: As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep ```parallel=1``` at the time being.
 
 
 ### Visualization:
