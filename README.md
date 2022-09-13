@@ -5,7 +5,7 @@ High precision gene and pathway scoring for GWAS summary statistics in python
 ## Features
 
 - Internal quad and multi-precision arithmetic support for high precision gene scoring via exact (up to 100 digits) or approximative CDF calculations  
-- Fast random access to SNP reference panel genomic data with minimal memory footprint.
+- Fast random access to SNP reference panel genomic data with minimal memory footprint
 - Parallelization over chromosomes and/or genes
 - GPU acceleration support via cupy
 - Gene-wise coherence test between two GWAS
@@ -71,7 +71,7 @@ Run the image in interactive mode with the host directory ```/your/workdir``` mo
 ```bash
 docker run --mount src=/your/workdir,target=/data,type=bind -p 8888:8888 -it pascalx bash
 ```
-Jupyter notebook comes pre-installed and listens on port ```8888```.
+Jupyter notebook comes pre-installed and is listening on port ```8888```.
 
 ## Usage
 
@@ -95,11 +95,11 @@ Options:
 
 **Set reference panel:**
 
-1000 Genome Project reference data can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
+1000 Genome Project reference data for the european subpopulation can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
 ```bash
 bash get1KGGRCh38.sh pathtostore/ EUR 4 tped
 ```
-Note that the third parameter specifies the # of cpu cores to utilize. 
+The third parameter specifies the # of cpu cores to utilize. Note that the download and conversion can take several hours. 
 
 The reference data has to be loaded by the gene scorer using the method
 ```python
@@ -111,7 +111,7 @@ The filename is required to not contain the ending ```.chr#....```. If the corre
 --recode 12 transpose
 ```
 
-By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. For import of allele information raw .vcf files have to be used. In this case the plink step can be skipped. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
+By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. Note that the import can take more than an hour per chromosome. A high parallel setting is therefore recommended. For import of allele information raw .vcf files have to be used. In this case the plink step can be skipped. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
 
 In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the ```tped``` import script option above with ```vcf```. Note that to keep only a subset of samples under .vcf import, the ```keepfile=``` option has to be set.
 
@@ -229,7 +229,7 @@ The genes in R_FAIL can be scored again with a manual choice of algorithm:
 R = Scorer.rescore(R,method='ruben',mode='128b',reqacc=1e-32,intlimit=100000)
 ```
 
-```method= 'auto' | 'ruben' | 'davies' | 'satterthwaite'```: Algorithm to use 
+```method= 'auto' | 'ruben' | 'davies' | 'satterthwaite' | 'saddle'```: Algorithm to use 
 
 ```mode='' | '128b' | '100d'```: internal precision (double | quad | 100 digits)
 
