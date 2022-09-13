@@ -66,7 +66,7 @@ class refpanel:
         
         return db
     
-    def set_refpanel(self,filename, parallel=1, keepfile=None, qualityT=100, SNPonly=False, chrlist=None, sourcefilename=None,regEx=None):
+    def set_refpanel(self,filename, parallel=1, keepfile=None, qualityT=100, SNPonly=False, chrlist=None, sourcefilename=None,regEx=None,nobar=True):
         """
         Sets the reference panel to use
         
@@ -81,6 +81,7 @@ class refpanel:
             chrlist(list): List of chromosomes to import. (None to import 1-22)
             sourcefilename(string): /path/filename (without .chr#. ending) of .tped | .vcf files. None to use same as filename
             regEx(string): Regular expression to filter sample ids. First capture group is kept. [only for .vcf]
+            nobar(bool): Show progress bar (updates only if a chromosome finished)
             
         Note:
         
@@ -108,7 +109,7 @@ class refpanel:
         # Import if missing
         if len(NF) > 0:
             print("Reference panel data not imported. Trying to import...")
-            self._import_reference(chrs=NF,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly,regEx=regEx)
+            self._import_reference(chrs=NF,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly,regEx=regEx,nobar=nobar)
             
     def _import_reference_thread_tped(self,i):
         
@@ -206,12 +207,12 @@ class refpanel:
             sampleKeys = list(sampleMap.keys())
             
             # Store sample keys
-            with open(self._refData+'.sampleKeys.txt','wt') as g:
+            with open(self._refData+'.sampleIds.txt','wt') as g:
                 s = ""
                 for j in range(0,len(sampleKeys)-1):
-                    s += str(sampleKeys[j])+"\t"
+                    s += str(sampleMap[sampleKeys[j]])+"\t"
                 
-                s += str(sampleKeys[len(sampleKeys)-1])
+                s += str(sampleMap[sampleKeys[len(sampleKeys)-1]])
                 
                 g.write(s+'\n')
                 
@@ -304,7 +305,7 @@ class refpanel:
         return True
         
 
-    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100,SNPonly=False,regEx=None):
+    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100,SNPonly=False,regEx=None,nobar=True):
         """
         Imports reference data from .tped.gz or .vcf.gz files.
         (Has only to be run once. The imported data is stored on disk for later usage.)
@@ -338,7 +339,7 @@ class refpanel:
         # Start import    
         pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
            
-        with tqdm(total=len(chrs), desc="Importing reference panel", bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]",file=sys.stdout) as pbar:
+        with tqdm(total=len(chrs), desc="Importing reference panel", bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]",file=sys.stdout,disable=nobar) as pbar:
         
             def update(*a):
                 pbar.update(1)

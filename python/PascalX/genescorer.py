@@ -707,7 +707,7 @@ class chi2sum:
             gene(list): gene symbols to score.
             parallel(int) : # of cores to use
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
@@ -794,7 +794,7 @@ class chi2sum:
        
             RESULT(list): Return of one of the gene scorring methods
             parallel(int) : # of cores to use
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
@@ -861,7 +861,7 @@ class chi2sum:
         
             chrs(list): List of chromosomes to score.
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
@@ -916,7 +916,7 @@ class chi2sum:
             chrs(int) : Chromosome number the supplied SNPs are located on
             gene(string): Gene symbol for the SNPs
             data(list} : List of SNP data in format [ [rsid1,rsid2,...], [GWASid1, GWASid2,...], M ] with M a pvalue matrix (rows: GWAS, cols: rsid)
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
