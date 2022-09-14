@@ -41,7 +41,7 @@ Requirements:
   
   Install of requirements on Debian/Ubuntu:
   ``` bash
-  sudo apt-get install python3 python3-dev python3-setuptools python3-pip g++ make libboost-all-dev
+  sudo apt install python3 python3-dev python3-setuptools python3-pip g++ make libboost-all-dev wget
   ```
 
 Export library path:
