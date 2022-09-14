@@ -200,6 +200,10 @@
 <p class="admonition-title">Warning</p>
 <p>In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the <code class="docutils literal notranslate"><span class="pre">tped</span></code> import script option above with <code class="docutils literal notranslate"><span class="pre">vcf</span></code>. Note that to keep only a subset of samples under .vcf import, the <code class="docutils literal notranslate"><span class="pre">keepfile=</span></code> option has to be set.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The import can take more than an hour per chromosome. A high parallel setting is therefore recommended.</p>
+</div>
 <p><strong>Gene annotation:</strong></p>
 <p>If you want to use ensembl gene annotation, it can be automatically downloaded from <a class="reference external" href="https://www.ensembl.org/biomart/martview/">BioMart</a> as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PascalX.genome</span> <span class="kn">import</span> <span class="n">genome</span>
@@ -225,7 +229,7 @@
 </div>
 <p>The argument <code class="docutils literal notranslate"><span class="pre">rscol=</span></code> specifies the column of the variant id and <code class="docutils literal notranslate"><span class="pre">pcol=</span></code> the column of the p-value. The columns <code class="docutils literal notranslate"><span class="pre">a1col=</span></code> and <code class="docutils literal notranslate"><span class="pre">a2col=</span></code> contain the alternate, respectively, reference allele. If the refernce panel does not contain allele information (.tped import), set both to <code class="docutils literal notranslate"><span class="pre">None</span></code>. <code class="docutils literal notranslate"><span class="pre">header=</span></code> specifies if the first row is a header or not. The file can be either raw text or gzip compressed with file name ending on <code class="docutils literal notranslate"><span class="pre">.gz</span></code>.</p>
 <p>Note that the loaded GWAS SNPs can be visualized gene-wise via the command</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Scorer</span><span class="o">.</span><span class="n">plot_genesnps</span><span class="p">(</span><span class="s1">&#39;AOAH&#39;</span><span class="p">,</span><span class="n">show_correlation</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Scorer</span><span class="o">.</span><span class="n">plot_genesnps</span><span class="p">(</span><span class="s1">&#39;AOAH&#39;</span><span class="p">,</span><span class="n">mark_window</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show_correlation</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
 </pre></div>
 </div>
 <img alt="_images/gwasvisu.png" src="_images/gwasvisu.png" />

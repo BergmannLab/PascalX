@@ -43,6 +43,10 @@ Set the reference panel to use via
 
     In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the ``tped`` import script option above with ``vcf``. Note that to keep only a subset of samples under .vcf import, the ``keepfile=`` option has to be set.   
 
+.. note::
+    
+    The import can take more than an hour per chromosome. A high parallel setting is therefore recommended.
+
 
 **Gene annotation:**
 
@@ -85,7 +89,7 @@ Note that the loaded GWAS SNPs can be visualized gene-wise via the command
 
 .. code-block:: python
 
-    Scorer.plot_genesnps('AOAH',show_correlation=True);
+    Scorer.plot_genesnps('AOAH',mark_window=True,show_correlation=True);
 
 .. image:: gwasvisu.png
 

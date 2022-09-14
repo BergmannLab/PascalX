@@ -1228,7 +1228,7 @@ class chi2sum:
         return C,np.array(RID),pos
     
                 
-    def plot_genesnps(self,G,show_correlation=False,mark_window=False,tickspacing=10):
+    def plot_genesnps(self,G,show_correlation=False,mark_window=False,tickspacing=10,color='limegreen',corrcmap=None):
         """
         Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix
         
@@ -1237,6 +1237,9 @@ class chi2sum:
             G(list): List of gene symbols
             show_correlation(bool): Plot the corresponding SNP-SNP correlation matrix 
             tickspacing(int): Spacing of ticks for correlation plot
+            color(color): Color for SNP associations
+            corrcmap(cmap): Colormap to use for correlation plot (None for default)
+            
         """
         print("Window size:",self._window)
 
@@ -1343,7 +1346,7 @@ class chi2sum:
         if show_correlation:
             plt.subplot(1, 2, 1)
 
-            plt.bar(x,h1,color=plt.get_cmap("tab20")(5))    
+            plt.bar(x,h1,color=color)    
             plt.ylabel("$-\log_{10}(p)$")
            
                 
@@ -1357,9 +1360,10 @@ class chi2sum:
             plt.subplot(1, 2, 2)
 
             # Generate a custom diverging colormap
-
-            cmap = sns.diverging_palette(230, 20, as_cmap=True)
-
+            if corrcmap is None:
+                cmap = sns.diverging_palette(230, 20, as_cmap=True)
+            else:
+                cmap = corrcmap
             sns.heatmap(corr,cmap=cmap,square=True,vmin=-1,vmax=+1,xticklabels=tickspacing,yticklabels=tickspacing)
         
             for i in range(0,len(pos)-1):
@@ -1373,7 +1377,7 @@ class chi2sum:
                 plt.axhline(y=eid, color='black', ls=':')
         
         else:
-            plt.bar(x,h1)    
+            plt.bar(x,h1,color=color)    
             plt.ylabel("$-\log_{10}(p)$")
         
             if mark_window and not isinstance(G, list):
