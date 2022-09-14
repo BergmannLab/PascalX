@@ -24,7 +24,7 @@ If you make use of PascalX for your research, please cite PascalX via the doi: 1
 If you make use of the X-scorer (gene-wise coherence test between two GWAS), please cite the work 
 
 *Krefl D., Bergmann S.*  
-*Covariance of Interdependent Samples with Application to GWAS*  
+*Cross-GWAS coherence test at the gene and pathway level*  
 [doi.org/10.1101/2021.05.16.21257289](https://doi.org/10.1101/2021.05.16.21257289)
 
 
@@ -198,9 +198,11 @@ R = Scorer.score(['WDR12','FARP2'])
 
 **Options:**
 
-```parallel=1```  : Number of cores to use
+```method='auto'```: Method to use for scoring
 
-```nobar=False``` : Disable progress bar
+```parallel=1```   : Number of cores to use
+
+```nobar=False```  : Disable progress bar
 
 **Return:**
 
