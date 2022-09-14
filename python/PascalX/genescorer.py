@@ -615,7 +615,7 @@ class chi2sum:
 
         return RESULT
         
-    def _scoremain(self,gene,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,label='',baroffset=0,nobar=False,lock=None):
+    def _scoremain(self,gene,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,label='',baroffset=0,nobar=False,lock=None):
         
         G = np.array(gene)
         RESULT = []
@@ -698,7 +698,7 @@ class chi2sum:
         
         return RESULT,FAIL,TOTALFAIL
     
-    def score(self,gene,parallel=1,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False):
+    def score(self,gene,parallel=1,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False):
         """
         Performs gene scoring for a given list of gene symbols
         
@@ -708,7 +708,7 @@ class chi2sum:
             parallel(int) : # of cores to use
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             nobar(bool): Show progress bar
@@ -795,7 +795,7 @@ class chi2sum:
             RESULT(list): Return of one of the gene scorring methods
             parallel(int) : # of cores to use
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             nobar(bool): Show progress bar
@@ -853,7 +853,7 @@ class chi2sum:
         
         return RESULT
     
-    def score_chr(self,chrs,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False):
+    def score_chr(self,chrs,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False):
         """
         Perform gene scoring for full chromosomes
         
@@ -862,7 +862,7 @@ class chi2sum:
             chrs(list): List of chromosomes to score.
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             parallel(int) : # of cores to use
@@ -888,7 +888,7 @@ class chi2sum:
    
         
 
-    def score_all(self,parallel=1,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False):
+    def score_all(self,parallel=1,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False):
         """
         Perform full gene scoring
         
@@ -896,7 +896,7 @@ class chi2sum:
         
             parallel(int) : # of cores to use
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             nobar(bool): Show progress bar
@@ -917,7 +917,7 @@ class chi2sum:
             gene(string): Gene symbol for the SNPs
             data(list} : List of SNP data in format [ [rsid1,rsid2,...], [GWASid1, GWASid2,...], M ] with M a pvalue matrix (rows: GWAS, cols: rsid)
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm

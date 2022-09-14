@@ -150,7 +150,7 @@ with
     
 Here, ``R_SUCCESS`` is the list of successfully scored genes, ``R_FAIL`` the list of genes with failed scoring due to non-convergence of the scoring algorithm and ``R_TOTALFAIL`` the list of genes which failed for other reasons, like no available SNPs. 
 
-By default, the genescorer selects automatically the most suitable algorithm and precision to use (``method='auto'``). The genes in ``R_FAIL`` are automatically re-scored once (``autorescore=True``) with Ruben at max precision. Given enough iterations, Ruben will converge eventually. However, if the ratio between largest and smallest eigenvalue is large, it may converge very slowly. In this case, often it is helpful to reduce the kept variance via the ``varcutoff=`` parameter of the genescorer. Note that a result ``R`` can be manually re-scored using the rescore method of the :ref:`Genescorer`.
+By default, the genescorer uses a saddle-point approximation for CDF calculation (``method='saddle'``). For exact calculation, it is recommended to automatically select the most suitable algorithm and precision to use via using (``method='auto'``). The genes in ``R_FAIL`` can be automatically re-scored once (``autorescore=True``) using Pearson's algorithm. Note that Ruben at max precision, given enough iterations, will converge eventually. However, if the ratio between largest and smallest eigenvalue is large, it may converge very slowly. In this case, often it is helpful to reduce the kept variance via the ``varcutoff=`` parameter of the genescorer. Note that a result ``R`` can be manually re-scored using the rescore method of the :ref:`Genescorer`.
 
 **Persistence:**
 

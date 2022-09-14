@@ -241,7 +241,7 @@ R = Scorer.rescore(R,method='ruben',mode='128b',reqacc=1e-32,intlimit=100000)
 
 NOTE:
 
-```ruben``` and ```davies``` compute exactly up to requested precision (```reqacc```). ```satterthwaite``` is a second order approximation and ```pearson``` a third order approximation. ```saddle``` uses a saddle-point approximation and is for most use cases a good choice as it is fast and its accuracy comes close to the exact calculation. ```auto``` tries to automatically select for given gene between davies and ruben to maximize throughput. If ```auto``` fails, it is recommended to rescore the missing genes with ```ruben``` and a very high ```intlimit``` setting. ```auto``` is the default setting for the gene scorer. 
+```ruben``` and ```davies``` compute exactly up to requested precision (```reqacc```). ```satterthwaite``` is a second order approximation and ```pearson``` a third order approximation. ```saddle``` uses a saddle-point approximation and is for most use cases a good choice as it is fast and its accuracy comes close to the exact calculation. ```auto``` tries to automatically select for given gene between davies and ruben to maximize throughput. If ```auto``` fails, it is recommended to rescore the missing genes with ```ruben``` and a very high ```intlimit``` setting. ```saddle``` is the default setting for the gene scorer. 
 
 
 TIP:

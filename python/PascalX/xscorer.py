@@ -964,10 +964,10 @@ class crosscorer(ABC):
             E_B(str): Second GWAS to use
             parallel(int) : # of cores to use
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
-            mode(string): Precision mode to use ('','128b','100d')
-            reqacc(float): requested accuracy 
-            intlimit(int) : Max # integration terms to use
+            method(string): Not used
+            mode(string): Not used
+            reqacc(float): Not used
+            intlimit(int) : Not used
             threshold(bool): Threshold p-value to reqacc
             nobar(bool): Show progress bar
             autorescore(bool): Automatically try to re-score failed genes
@@ -1056,9 +1056,10 @@ class crosscorer(ABC):
             E_A(str): First GWAS to use
             E_B(str): Second GWAS to use
             parallel(int) : # of cores to use
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
-            mode(string): Precision mode to use ('','128b','100d')
-            reqacc(float): requested accuracy 
+            pcorr(float): Sample overlap correction factor
+            method(string): Not used
+            mode(string): Not used
+            reqacc(float): Not used
             nobar(bool): Show progress bar
         
         """

@@ -225,7 +225,7 @@ class chi2rank(pathwayscorer):
             modules(list): List of modules to score
             samples(int): # of random gene sets to draw
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             nobar(bool): Show progress bar
             
@@ -350,7 +350,7 @@ class chi2perm(pathwayscorer):
             modules(list): List of modules to score
             samples(int): # of random gene sets to draw
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d')
+            mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             nobar(bool): Show progress bar
             
