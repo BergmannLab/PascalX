@@ -10,7 +10,7 @@ PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_
 
 **Highlights:**
 
-    * Multi-precision weighted :math:`\chi^2` cdf calculation (up to 100 digits) 
+    * Multi-precision weighted :math:`\chi^2` cdf calculation (approximatively and exactly up to 100 digits) 
     * Parallelization over chromosomes and/or genes
     * GPU support for acceleration of linear algebra operations
     * Fast random access to reference panel genomic data via own indexed SNP database
@@ -22,14 +22,6 @@ PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_
 .. warning::
     PascalX is a research level tool. No warranty or guarantee whatsoever for its correct functionality is given. You should perform your own consistency checks on results PascalX implies.
 
-
-**Why PascalX:**
-
-In order to illustrate the impact of approximating the cdf of the weighted :math:`\chi^2` distribution at very small p-values via matching only the first two moments, we calcuated for an uniform random sample of weights and arguments :math:`\log_{10}` transformed p-values at :math:`N=10`, :math:`N=100` and :math:`N=1000` degrees of freedom via Ruben's algorithm at 100 digits precision and the Satterthwaite-Welch approximation. The resulting p-values are ordered, :math:`-\log_{10}` transformed, and plotted against each other (QQ-plots), see top row of the following figure. 
-
-.. image:: SatterthwaiteVsRuben.png
-
-In the second row, the ratio of p-values is plotted at various fixed arguments, sampled from different weights. The bullet point marks the mean and the error bar the range of values observed. We infer that the Satterthwaite-Welch approximation tends to overestimate the significance, in particular for small :math:`N`. Note that the error can go beyond several orders of magnitude.  
 
 
 
@@ -64,7 +56,7 @@ If you make use of the X-scorer (gene-wise coherence test between GWAS), please 
 
 
 | *Krefl D., Bergmann S.* 
-| *Covariance of Interdependent Samples with Application to GWAS* 
+| *Cross-GWAS coherence test at the gene and pathway level* 
 | *doi:10.1101/2021.05.16.21257289*
 
 
