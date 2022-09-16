@@ -514,8 +514,10 @@ class crosscorer(ABC):
             
             print(N,"common SNPs")
             #print(round(Nf/N*100,2),"% matching flipped alleles -> ", Nf,"SNPs flipped")
-            print(round(Ne/N*100,2),"% non-matching alleles        -> ",Ne,"SNPs removed")       
-            print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
+            print(round(Ne/N*100,2),"% non-matching alleles        -> ",Ne,"SNPs removed")     
+            
+            if matchRefPanel:
+                print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
             
             if round(Ne/N,2) > 0.5:
                 print("WARNING: Too many non-matching alleles. Try to invert A1 and A2 columns of one of the GWAS.")
