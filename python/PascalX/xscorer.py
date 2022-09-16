@@ -427,14 +427,21 @@ class crosscorer(ABC):
         return C,np.array(RID),ALLELES
     
     
-    def matchAlleles(self,E_A,E_B,matchRefPanel=True):
+    def matchAlleles(self,E_A,E_B,matchRefPanel=False):
         """
         Matches alleles between two GWAS 
         (SNPs with non matching alleles are removed)
         
         Args:
+            
             E_A(str) : Identifier of first GWAS
             E_B(str) : Identifier of second GWAS
+            matchRefPanel(bool) : Match also alleles to reference panel
+            
+        Note:
+        
+            Currently, matchRefPanel=True requires sufficient memory to load all reference panel indices into memory.
+            
         """
         
         if matchRefPanel:
