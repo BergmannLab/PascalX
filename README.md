@@ -198,7 +198,7 @@ R = Scorer.score(['WDR12','FARP2'])
 
 **Options:**
 
-```method='auto'```: Method to use for scoring
+```method='saddle'```: Method to use for scoring
 
 ```parallel=1```   : Number of cores to use
 
