@@ -291,7 +291,8 @@ def onemin_cdf_ruben(X, lb, lim=100000, acc=1e-16, mode=''):
     toc = time.time()
     
     return [res,_ifault[0], round(toc-tic,5)]
-    
+   
+
 def onemin_cdf_auto(X, lb, lim=1000000, acc=1e-100, mode=''):
     
     _L = np.ascontiguousarray(lb, dtype='float64')
@@ -311,15 +312,77 @@ def onemin_cdf_auto(X, lb, lim=1000000, acc=1e-100, mode=''):
     return [res, _ifault[0], round(toc-tic,5)]
 
 
-def onemin_cdf_satterthwaite(X, lb, mode='100d'):
+def onemin_cdf_satterthwaite(X, lb, mode='auto'):
     tic = time.time()
     
-    if mode == '200d':
-        res = hpstats.onemin_cdf_satterthwaite_200d(X, lb)
+    _L = np.ascontiguousarray(lb, dtype='float64')
+    
+    if mode == 'auto':
+        res = lib.oneminwchissum_m1nc0_satterthwaite_auto(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-300
+    elif mode == '200d':
+        res = lib.oneminwchissum_m1nc0_satterthwaite_200d(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-200
+    elif mode == '100d':
+        res = lib.oneminwchissum_m1nc0_satterthwaite_100d(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-100
+    elif mode == '128b':
+        res = lib.oneminwchissum_m1nc0_satterthwaite_float128(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-32    
     else:
-        res = hpstats.onemin_cdf_satterthwaite_100d(X, lb)
-        
+        res = lib.oneminwchissum_m1nc0_satterthwaite(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-15
+            
     toc = time.time()
     
-    return [res, 0, round(toc-tic,5)]
+    return [max(rf,res), 0, round(toc-tic,5)]
   
+def onemin_cdf_pearson(X, lb, mode='auto'):
+    tic = time.time()
+
+    _L = np.ascontiguousarray(lb, dtype='float64')
+
+    if mode == 'auto':
+        res = lib.oneminwchissum_m1nc0_pearson_auto(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-300
+    elif mode == '200d':
+        res = lib.oneminwchissum_m1nc0_pearson_200d(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-200
+    elif mode == '100d':
+        res = lib.oneminwchissum_m1nc0_pearson_100d(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-100
+    elif mode == '128b':
+        res = lib.oneminwchissum_m1nc0_pearson_float128(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-32    
+    else:
+        res = lib.oneminwchissum_m1nc0_pearson(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-15
+    
+    toc = time.time()
+
+    return [max(rf,res), 0, round(toc-tic,5)]
+
+def onemin_cdf_saddle(X, lb, mode='auto'):
+    tic = time.time()
+
+    _L = np.ascontiguousarray(lb, dtype='float64')
+
+    if mode == 'auto':
+        res = lib.oneminwchissum_m1nc0_saddle_auto(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-300
+    elif mode == '200d':
+        res = lib.oneminwchissum_m1nc0_saddle_200d(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-200
+    elif mode == '100d':
+        res = lib.oneminwchissum_m1nc0_saddle_100d(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-100
+    elif mode == '128b':
+        res = lib.oneminwchissum_m1nc0_saddle_float128(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-32    
+    else:
+        res = lib.oneminwchissum_m1nc0_saddle(ffi.cast("double *",_L.ctypes.data),len(_L),X)
+        rf = 1e-15
+    
+    toc = time.time()
+
+    return [max(rf,res), 0, round(toc-tic,5)]

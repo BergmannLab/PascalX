@@ -40,15 +40,15 @@ setup(
 	"tqdm>=4.43.0",
 	"scipy>=1.4.0",
 	"numpy>=1.18.0",
-    "fastnumbers>=3.1.0",
 	"seaborn>=0.11.0",
 	"progressbar>=2.5",
 	"docutils<0.18",
 	"sphinx>=3.2.1",
-	"sphinx-rtd-theme>=0.5.0"
+	"sphinx-rtd-theme>=0.5.0",
+	"fastnumbers>=3.1.0"
     ],
     setup_requires=["cffi","path.py"],
-    cffi_modules=["wchissum.py:ffibuilder","hpstats.py:ffibuilder"],
+    cffi_modules=["hpstats.py:ffibuilder","wchissum.py:ffibuilder"],
     zip_safe=False,
 )
 

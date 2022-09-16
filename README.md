@@ -1,11 +1,11 @@
 # PascalX
 
-High precision gene and pathway scoring for GWAS summary statistics in python
+High precision gene, pathway and cross scoring for GWAS summary statistics in python
 
 ## Features
 
-- Internal quad and multi-precision arithmetic support for high precision gene scoring via exact CDF calculations (up to 100 digits)
-- Fast random access to SNP reference panel genomic data with minimal memory footprint.
+- Internal quad and multi-precision arithmetic support for high precision gene scoring via exact (up to 100 digits) or approximative CDF calculations  
+- Fast random access to SNP reference panel genomic data with minimal memory footprint
 - Parallelization over chromosomes and/or genes
 - GPU acceleration support via cupy
 - Gene-wise coherence test between two GWAS
@@ -24,7 +24,7 @@ If you make use of PascalX for your research, please cite PascalX via the doi: 1
 If you make use of the X-scorer (gene-wise coherence test between two GWAS), please cite the work 
 
 *Krefl D., Bergmann S.*  
-*Covariance of Interdependent Samples with Application to GWAS*  
+*Cross-GWAS coherence test at the gene and pathway level*  
 [doi.org/10.1101/2021.05.16.21257289](https://doi.org/10.1101/2021.05.16.21257289)
 
 
@@ -41,7 +41,7 @@ Requirements:
   
   Install of requirements on Debian/Ubuntu:
   ``` bash
-  sudo apt-get install python3 python3-dev python3-setuptools python3-pip g++ make libboost-all-dev
+  sudo apt install python3 python3-dev python3-setuptools python3-pip g++ make libboost-all-dev wget
   ```
 
 Export library path:
@@ -71,7 +71,7 @@ Run the image in interactive mode with the host directory ```/your/workdir``` mo
 ```bash
 docker run --mount src=/your/workdir,target=/data,type=bind -p 8888:8888 -it pascalx bash
 ```
-Jupyter notebook comes pre-installed and listens on port ```8888```.
+Jupyter notebook comes pre-installed and is listening on port ```8888```.
 
 ## Usage
 
@@ -95,11 +95,11 @@ Options:
 
 **Set reference panel:**
 
-1000 Genome Project reference data can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
+1000 Genome Project reference data for the european subpopulation can be downloaded and converted via executing the script in the PascalX/misc folder as below (for GRCh37 replace 38 with 37).
 ```bash
 bash get1KGGRCh38.sh pathtostore/ EUR 4 tped
 ```
-Note that the third parameter specifies the # of cpu cores to utilize. 
+The third parameter specifies the # of cpu cores to utilize. Note that the download and conversion can take several hours. 
 
 The reference data has to be loaded by the gene scorer using the method
 ```python
@@ -111,7 +111,7 @@ The filename is required to not contain the ending ```.chr#....```. If the corre
 --recode 12 transpose
 ```
 
-By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. For import of allele information raw .vcf files have to be used. In this case the plink step can be skipped. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
+By default PascalX uses only one cpu core for the import. The number of cores to utilize can be set via the option ```parallel=```. Note that the import can take more than an hour per chromosome. A high parallel setting is therefore recommended. For import of allele information raw .vcf files have to be used. In this case the plink step can be skipped. Note that later calls of ```load_refpanel``` will be fast as the converted reference data will be stored on disk and reloaded on the fly. 
 
 In order to import allele information into the reference panel, raw .vcf files have to be used for the import. Replace for this the ```tped``` import script option above with ```vcf```. Note that to keep only a subset of samples under .vcf import, the ```keepfile=``` option has to be set.
 
@@ -198,9 +198,11 @@ R = Scorer.score(['WDR12','FARP2'])
 
 **Options:**
 
-```parallel=1```  : Number of cores to use
+```method='saddle'```: Method to use for scoring
 
-```nobar=False``` : Disable progress bar
+```parallel=1```   : Number of cores to use
+
+```nobar=False```  : Disable progress bar
 
 **Return:**
 
@@ -229,7 +231,7 @@ The genes in R_FAIL can be scored again with a manual choice of algorithm:
 R = Scorer.rescore(R,method='ruben',mode='128b',reqacc=1e-32,intlimit=100000)
 ```
 
-```method= 'auto' | 'ruben' | 'davies' | 'satterthwaite'```: Algorithm to use 
+```method= 'auto' | 'ruben' | 'davies' | 'satterthwaite' | 'saddle'```: Algorithm to use 
 
 ```mode='' | '128b' | '100d'```: internal precision (double | quad | 100 digits)
 
@@ -239,7 +241,7 @@ R = Scorer.rescore(R,method='ruben',mode='128b',reqacc=1e-32,intlimit=100000)
 
 NOTE:
 
-```ruben``` and ```davies``` compute exactly up to requested precision (```reqacc```). ```satterthwaite``` is a second order approximation. ```auto``` tries to automatically select for given gene between davies and ruben to maximize throughput. ```auto``` is the default setting for the gene scorer. If it fails, it is recommended to rescore with ```ruben```.
+```ruben``` and ```davies``` compute exactly up to requested precision (```reqacc```). ```satterthwaite``` is a second order approximation and ```pearson``` a third order approximation. ```saddle``` uses a saddle-point approximation and is for most use cases a good choice as it is fast and its accuracy comes close to the exact calculation. ```auto``` tries to automatically select for given gene between davies and ruben to maximize throughput. If ```auto``` fails, it is recommended to rescore the missing genes with ```ruben``` and a very high ```intlimit``` setting. ```saddle``` is the default setting for the gene scorer. 
 
 
 TIP:
@@ -248,7 +250,7 @@ Ruben converges very slowly if the ratio between the largest and smallest eigenv
 
 **Output:**
 
-The scoring results ```R_SUCCESS``` can be saved in a a tab separated file via:
+The scoring results ```R_SUCCESS``` can be saved in a tab separated file via:
 
 ```python
 scorer.save_scores('filename')
@@ -351,8 +353,6 @@ As above, but with
 X = xscorer.rsum(leftTail=False)
 ```
 
-NOTE: As the current cross scoring implementation consumes significantly more memory than the genescorer, it is recommended to keep ```parallel=1``` at the time being.
-
 
 ### Visualization:
 
@@ -375,3 +375,8 @@ Scorer.plot_Manhattan(R[0])
 
 ```style='classic'```: 
 ![Classic style](https://github.com/BergmannLab/PascalX/blob/main/misc/style_classic.png)
+
+
+### Disclaimer:
+
+PascalX is a research level tool. No warranty or guarantee whatsoever for its correct functionality is given. You should perform your own consistency checks on results PascalX implies.

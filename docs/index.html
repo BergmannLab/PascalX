@@ -168,7 +168,7 @@
 <p><strong>Highlights:</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Multi-precision weighted <span class="math notranslate nohighlight">\(\chi^2\)</span> cdf calculation (up to 100 digits)</p></li>
+<li><p>Multi-precision weighted <span class="math notranslate nohighlight">\(\chi^2\)</span> cdf calculation (approximatively and exactly up to 100 digits)</p></li>
 <li><p>Parallelization over chromosomes and/or genes</p></li>
 <li><p>GPU support for acceleration of linear algebra operations</p></li>
 <li><p>Fast random access to reference panel genomic data via own indexed SNP database</p></li>
@@ -181,10 +181,6 @@
 <p class="admonition-title">Warning</p>
 <p>PascalX is a research level tool. No warranty or guarantee whatsoever for its correct functionality is given. You should perform your own consistency checks on results PascalX implies.</p>
 </div>
-<p><strong>Why PascalX:</strong></p>
-<p>In order to illustrate the impact of approximating the cdf of the weighted <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution at very small p-values via matching only the first two moments, we calcuated for an uniform random sample of weights and arguments <span class="math notranslate nohighlight">\(\log_{10}\)</span> transformed p-values at <span class="math notranslate nohighlight">\(N=10\)</span>, <span class="math notranslate nohighlight">\(N=100\)</span> and <span class="math notranslate nohighlight">\(N=1000\)</span> degrees of freedom via Ruben’s algorithm at 100 digits precision and the Satterthwaite-Welch approximation. The resulting p-values are ordered, <span class="math notranslate nohighlight">\(-\log_{10}\)</span> transformed, and plotted against each other (QQ-plots), see top row of the following figure.</p>
-<img alt="_images/SatterthwaiteVsRuben.png" src="_images/SatterthwaiteVsRuben.png" />
-<p>In the second row, the ratio of p-values is plotted at various fixed arguments, sampled from different weights. The bullet point marks the mean and the error bar the range of values observed. We infer that the Satterthwaite-Welch approximation tends to overestimate the significance, in particular for small <span class="math notranslate nohighlight">\(N\)</span>. Note that the error can go beyond several orders of magnitude.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
@@ -230,7 +226,7 @@
 <p>If you make use of the X-scorer (gene-wise coherence test between GWAS), please cite the work:</p>
 <div class="line-block">
 <div class="line"><em>Krefl D., Bergmann S.</em></div>
-<div class="line"><em>Covariance of Interdependent Samples with Application to GWAS</em></div>
+<div class="line"><em>Cross-GWAS coherence test at the gene and pathway level</em></div>
 <div class="line"><em>doi:10.1101/2021.05.16.21257289</em></div>
 </div>
 </div>

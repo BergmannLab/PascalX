@@ -48,7 +48,9 @@ try:
     cp.cuda.set_allocator(mpool.malloc)
 except ModuleNotFoundError:
     cp = None
-        
+    
+
+    
     
 class crosscorer(ABC):
     # Note: GWAS data is stored statically (same for all instances)
@@ -245,11 +247,11 @@ class crosscorer(ABC):
             gcol(int): Column with gene id
             rcol(int): Column with SNP id
             wcol(int): Column with weight
+            bcol(int): Column with additional weight
+            delimiter(string): Character used to separate columns
             a1col(int): Column of alternate allele (None for ignoring alleles)
             a2col(int): Column of reference allele (None for ignoring alleles)
-            bcol(int): Column with additional weight
-            splitchr(string): Character used to separate columns
-            pfilter(float): Only load rows with wcol < pfilter
+            pfilter(float): Only include rows with wcol < pfilter
             header(bool): Header present
             
         """
@@ -431,8 +433,15 @@ class crosscorer(ABC):
         (SNPs with non matching alleles are removed)
         
         Args:
+            
             E_A(str) : Identifier of first GWAS
             E_B(str) : Identifier of second GWAS
+            matchRefPanel(bool) : Match also alleles to reference panel
+            
+        Note:
+        
+            Currently, matchRefPanel=True requires sufficient memory to load all reference panel indices into memory.
+            
         """
         
         if matchRefPanel:
@@ -505,9 +514,16 @@ class crosscorer(ABC):
             
             print(N,"common SNPs")
             #print(round(Nf/N*100,2),"% matching flipped alleles -> ", Nf,"SNPs flipped")
-            print(round(Ne/N*100,2),"% non-matching alleles        -> ",Ne,"SNPs removed")       
-            print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
+            print(round(Ne/N*100,2),"% non-matching alleles        -> ",Ne,"SNPs removed")     
             
+            if matchRefPanel:
+                print(round(Nr/N*100,2),"% non-matching with ref panel -> ",Nr,"SNPs removed")       
+            
+            if round(Ne/N,2) > 0.5:
+                print("WARNING: Too many non-matching alleles. Try to invert A1 and A2 columns of one of the GWAS.")
+            if round(Nr/N,2) > 0.5:
+                print("WARNING: Too many non-matching alleles with reference panel. Try to invert A1 and A2 columns of both GWAS.")
+                
         else:
             print("ERROR: Allele information missing !")
     
@@ -740,7 +756,7 @@ class crosscorer(ABC):
         return R
     
             
-    def plot_genesnps(self,G,E_A,E_B,rank=False,zscore=False,show_correlation=False,mark_window=False,MAF=None,tickspacing=10):
+    def plot_genesnps(self,G,E_A,E_B,rank=False,zscore=False,show_correlation=False,mark_window=False,MAF=None,tickspacing=10,pcolor='limegreen',ncolor='darkviolet',corrcmap=None):
         """
         Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix
         
@@ -750,6 +766,11 @@ class crosscorer(ABC):
             show_correlation(bool): Plot the corresponding SNP-SNP correlation matrix 
             mark_window(bool): Mark the gene transcription start and end positions
             MAF(float): MAF filter (None for value set in class)
+            tickspacing(int): Spacing of ticks
+            pcolor(color): Color for positive SNP associations
+            ncolor(color): Color for negative SNP associations
+            corrcmap(cmap): Colormap to use for correlation plot (None for default)
+            
         """
         if MAF is None:
             MAF = self._MAF
@@ -874,11 +895,19 @@ class crosscorer(ABC):
 
             x.append(i)
             h1.append(-np.log10(pA))
-            c1.append( int(np.sign(crosscorer._ENTITIES_b[E_A][RID[i]])) + 3 +1)
-
+            #c1.append( int(np.sign(crosscorer._ENTITIES_b[E_A][RID[i]])) + 3 +1)
+            if np.sign(crosscorer._ENTITIES_b[E_A][RID[i]]) > 0:
+                c1.append(pcolor)
+            else:
+                c1.append(ncolor)
+                
             h2.append(np.log10(pB))
-            c2.append( int(np.sign(crosscorer._ENTITIES_b[E_B][RID[i]])) + 3 +1)
-
+            #c2.append( int(np.sign(crosscorer._ENTITIES_b[E_B][RID[i]])) + 3 +1)
+            if np.sign(crosscorer._ENTITIES_b[E_B][RID[i]]) > 0:
+                c2.append(pcolor)
+            else:
+                c2.append(ncolor)
+                          
             if ALLELES is not None:
                 DICT[i] = [RID[i],pA,pB,np.sign(crosscorer._ENTITIES_b[E_A][RID[i]]),np.sign(crosscorer._ENTITIES_b[E_B][RID[i]]),ALLELES[i]]
             else:
@@ -888,8 +917,10 @@ class crosscorer(ABC):
         if show_correlation:
             plt.subplot(1, 2, 1)
 
-            plt.bar(x,h1,color=plt.get_cmap("tab20")(c1))    
-            plt.bar(x,h2,color=plt.get_cmap("tab20")(c2))    
+            #plt.bar(x,h1,color=plt.get_cmap("tab20")(c1))    
+            #plt.bar(x,h2,color=plt.get_cmap("tab20")(c2))    
+            plt.bar(x,h1,color=c1)    
+            plt.bar(x,h2,color=c2)    
             plt.ylabel("$-\log_{10}(p)$")
             plt.axhline(0,color='black',linestyle='dashed')
             ax = plt.gca()
@@ -902,9 +933,11 @@ class crosscorer(ABC):
             plt.subplot(1, 2, 2)
 
             # Generate a custom diverging colormap
-
-            cmap = sns.diverging_palette(230, 20, as_cmap=True)
-
+            if corrcmap is None:
+                cmap = sns.diverging_palette(230, 20, as_cmap=True)
+            else:
+                cmap = corrcmap
+                
             sns.heatmap(corr,cmap=cmap,square=True, vmin=-1,vmax=+1,xticklabels=tickspacing,yticklabels=tickspacing)
             
             if mark_window:
@@ -940,10 +973,10 @@ class crosscorer(ABC):
             E_B(str): Second GWAS to use
             parallel(int) : # of cores to use
             unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
-            mode(string): Precision mode to use ('','128b','100d')
-            reqacc(float): requested accuracy 
-            intlimit(int) : Max # integration terms to use
+            method(string): Not used
+            mode(string): Not used
+            reqacc(float): Not used
+            intlimit(int) : Not used
             threshold(bool): Threshold p-value to reqacc
             nobar(bool): Show progress bar
             autorescore(bool): Automatically try to re-score failed genes
@@ -1032,9 +1065,10 @@ class crosscorer(ABC):
             E_A(str): First GWAS to use
             E_B(str): Second GWAS to use
             parallel(int) : # of cores to use
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite')
-            mode(string): Precision mode to use ('','128b','100d')
-            reqacc(float): requested accuracy 
+            pcorr(float): Sample overlap correction factor
+            method(string): Not used
+            mode(string): Not used
+            reqacc(float): Not used
             nobar(bool): Show progress bar
         
         """

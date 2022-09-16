@@ -31,6 +31,8 @@ import numpy as np
 
 from fastnumbers import int
 
+import re
+
 class refpanel:
     
     def __init__(self):
@@ -64,7 +66,7 @@ class refpanel:
         
         return db
     
-    def set_refpanel(self,filename, parallel=1, keepfile=None, qualityT=100, SNPonly=False):
+    def set_refpanel(self,filename, parallel=1, keepfile=None, qualityT=100, SNPonly=False, chrlist=None, sourcefilename=None,regEx=None,nobar=True):
         """
         Sets the reference panel to use
         
@@ -73,31 +75,51 @@ class refpanel:
             filename(string): /path/filename (without .chr#.db ending)
             parallel(int): Number of cores to use for parallel import of reference panel
             
-            keepfile(string|None): [only for .vcf] File with sample ids (one per line) to keep.  None to keep all.
+            keepfile(string): [only for .vcf] File with sample ids (one per line) to keep.  None to keep all.
             qualityT(int): [only for .vcf] Quality threshold for variant to keep (None to ignore)
-            SNPonly(bool): [only for.vcf] Load only SNPs 
+            SNPonly(bool): [only for .vcf] Load only SNPs 
+            chrlist(list): List of chromosomes to import. (None to import 1-22)
+            sourcefilename(string): /path/filename (without .chr#. ending) of .tped | .vcf files. None to use same as filename
+            regEx(string): Regular expression to filter sample ids. First capture group is kept. [only for .vcf]
+            nobar(bool): Show progress bar (updates only if a chromosome finished)
             
         Note:
         
             One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.
             
+        Note:
+        
+            Alleles (under .vcf import) are stored internally in the order [ALT,REF].
+            
         """
         self._refData = filename
+        self._srcData = sourcefilename
         
-        NF = []
-        for i in range(1,23):
-            if not os.path.isfile(filename+".chr"+str(i)+".idx.gz") or not os.path.isfile(filename+".chr"+str(i)+".db"):
-                NF.append(i)
-        
+        if chrlist is None:
+            NF = []
+            for i in range(1,23):
+                if not os.path.isfile(filename+".chr"+str(i)+".idx.gz") or not os.path.isfile(filename+".chr"+str(i)+".db"):
+                    NF.append(i)
+        else: 
+            NF = []
+            for i in chrlist:
+                if not os.path.isfile(filename+".chr"+str(i)+".idx.gz") or not os.path.isfile(filename+".chr"+str(i)+".db"):
+                    NF.append(i)
+            
         # Import if missing
         if len(NF) > 0:
             print("Reference panel data not imported. Trying to import...")
-            self._import_reference(chrs=NF,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
+            self._import_reference(chrs=NF,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly,regEx=regEx,nobar=nobar)
             
     def _import_reference_thread_tped(self,i):
         
         # Load
-        with gzip.open(self._refData+'.chr'+str(i)+'.tped.gz','rt') as f:
+        if self._srcData is None:
+            fn = self._refData
+        else:
+            fn = self._srcData
+            
+        with gzip.open(fn+'.chr'+str(i)+'.tped.gz','rt') as f:
             
             db = snpdb.db()
             db.open(self._refData+'.chr'+str(i))
@@ -135,7 +157,7 @@ class refpanel:
             
         return True
         
-    def _import_reference_thread_vcf(self,i,keepfile,qualityT,SNPonly):
+    def _import_reference_thread_vcf(self,i,keepfile,qualityT,SNPonly,regEx=None):
         # Load filter info
         keep = set([])
         if keepfile is not None:
@@ -145,11 +167,16 @@ class refpanel:
                 keep.add(S)
 
             f.close()
-    
+        
         sampleMap = {}
         
         # Load
-        with gzip.open(self._refData+'.chr'+str(i)+'.vcf.gz','rt') as f:
+        if self._srcData is None:
+            fn = self._refData
+        else:
+            fn = self._srcData
+            
+        with gzip.open(fn+'.chr'+str(i)+'.vcf.gz','rt') as f:
             
             # Find header
             for line in f:
@@ -161,6 +188,16 @@ class refpanel:
                 if line[:2] == "#C":
                     data = line.split("\t")
                     tmp = data[9:]
+                    
+                    # RegEx processing of sample names
+                    if regEx is not None:
+                        for j in range(0,len(tmp)):
+                            m = re.search(regEx,tmp[j])
+                            try:
+                                tmp[j] = m.group(1)
+                            except:
+                                continue
+                            
                     for j in range(0,len(tmp)):
                         if (keepfile is None) or (tmp[j] in keep):
                             sampleMap[j] = tmp[j]
@@ -168,8 +205,18 @@ class refpanel:
                     break
 
             sampleKeys = list(sampleMap.keys())
-
             
+            # Store sample keys
+            with open(self._refData+'.sampleIds.txt','wt') as g:
+                s = ""
+                for j in range(0,len(sampleKeys)-1):
+                    s += str(sampleMap[sampleKeys[j]])+"\t"
+                
+                s += str(sampleMap[sampleKeys[len(sampleKeys)-1]])
+                
+                g.write(s+'\n')
+                
+                
             db = snpdb.db()
             db.open(self._refData+'.chr'+str(i))
             
@@ -258,7 +305,7 @@ class refpanel:
         return True
         
 
-    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100,SNPonly=False):
+    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100,SNPonly=False,regEx=None,nobar=True):
         """
         Imports reference data from .tped.gz or .vcf.gz files.
         (Has only to be run once. The imported data is stored on disk for later usage.)
@@ -274,12 +321,17 @@ class refpanel:
         """
         
         # Check if ref exist
-        for i in range(1,23):
-            if not os.path.isfile(self._refData+".chr"+str(i)+".tped.gz") and not os.path.isfile(self._refData+".chr"+str(i)+".vcf.gz"):
-                print("ERROR: ", self._refData+".chr"+str(i)+".(tped|vcf).gz", "not found")   
+        if self._srcData is None:
+            fn = self._refData
+        else:
+            fn = self._srcData
+            
+        for i in chrs:
+            if not os.path.isfile(fn+".chr"+str(i)+".tped.gz") and not os.path.isfile(fn+".chr"+str(i)+".vcf.gz"):
+                print("ERROR: ", fn+".chr"+str(i)+".(tped|vcf).gz", "not found")   
                 return
 
-            if os.path.isfile(self._refData+".chr"+str(i)+".tped.gz"):
+            if os.path.isfile(fn+".chr"+str(i)+".tped.gz"):
                 cmd = 'tped'
             else:
                 cmd = 'vcf'
@@ -287,7 +339,7 @@ class refpanel:
         # Start import    
         pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
            
-        with tqdm(total=len(chrs), desc="Importing reference panel", bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]",file=sys.stdout) as pbar:
+        with tqdm(total=len(chrs), desc="Importing reference panel", bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]",file=sys.stdout,disable=nobar) as pbar:
         
             def update(*a):
                 pbar.update(1)
@@ -297,7 +349,7 @@ class refpanel:
                 if cmd == 'tped':
                     res.append(pool.apply_async(self._import_reference_thread_tped, args=(i,), callback=update))
                 elif cmd == 'vcf':
-                    res.append(pool.apply_async(self._import_reference_thread_vcf, args=(i,keepfile,qualityT,SNPonly), callback=update))
+                    res.append(pool.apply_async(self._import_reference_thread_vcf, args=(i,keepfile,qualityT,SNPonly,regEx), callback=update))
             
                 
             # Wait to finish

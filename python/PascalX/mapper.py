@@ -29,7 +29,6 @@ class mapper:
     def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,delimiter="\t",pfilter=1,header=False):
         """
         Loads a SNP to gene mapping
-        
         Args:
             file(string): File to load
             gcol(int): Column with gene id
