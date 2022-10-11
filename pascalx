@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+import argparse
+
+parser = argparse.ArgumentParser(description="PascalX")
+
+# General options
+parser.add_argument("-p", "--parallel",type=int,default=1,help="# cpu cores to utilize")
+parser.add_argument("-g", "--gpu",type=bool,default=False,help="use gpu")
+parser.add_argument("-m", "--maf",type=float,default=0.05,help="minor allele frequency cutoff")
+parser.add_argument("-w", "--window",type=int,default=50000,help="gene window")
+parser.add_argument("-v", "--var",type=int,default=0.99,help="variance cutoff")
+
+# Ref panel
+parser.add_argument("refpanel", help="Imported refpanel to use (/path/filename[without .chr... ending])")
+
+# cmd
+subparsers = parser.add_subparsers(dest='subcommand')
+subparsers.required = True
+
+parser_genescoring = subparsers.add_parser('genescoring')
+
+parser_xscoring = subparsers.add_parser('xscoring')
+
+
+#parser.add_argument("-c", "--cmd", choices=["genescoring", "xscoring"],
+#                    help="what to do")
+                    
+args = parser.parse_args()
+print(args)
