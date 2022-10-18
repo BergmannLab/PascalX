@@ -216,7 +216,7 @@ class chi2rank(pathwayscorer):
         
     """
        
-    def score(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
+    def score(self,modules,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
         """
         Scores a set of pathways/modules
         
@@ -341,7 +341,7 @@ class chi2perm(pathwayscorer):
         Genes in the background gene sets are NOT fused.
     """
     
-    def score(self,modules,samples=100000,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
+    def score(self,modules,samples=100000,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
         """
         Scores a set of pathways/modules
         

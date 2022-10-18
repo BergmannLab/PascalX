@@ -100,7 +100,7 @@ class chi2sum:
             self._SKIPPED = genome._SKIPPED
 
             
-    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100,SNPonly=False):
+    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100,SNPonly=False,chrlist=None):
         """
         Sets the reference panel to use
         
@@ -112,6 +112,7 @@ class chi2sum:
             keepfile: File with sample ids (one per line) to keep (only for .vcf) 
             qualityT: Quality threshold for variant to keep (only for .vcf)
             SNPonly : Import only SNPs (only for .vcf)
+            chrlist(list): List of chromosomes to import. (None to import 1-22)
             
         Note:
         
@@ -119,7 +120,7 @@ class chi2sum:
             
         """
         self._ref = refpanel.refpanel()
-        self._ref.set_refpanel(filename=filename,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
+        self._ref.set_refpanel(filename=filename,parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly,chrlist=chrlist)
 
         
   
@@ -908,7 +909,7 @@ class chi2sum:
         
         return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore)
     
-    def score_gene_bulk_chr(self,chrs,gene,data,unloadRef=False,method='auto',mode='auto',reqacc=1e-100,intlimit=100000,autorescore=False):
+    def score_gene_bulk_chr(self,chrs,gene,data,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,autorescore=False):
         """
         Perform scoring in bulk for supplied set of SNPs
         
@@ -916,6 +917,7 @@ class chi2sum:
             chrs(int) : Chromosome number the supplied SNPs are located on
             gene(string): Gene symbol for the SNPs
             data(list} : List of SNP data in format [ [rsid1,rsid2,...], [GWASid1, GWASid2,...], M ] with M a pvalue matrix (rows: GWAS, cols: rsid)
+            unloadRef(bool): Remove loaded reference data from memory
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 

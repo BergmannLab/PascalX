@@ -64,7 +64,7 @@ class crosscorer(ABC):
     def __init__(self):
         pass
     
-    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100,SNPonly=False):
+    def load_refpanel(self, filename, parallel=1,keepfile=None,qualityT=100,SNPonly=False,chrlist=None):
         """
         Sets the reference panel to use
         
@@ -76,6 +76,7 @@ class crosscorer(ABC):
             keepfile: File with sample ids (one per line) to keep (only for .vcf) 
             qualityT: Quality threshold for variant to keep (only for .vcf)
             SNPonly : Import only SNPs (only for .vcf)
+            chrlist(list): List of chromosomes to import. (None to import 1-22)
             
         Note:
         
@@ -83,7 +84,7 @@ class crosscorer(ABC):
                
         """
         self._ref = refpanel.refpanel()
-        self._ref.set_refpanel(filename=filename, parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly)
+        self._ref.set_refpanel(filename=filename, parallel=parallel,keepfile=keepfile,qualityT=qualityT,SNPonly=SNPonly,chrlist=chrlist)
 
         
     def load_genome(self,file,ccol=1,cid=0,csymb=5,cstx=2,cetx=3,cs=4,cb=None,chrStart=0,splitchr='\t',NAgeneid='n/a',useNAgenes=False,header=False):
@@ -1099,17 +1100,18 @@ class crosscorer(ABC):
             
         return Clist
 
-    def score_chr(self,E_A,E_B,chrs=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'],threshold=1,parallel=1,pcorr=0):
+    def score_chr(self,E_A,E_B,chrs=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'],threshold=1,parallel=1,pcorr=0,nobar=False):
         """
         Performs cross scoring for gene symbols on given chromosomes
         
         Args:
         
-            chr(list): Chromosomes to score.
             E_A(str): First GWAS to use
             E_B(str): Second GWAS to use
+            chrs(list): Chromosomes to score.
             parallel(int) : # of cores to use
-          
+            pcorr(float): Sample overlap correction factor
+            
         """
         if not E_A in crosscorer._ENTITIES_p:
             print("[ERROR]:",E_A," not loaded")
@@ -1127,7 +1129,7 @@ class crosscorer(ABC):
                 
                 for i in chrs:
                     
-                    C = self._score_chr_thread(i,E_A,E_B,threshold,pcorr)
+                    C = self._score_chr_thread(str(i),E_A,E_B,threshold,pcorr)
                     
                     RESULT.extend(C[0])
                     FAIL.extend(C[1])
@@ -1150,7 +1152,7 @@ class crosscorer(ABC):
             for i in chrs:
                
                 #res.append(pool.apply_async(self._score_chr_thread, args=(i,E_A,E_B,threshold), callback=update))
-                res.append(pool.apply_async(self._score_chr_thread, args=(i,E_A,E_B,threshold,pcorr)))
+                res.append(pool.apply_async(self._score_chr_thread, args=(str(i),E_A,E_B,threshold,pcorr)))
 
             # Wait to finish
             for i in range(0,len(res)):

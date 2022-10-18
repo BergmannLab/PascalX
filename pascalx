@@ -1,30 +1,249 @@
 #!/usr/bin/env python3
 
+import PascalX
 import argparse
+import ast
+import os.path
 
-parser = argparse.ArgumentParser(description="PascalX")
+parser = argparse.ArgumentParser(description="PascalX v"+str(PascalX.__version__)+" -- gene, cross, and pathway scoring for GWAS summary statistics. https://github.com/BergmannLab/PascalX")
 
 # General options
-parser.add_argument("-p", "--parallel",type=int,default=1,help="# cpu cores to utilize")
-parser.add_argument("-g", "--gpu",type=bool,default=False,help="use gpu")
-parser.add_argument("-m", "--maf",type=float,default=0.05,help="minor allele frequency cutoff")
-parser.add_argument("-w", "--window",type=int,default=50000,help="gene window")
-parser.add_argument("-v", "--var",type=int,default=0.99,help="variance cutoff")
+parser.add_argument("-p", "--parallel",type=int,default=1,help="# cpu cores to utilize [int], default=1")
+parser.add_argument("-g", "--gpu",type=lambda x: (str(x).lower() == 'true'),default=False,help="use gpu [True|False], default=False (requires cupy library")
+parser.add_argument("-m", "--maf",type=float,default=0.05,help="minor allele frequency cutoff [float], default=0.05")
+parser.add_argument("-w", "--window",type=int,default=50000,help="gene window [int], default=50000")
+parser.add_argument("-v", "--var",type=float,default=0.99,help="variance cutoff [float], default=0.99")
+parser.add_argument("-c", "--chr", default="all", help='list of chromosomes to score, default=all')
+parser.add_argument("-n", "--nobar",type=lambda x: (str(x).lower() == 'true'),default=False,help="disable progress bar [True|False], default=False")
+parser.add_argument("-pw", "--pathway",help="Pathway file (do not specify for no pathway scoring). Pathway scoring runs for all chromosomes.")
+parser.add_argument("-cn","--col_name",type=int,default=0,help="column with module name in pathway file, default=0")
+parser.add_argument("-cs","--col_symb",type=int,default=2,help="column with first gene symbol in pathway file, default=2")
+
+# Gene annotation
+parser.add_argument("genome",help="gene annotation file (if file does not exist, will download GRCh38 protein coding genes from ensemble)")
 
 # Ref panel
-parser.add_argument("refpanel", help="Imported refpanel to use (/path/filename[without .chr... ending])")
+parser.add_argument("refpanel", help="reference panel to use (/path/filename[without .chr... ending]), imports from .vcf if not done yet")
+
+# Out 
+parser.add_argument("outfile", help="filename to store results in")
 
 # cmd
 subparsers = parser.add_subparsers(dest='subcommand')
 subparsers.required = True
 
-parser_genescoring = subparsers.add_parser('genescoring')
+# Genescoring
+parser_genescoring = subparsers.add_parser('genescoring',description="Genescorer")
+parser_genescoring.add_argument("gwas",help="tab separated file with GWAS data")
+parser_genescoring.add_argument("-sh","--skip_head",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
+parser_genescoring.add_argument("-cr","--col_rsid",type=int,default=0,help="column with rsids, default=0")
+parser_genescoring.add_argument("-cp","--col_pval",type=int,default=1,help="column with p-values, default=1")
 
-parser_xscoring = subparsers.add_parser('xscoring')
+
+# X-scoring
+parser_xscoring = subparsers.add_parser('xscoring',description="Xscorer")
+parser_xscoring.add_argument("gwas1",help="tab separated file with GWAS data")
+parser_xscoring.add_argument("-sh1","--skip_head1",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
+parser_xscoring.add_argument("-cr1","--col_rsid1",type=int,default=0,help="column with rsids, default=0")
+parser_xscoring.add_argument("-cp1","--col_pval1",type=int,default=1,help="column with p-values, default=1")
+parser_xscoring.add_argument("-cb1","--col_effect1",type=int,default=2,help="column with effect size, default=2")
+parser_xscoring.add_argument("-ca11","--col_allele11",type=int,default=3,help="column with allele 1, default=3")
+parser_xscoring.add_argument("-ca21","--col_allele21",type=int,default=4,help="column with allele 2, default=4")
+parser_xscoring.add_argument("gwas2",help="tab separated file with GWAS data")
+parser_xscoring.add_argument("-sh2","--skip_head2",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
+parser_xscoring.add_argument("-cr2","--col_rsid2",type=int,default=0,help="column with rsids, default=0")
+parser_xscoring.add_argument("-cp2","--col_pval2",type=int,default=1,help="column with p-values, default=1")
+parser_xscoring.add_argument("-cb2","--col_effect2",type=int,default=2,help="column with effect size, default=2")
+parser_xscoring.add_argument("-ca12","--col_allele12",type=int,default=3,help="column with allele 1, default=3")
+parser_xscoring.add_argument("-ca22","--col_allele22",type=int,default=4,help="column with allele 2, default=4")
+parser_xscoring.add_argument("-t","--lefttail",type=lambda x: (str(x).lower() == 'true'),default=False,help="left tail test (anti-coherence) [True|False], default=False")
+parser_xscoring.add_argument("-r","--ratio",type=lambda x: (str(x).lower() == 'true'),default=False,help="perform ratio test (order of gwas1 and gwas2 matters) [True|False], default=False")
+parser_xscoring.add_argument("-f","--flip",type=lambda x: (str(x).lower() == 'true'),default=False,help="flip GWAS1 and GWAS2 for ratio test [True|False], default=False")
+
+# Start
+if __name__ == "__main__":
+
+	args = parser.parse_args()
+
+	# Check if genome annotation exist, and download in case not
+	if not os.path.isfile(args.genome):
+		from PascalX import genome
+		E = genome.genome()
+		E.get_ensembl_annotation(args.genome,genetype='protein_coding',version='GRCh38')
+
+	# Check if ref panel exist
+	if args.chr == 'all':
+		chrs = [str(i) for i in range(1,23)]
+	else:
+		chrs = list(ast.literal_eval(args.chr))
+
+	stop = False
+	for c in chrs:
+		if not os.path.isfile(args.refpanel+".chr"+str(c)+".db"):
+			print("Refpanel file "+args.refpanel+".chr"+str(c)+".db not found") 
+			if not os.path.isfile(args.refpanel+".chr"+str(c)+".vcf"):
+				print("No corresponding "+args.refpanel+".chr"+str(c)+".vcf file found -> Can not import reference panel")
+				stop = True
+			else:
+				print("Found "+args.refpanel+".chr"+str(c)+".vcf -> will import") 
+		else:
+			if not os.path.isfile(args.refpanel+".chr"+str(c)+".idx.gz"):
+                        	print("Refpanel file "+args.refpanel+".chr"+str(c)+".idx.gz not found -> database broken. Delete .db files and re-import from vcf.") 
+                        	stop = True
+			
+	if stop:
+		exit(0)
+
+#	print(args)
+
+	# Main
+	if args.subcommand == 'genescoring':
+		from PascalX import genescorer
+		G = genescorer.chi2sum(window=args.window,varcutoff=args.var,MAF=args.maf,gpu=args.gpu)
+		G.load_genome(args.genome)
+		
+		if args.chr=='all':
+			G.load_refpanel(args.refpanel,parallel=args.parallel)
+		else:
+			G.load_refpanel(args.refpanel,parallel=args.parallel,chrlist=list(ast.literal_eval(args.chr)))
+
+		G.load_GWAS(args.gwas,rscol=args.col_rsid,pcol=args.col_pval,delimiter="\t",header=args.skip_head)
+		if args.pathway is None:
+			print("Starting genescoring")
+			if args.chr == 'all':
+				R = G.score_all(parallel=args.parallel,nobar=args.nobar)
+			else:
+				R = G.score_chr(chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
+
+			G.save_scores(args.outfile)
+			
+			if len(R[1]) > 0:
+				f = open(args.outfile+".fail","wt")
+				for x in R[1]:
+					f.write(x[0]+"\n")
+				f.close()
+
+			if len(R[2]) > 0:
+				f = open(args.outfile+".error","wt")
+				for x in R[2]:
+					f.write(x[0]+"\n")
+				f.close()
+            	
+			c = 0
+			L = []
+			bfcut = 0.025/(len(R[0])+len(R[1]))
+			for i in range(0,len(R[0])):
+				if R[0][i][1] < bfcut:
+					c+=1
+					L.append(R[0][i][0])
+
+			if c > 0:
+				print(c,"Bonferroni significant genes found:",L)
+			else:
+				print("No Bonferroni significant genes found")
 
 
-#parser.add_argument("-c", "--cmd", choices=["genescoring", "xscoring"],
-#                    help="what to do")
-                    
-args = parser.parse_args()
-print(args)
+		else:
+			print("Starting genescoring based pathway scoring")
+			from PascalX import pathway
+			P = pathway.chi2rank(G)
+			M = P.load_modules(args.pathway,args.col_name,args.col_symb)
+			R = P.score(M,parallel=args.parallel,nobar=args.nobar)
+			
+			f = open(args.outfile,"wt")
+			for x in R[0]:
+				f.write(x[0]+"\t"+str(x[2])+"\n")
+			
+			f.close()
+
+	if args.subcommand == 'xscoring':
+		from PascalX import xscorer
+
+		if not args.ratio:
+			X = xscorer.zsum(leftTail=args.lefttail,window=args.window,varcutoff=args.var,MAF=args.maf,gpu=args.gpu)
+		else:
+			X = xscorer.rsum(leftTail=args.lefttail,window=args.window,varcutoff=args.var,MAF=args.maf,gpu=args.gpu)
+
+		X.load_genome(args.genome)
+		
+		if args.chr == 'all':
+			X.load_refpanel(args.refpanel,parallel=args.parallel)
+		else:
+			X.load_refpanel(args.refpanel,parallel=args.parallel,chrlist=list(ast.literal_eval(args.chr)))
+
+		X.load_GWAS(args.gwas1,name="GWAS1",rscol=args.col_rsid1,pcol=args.col_pval1,bcol=args.col_effect1,a1col=args.col_allele11,a2col=args.col_allele21,header=args.skip_head1)
+		X.load_GWAS(args.gwas2,name="GWAS2",rscol=args.col_rsid2,pcol=args.col_pval2,bcol=args.col_effect2,a1col=args.col_allele12,a2col=args.col_allele22,header=args.skip_head2)
+		X.matchAlleles("GWAS1","GWAS2")
+		X.jointlyRank("GWAS1","GWAS2")
+		if args.pathway is None:
+			print("Starting xscoring")
+			if args.chr == 'all':
+				if not args.flip:
+					R = X.score_all("GWAS1","GWAS2",parallel=args.parallel,nobar=args.nobar)
+				else:
+					R = X.score_all("GWAS2","GWAS1",parallel=args.parallel,nobar=args.nobar)
+			else:
+				if not args.flip:
+					R = X.score_chr("GWAS1","GWAS2",chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
+				else:
+					R = X.score_chr("GWAS2","GWAS1",chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
+
+			f = open(args.outfile,"wt")
+
+			for x in R[0]:
+				f.write(x[0]+"\t"+str(x[1])+"\n")
+
+			f.close()
+
+			if len(R[1]) > 0:
+				f = open(args.outfile+".fail","wt")
+				for x in R[1]:
+					f.write(x[0]+"\n")
+				f.close()
+			
+			if len(R[2]) > 0:
+				f = open(args.outfile+".error","wt")
+				for x in R[2]:
+					f.write(x[0]+"\n")
+				f.close()
+
+			c = 0
+			L = []
+			bfcut = 0.025/(len(R[0])+len(R[1]))/2
+
+			for i in range(0,len(R[0])):
+				if R[0][i][1] < bfcut:
+					c+=1
+					L.append(R[0][i][0])
+
+			if c > 0:
+				print(c,"Bonferroni significant genes found:",L)
+			else:
+				print("No Bonferroni significant genes found")
+
+			
+
+
+
+		else:
+			print("Starting xscoring based pathway scoring")
+			from PascalX import pathway
+			
+			if not args.flip:
+				X._last_EA = "GWAS1"
+				X._last_EB = "GWAS2"
+			else:
+				X._last_EA = "GWAS2"
+				X._last_EB = "GWAS1"
+
+			P = pathway.chi2rank(X)
+			M = P.load_modules(args.pathway,args.col_name,args.col_symb)
+			R = P.score(M,parallel=args.parallel,nobar=args.nobar)
+
+			f = open(args.outfile,"wt")
+			for x in R[0]:
+				f.write(x[0]+"\t"+str(x[2])+"\n")
+
+			f.close()
+
+
