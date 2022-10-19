@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.7
 
 import PascalX
 import argparse
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 			else:
 				R = G.score_chr(chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
 
-			G.save_scores(args.outfile)
+			G.save_scores(args.outfile+".tsv")
 			
 			if len(R[1]) > 0:
 				f = open(args.outfile+".fail","wt")
@@ -188,7 +188,7 @@ if __name__ == "__main__":
 				else:
 					R = X.score_chr("GWAS2","GWAS1",chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
 
-			f = open(args.outfile,"wt")
+			f = open(args.outfile+".tsv","wt")
 
 			for x in R[0]:
 				f.write(x[0]+"\t"+str(x[1])+"\n")
@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
 			c = 0
 			L = []
-			bfcut = 0.025/(len(R[0])+len(R[1]))/2
+			bfcut = 0.025/(len(R[0])+len(R[1]))
 
 			for i in range(0,len(R[0])):
 				if R[0][i][1] < bfcut:
@@ -240,7 +240,7 @@ if __name__ == "__main__":
 			M = P.load_modules(args.pathway,args.col_name,args.col_symb)
 			R = P.score(M,parallel=args.parallel,nobar=args.nobar)
 
-			f = open(args.outfile,"wt")
+			f = open(args.outfile+".tsv","wt")
 			for x in R[0]:
 				f.write(x[0]+"\t"+str(x[2])+"\n")
 

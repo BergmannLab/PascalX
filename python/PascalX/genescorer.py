@@ -712,7 +712,7 @@ class chi2sum:
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
-            nobar(bool): Show progress bar
+            nobar(bool): Do not show progress bar
             autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
@@ -799,7 +799,7 @@ class chi2sum:
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
-            nobar(bool): Show progress bar
+            nobar(bool): Do not show progress bar
         
         Warning:
         
@@ -867,7 +867,7 @@ class chi2sum:
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
             parallel(int) : # of cores to use
-            nobar(bool): Show progress bar
+            nobar(bool): Do not show progress bar
             autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
@@ -900,7 +900,7 @@ class chi2sum:
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             intlimit(int) : Max # integration terms to use
-            nobar(bool): Show progress bar
+            nobar(bool): Do not show progress bar
             autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """

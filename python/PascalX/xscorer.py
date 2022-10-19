@@ -28,7 +28,8 @@ import multiprocessing as mp
 from scipy.special import iti0k0
 from scipy.stats import chi2
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
+#from tqdm import tqdm
 
 import sys
 
@@ -272,8 +273,12 @@ class crosscorer(ABC):
         self._last_EB = None
   
 
-    def _calcSNPcorr(self,SNPs,D,MAF=0.05):
-        DATA = D.getSNPs(SNPs)
+    def _calcSNPcorr(self,g,SNPs,REF,MAF=0.05):
+        
+        
+        P = list(REF[1].irange(self._GENEID[g][1]-self._window,self._GENEID[g][2]+self._window))
+        
+        DATA = REF[0].get(list(P))     
         
         filtered = {}
         #use = []
@@ -284,7 +289,7 @@ class crosscorer(ABC):
         # Sort out
         for D in DATA:
             # Select
-            if D is not None and D[1] > MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+            if D is not None and D[1] > MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]) and D[0] in SNPs:
                     filtered[D[0]] = [D[1],D[2]]
                     #use.append(D[2])
                     #RID.append(D[0])
@@ -307,18 +312,17 @@ class crosscorer(ABC):
             
         return C,np.array(RID)
 
-    def _calcSNPcorr_wAlleles(self,SNPs,E_A,D,MAF=0.05):
-        DATA = D.getSNPs(SNPs)
+    def _calcSNPcorr_wAlleles(self,g,SNPs,E_A,D,MAF=0.05):
+        P = list(D[1].irange(self._GENEID[g][1]-self._window,self._GENEID[g][2]+self._window))
+        
+        DATA = D[0].get(P)     
         
         filtered = {}
-        
-        #use = []
-        #RID = []
-        
+         
         # Sort out
         for D in DATA:
             # Select
-            if D is not None and D[1] > MAF: # MAF filter
+            if D is not None and D[1] > MAF and D[0] in SNPs: # MAF filter
                 # Allele filter
                 A = self._ENTITIES_a[E_A][D[0]]
                 
@@ -947,8 +951,9 @@ class crosscorer(ABC):
                 plt.axvline(x=eid, color='black', ls=':')
                 plt.axhline(y=eid, color='black', ls=':')
         else:
-            plt.bar(x,h1,color=plt.get_cmap("tab20")(c1))    
-            plt.bar(x,h2,color=plt.get_cmap("tab20")(c2))    
+            
+            plt.bar(x,h1,color=c1)    
+            plt.bar(x,h2,color=c2)    
             plt.ylabel("$-\log_{10}(p)$")
             plt.axhline(0,color='black',linestyle='dashed')
             ax = plt.gca()
@@ -963,7 +968,7 @@ class crosscorer(ABC):
          
 
     
-    def score(self,gene,E_A=None,E_B=None,threshold=1,parallel=1,method=None,mode=None,nobar=None,reqacc=None,autorescore=False):
+    def score(self,gene,E_A=None,E_B=None,threshold=1,parallel=1,method=None,mode=None,nobar=False,reqacc=None,autorescore=False,pcorr=0):
         """
         Performs cross scoring for a given list of gene symbols
         
@@ -979,9 +984,9 @@ class crosscorer(ABC):
             reqacc(float): Not used
             intlimit(int) : Not used
             threshold(bool): Threshold p-value to reqacc
-            nobar(bool): Show progress bar
+            nobar(bool): Do not show progress bar
             autorescore(bool): Automatically try to re-score failed genes
-        
+            pcorr(float): Sample overlap correction factor
         """
         if E_A is None:
             if self._last_EA is not None:
@@ -1007,20 +1012,25 @@ class crosscorer(ABC):
         
         # Check if in annotation and sort after chromosome
         G = []
-        cr = []
+        cr = [] 
         for i in range(0,len(gene)):
             if gene[i] in self._GENESYMB:
                 G.append(self._GENESYMB[gene[i]])
                 cr.append(self._GENEID[self._GENESYMB[gene[i]]][0])
+            elif gene[i] in self._GENEID:
+                G.append(gene[i])
+                cr.append(self._GENEID[gene[i]][0])
             else:
                 print("[WARNING]: "+gene[i]+" not in annotation -> ignoring")
         
         I = np.argsort(cr)
         G = np.array(G)[I]
-                
+        
+        lock = mp.Manager().Lock()
+        
         # Score gene-wise
         if parallel==1:
-            R = self._score_gene_thread(G,E_A,E_B,0,nobar)
+            R = self._score_gene_thread(G,E_A,E_B,0,nobar,pcorr,lock)
         else:
             R = [[],[],[]]
             S = np.array_split(G,parallel)
@@ -1031,7 +1041,7 @@ class crosscorer(ABC):
 
             for i in range(0,len(S)): 
 
-                result = pool.apply_async(self._score_gene_thread, (S[i],E_A,E_B,i,nobar))
+                result = pool.apply_async(self._score_gene_thread, (S[i],E_A,E_B,i,nobar,pcorr,lock))
                 result_objs.append(result)
 
             results = [r.get() for r in result_objs]    
@@ -1057,7 +1067,7 @@ class crosscorer(ABC):
         return R
         
     
-    def score_all(self,E_A=None,E_B=None,threshold=1,parallel=1,pcorr=0,method=None,mode=None,nobar=None,reqacc=None):
+    def score_all(self,E_A=None,E_B=None,threshold=1,parallel=1,pcorr=0,method=None,mode=None,nobar=False,reqacc=None):
         """
         Performs cross scoring for all gene symbols
         
@@ -1070,7 +1080,7 @@ class crosscorer(ABC):
             method(string): Not used
             mode(string): Not used
             reqacc(float): Not used
-            nobar(bool): Show progress bar
+            nobar(bool): Do not show progress bar
         
         """
         self._SCORES = {}
@@ -1094,7 +1104,7 @@ class crosscorer(ABC):
             self._last_EB = E_B    
         
         if self._gMAP is None:
-            Clist = self.score_chr(E_A, E_B, parallel=parallel,threshold=threshold,pcorr=pcorr)
+            Clist = self.score_chr(E_A, E_B, parallel=parallel,threshold=threshold,pcorr=pcorr,nobar=nobar)
         else:
             Clist = self.score_map(parallel=parallel)
             
@@ -1111,14 +1121,23 @@ class crosscorer(ABC):
             chrs(list): Chromosomes to score.
             parallel(int) : # of cores to use
             pcorr(float): Sample overlap correction factor
-            
+            nobar(bool): Do not show progress bar
         """
         if not E_A in crosscorer._ENTITIES_p:
             print("[ERROR]:",E_A," not loaded")
         
         if not E_B in crosscorer._ENTITIES_p:
             print("[ERROR]:",E_B," not loaded")
-            
+           
+        
+        # Build list of genes for chromosomes
+        G = []
+        for c in chrs:
+            G.extend(self._CHR[str(c)][0])
+        
+        return self.score(G,E_A=E_A,E_B=E_B,threshold=threshold,parallel=parallel,pcorr=pcorr,nobar=nobar)
+        
+        
         RESULT = []
         FAIL = []
         TOTALFAIL = []
@@ -1479,71 +1498,72 @@ class zsum(crosscorer):
     
     
     
-    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False,pcorr=0):
+    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False,pcorr=0,lock=None):
         RESULT = []
         FAIL = []
         TOTALFAIL = []
         
-        REF = {}
-        DB  = {}
+        REF  = {}
         
-        SNPs = np.array(list(crosscorer._ENTITIES_p[E_A].keys() & crosscorer._ENTITIES_p[E_B].keys()))
+        SNPs = crosscorer._ENTITIES_p[E_A].keys() & crosscorer._ENTITIES_p[E_B].keys()
         
         E_p_A = crosscorer._ENTITIES_p[E_A]
         E_b_A = crosscorer._ENTITIES_b[E_A]
         E_p_B = crosscorer._ENTITIES_p[E_B]
         E_b_B = crosscorer._ENTITIES_b[E_B]
         
-        with tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", file=sys.stdout, position=baroffset, leave=True,disable=nobar) as pbar:
-            for g in G:
+        if not nobar:
+            print(' ', end='', flush=True) # Hack to work with jupyter notebook 
+        
+        with lock:
+            pbar = tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", position=baroffset, leave=True,disable=nobar)
+            #pbar.set_description(label)#+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
 
-                cr = self._GENEID[g][0]
+        for i in range(pbar.total):
+           
+            cr = self._GENEID[G[i]][0]
 
-                if cr == 'X' or cr == 'Y': # Skip these
-                    continue
+            if cr == 'X' or cr == 'Y': # Skip these
+                continue
 
-                if not cr in REF:
-                    DB[cr]  = self._ref.load_snp_reference(cr)    
-                    REF[cr] = DB[cr].getSortedKeys()
+            if not cr in REF:
+                REF = {}
+                REF[cr] = self._ref.load_pos_reference(cr)
 
-                #print(g,cr,self._GENEID[g])
+            #print(g,cr,self._GENEID[g])
 
-                P = list(REF[cr].irange(self._GENEID[g][1]-self._window,self._GENEID[g][2]+self._window))
+            if E_A in self._ENTITIES_a:
+                corr,RID = self._calcSNPcorr_wAlleles(G[i],SNPs,E_A,REF[cr],self._MAF) # Score with alleles
+            else:  
+                corr,RID = self._calcSNPcorr(G[i],SNPs,REF[cr],self._MAF)
 
-                DATA = np.array(DB[cr].getSNPatPos(P))
+            if len(RID) > 0:
+                # Get w, z   
+                w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
 
-                UNIOND = np.intersect1d(SNPs,DATA)
+                z = np.array([np.sign(E_b_B[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_B[x])) for x in RID])
 
-                if len(UNIOND) > 0:
-                    if E_A in self._ENTITIES_a:
-                        corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,DB[cr],self._MAF) # Score with alleles
-                    else:  
-                        corr,RID = self._calcSNPcorr(UNIOND,DB[cr],self._MAF)
-                   
-                    # Get w, z   
-                    w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
 
-                    z = np.array([np.sign(E_b_B[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_B[x])) for x in RID])
 
-                  
-                      
-                    sumr = z.dot(w)
+                sumr = z.dot(w)
 
-                    score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05,pcorr)
+                score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05,pcorr)
 
-                    if score[1][1] !=0 or score[1][0] <= 0.0:
-                        #print("[WARNING]( chr",C,"):",score)
-                        FAIL.append([self._GENEID[g][4],score,len(w),sumr])
+                if score[1][1] !=0 or score[1][0] <= 0.0:
+                    #print("[WARNING]( chr",C,"):",score)
+                    FAIL.append([self._GENEID[G[i]][4],score,len(w),sumr])
 
-                    else:
-                        RESULT.append([self._GENEID[g][4],score[1][0],len(w),np.sign(sumr)])
-                    
                 else:
-                    TOTALFAIL.append([self._GENEID[g][4],"No SNPs"])
+                    RESULT.append([self._GENEID[G[i]][4],score[1][0],len(w),np.sign(sumr)])
+
+            else:
+                TOTALFAIL.append([self._GENEID[G[i]][4],"No SNPs"])
 
 
+            with lock:
                 pbar.update(1)
 
+                
         return RESULT,FAIL,TOTALFAIL
 
     
@@ -1755,9 +1775,8 @@ class rsum(crosscorer):
         FAIL = []
         TOTALFAIL = []
         
-        db  = self._ref.load_snp_reference(C)
-        REF = db.getSortedKeys()
-            
+        REF = self._ref.load_pos_reference(cr)
+      
         # Run over genes on chromosome
         if len(self._CHR[str(C)]) > 0:
             # Loop over genes
@@ -1765,8 +1784,10 @@ class rsum(crosscorer):
 
                 G = self._GENEID[gene]
                 if gene in self._gMAP:
-                    snps = list(self._gMAP[gene].keys()) # List to prevent blocking ?
-                    corr,RID = self._calcSNPcorr(snps,db,self._MAF)
+                    snps = self._gMAP[gene].keys()
+                    
+                    corr,RID = self._calcSNPcorr(G,snps,REF,self._MAF)
+                    
                     data = self._gMAP[gene]
     
                     w = np.array([data[x][1]*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail( data[x][0]  )) for x in RID])
@@ -1799,71 +1820,71 @@ class rsum(crosscorer):
                 
                 
 
-    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False,pcorr=0):
+    def _score_gene_thread(self,G,E_A,E_B,baroffset=0,nobar=False,pcorr=0,lock=None):
         RESULT = []
         FAIL = []
         TOTALFAIL = []
         
-        REF = {}
-        DB  = {}
         
-        SNPs = np.array(list(crosscorer._ENTITIES_p[E_A].keys() & crosscorer._ENTITIES_p[E_B].keys()))
+        SNPs = crosscorer._ENTITIES_p[E_A].keys() & crosscorer._ENTITIES_p[E_B].keys()
         
         E_p_A = crosscorer._ENTITIES_p[E_A]
         E_b_A = crosscorer._ENTITIES_b[E_A]
         E_p_B = crosscorer._ENTITIES_p[E_B]
         E_b_B = crosscorer._ENTITIES_b[E_B]
         
-        with tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", file=sys.stdout, position=baroffset, leave=True,disable=nobar) as pbar:
-            for g in G:
+        REF = {}
+        if not nobar:
+            print(' ', end='', flush=True) # Hack to work with jupyter notebook 
+        
+        with lock:
+            pbar = tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", position=baroffset, leave=True,disable=nobar)
+            #pbar.set_description(label)#+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
 
-                cr = self._GENEID[g][0]
+        for i in range(pbar.total):
 
-                if cr == 'X' or cr == 'Y': # Skip these
-                    continue
+            cr = self._GENEID[G[i]][0]
 
-                if not cr in REF:
-                    DB[cr]  = self._ref.load_snp_reference(cr)    
-                    REF[cr] = DB[cr].getSortedKeys()
+            if cr == 'X' or cr == 'Y': # Skip these
+                continue
 
-                #print(g,cr,self._GENEID[g])
+            if not cr in REF:
+                REF = {}
+                REF[cr] = self._ref.load_pos_reference(cr)
 
-                P = list(REF[cr].irange(self._GENEID[g][1]-self._window,self._GENEID[g][2]+self._window))
+            #print(g,cr,self._GENEID[g])
 
-                DATA = np.array(DB[cr].getSNPatPos(P))
+            if E_A in self._ENTITIES_a:
+                corr,RID = self._calcSNPcorr_wAlleles(G[i],SNPs,E_A,REF[cr],self._MAF) # Score with alleles
+            else:  
+                corr,RID = self._calcSNPcorr(G[i],SNPs,REF[cr],self._MAF)
 
-                UNIOND = np.intersect1d(SNPs,DATA)
+            if len(RID) > 0:
 
-                if len(UNIOND) > 0:
-                    
-                    if E_A in self._ENTITIES_a:
-                        corr,RID = self._calcSNPcorr_wAlleles(UNIOND,E_A,DB[cr],self._MAF) # Score with alleles
-                    else:  
-                        corr,RID = self._calcSNPcorr(UNIOND,DB[cr],self._MAF)
-                   
-                    # Get w, z   
-                    w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
+                # Get w, z   
+                w = np.array([np.sign(E_b_A[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_A[x])) for x in RID])
 
-                    z = np.array([np.sign(E_b_B[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_B[x])) for x in RID])
-                      
-                    norm = z.dot(z)
-                    if norm != 0:
-                        sumr = z.dot(w)/norm
+                z = np.array([np.sign(E_b_B[x])*np.sqrt(tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(E_p_B[x])) for x in RID])
 
-                        score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,0.99,50000,0.05,pcorr)
+                norm = z.dot(z)
+                if norm != 0:
+                    sumr = z.dot(w)/norm
 
-                        if score[1][1] !=0 or score[1][0] <= 0.0:
-                            #print("[WARNING]( chr",C,"):",score)
-                            FAIL.append([self._GENEID[g][4],score,len(w),sumr])
+                    score = self._scoreThread(0,corr,sumr,E_B,'auto',1e-16,1000000,self._varcutoff,self._window,self._MAF,pcorr)
 
-                        else:
-                            RESULT.append([self._GENEID[g][4],score[1][0],len(w),np.sign(sumr)])
+                    if score[1][1] !=0 or score[1][0] <= 0.0:
+                        #print("[WARNING]( chr",C,"):",score)
+                        FAIL.append([self._GENEID[G[i]][4],score,len(w),sumr])
+
                     else:
-                        TOTALFAIL.append([self._GENEID[g][4],"NaN for denom"])
+                        RESULT.append([self._GENEID[G[i]][4],score[1][0],len(w),np.sign(sumr)])
                 else:
-                    TOTALFAIL.append([self._GENEID[g][4],"No SNPs"])
+                    TOTALFAIL.append([self._GENEID[G[i]][4],"NaN for denom"])
+            else:
+                TOTALFAIL.append([self._GENEID[G[i]][4],"No SNPs"])
 
 
+            with lock:
                 pbar.update(1)
 
         return RESULT,FAIL,TOTALFAIL
