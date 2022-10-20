@@ -759,8 +759,50 @@ class crosscorer(ABC):
             R.append([K[i],V[i]])
         
         return R
-    
+       
+    def save_scores(self,file):
+        """
+        Save computed gene scores 
+        
+        Args:
             
+            file(string): Filename to store data
+        
+        """
+        f = open(file,"w")
+        
+        for K in self._SCORES.keys():
+            f.write(str(K)+"\t"+str(self._SCORES[K])+"\n")
+            
+        f.close()
+    
+    def load_scores(self,file,gcol=0,pcol=1,header=False):
+        """
+        Load computed gene scores
+        
+        Args:
+            
+            file(string): Filename of data to load
+            gcol(int): Column with gene symbol
+            pcol(int): Column with p-value
+            header(bool): File contains a header (True|False)
+        """
+        self._SCORES = {}
+        
+        f = open(file,"r")
+        if header:
+            f.readline()
+            
+        for line in f:
+            L = line.rstrip('\n').split("\t")
+            self._SCORES[L[gcol]] = float(L[pcol])
+            
+        f.close()
+        
+        print(len(self._SCORES),"scores loaded")
+        
+    
+    
     def plot_genesnps(self,G,E_A,E_B,rank=False,zscore=False,show_correlation=False,mark_window=False,MAF=None,tickspacing=10,pcolor='limegreen',ncolor='darkviolet',corrcmap=None):
         """
         Plots the SNP p-values for a list of genes and the genotypic SNP-SNP correlation matrix

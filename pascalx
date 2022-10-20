@@ -15,9 +15,11 @@ parser.add_argument("-w", "--window",type=int,default=50000,help="gene window [i
 parser.add_argument("-v", "--var",type=float,default=0.99,help="variance cutoff [float], default=0.99")
 parser.add_argument("-c", "--chr", default="all", help='list of chromosomes to score, default=all')
 parser.add_argument("-n", "--nobar",type=lambda x: (str(x).lower() == 'true'),default=False,help="disable progress bar [True|False], default=False")
-parser.add_argument("-pw", "--pathway",help="Pathway file (do not specify for no pathway scoring). Pathway scoring runs for all chromosomes.")
+parser.add_argument("-pw","--pathway",help="Pathway file (do not specify for no pathway scoring).")
+parser.add_argument("-ps","--scores", help='Load precomputed fusion genescores from file') 
 parser.add_argument("-cn","--col_name",type=int,default=0,help="column with module name in pathway file, default=0")
 parser.add_argument("-cs","--col_symb",type=int,default=2,help="column with first gene symbol in pathway file, default=2")
+parser.add_argument("-po","--genes_only",type=lambda x: (str(x).lower() == 'true'),default=False,help="Compute fusion genescores only, default=False")
 
 # Gene annotation
 parser.add_argument("genome",help="gene annotation file (if file does not exist, will download GRCh38 protein coding genes from ensemble)")
@@ -131,7 +133,7 @@ if __name__ == "__main__":
             	
 			c = 0
 			L = []
-			bfcut = 0.025/(len(R[0])+len(R[1]))
+			bfcut = 0.05/(len(R[0])+len(R[1]))
 			for i in range(0,len(R[0])):
 				if R[0][i][1] < bfcut:
 					c+=1
@@ -146,15 +148,44 @@ if __name__ == "__main__":
 		else:
 			print("Starting genescoring based pathway scoring")
 			from PascalX import pathway
+
+			if args.scores is not None:
+                  	      G.load_scores(args.scores)
+
+
 			P = pathway.chi2rank(G)
 			M = P.load_modules(args.pathway,args.col_name,args.col_symb)
-			R = P.score(M,parallel=args.parallel,nobar=args.nobar)
-			
-			f = open(args.outfile,"wt")
-			for x in R[0]:
-				f.write(x[0]+"\t"+str(x[2])+"\n")
-			
-			f.close()
+			if args.chr == 'all':
+				R = P.score(M,parallel=args.parallel,nobar=args.nobar,genes_only=args.genes_only)
+			else:
+				R = P.score(M,parallel=args.parallel,nobar=args.nobar,chrs_only=args.chr,genes_only=args.genes_only)
+
+			if args.genes_only:
+				G.save_scores(args.outfile+".tsv")
+			else:
+				f = open(args.outfile+".tsv","wt")
+
+				L = []
+				
+				c = 0
+				for x in R[0]:
+					if len(x[1]) > 0:
+						c+=1
+
+				bfcut = 0.05/c
+
+				for x in R[0]:
+					if len(x[1]) > 0:
+						f.write(x[0]+"\t"+str(x[3])+"\n")
+						if x[3] < bfcut:
+							L.append(x[0])
+				f.close()
+
+				if len(L) > 0:
+					print(len(L),"Bonferroni significant pathways found:",L)
+				else:
+					print("No Bonferroni significant pathways found")
+
 
 	if args.subcommand == 'xscoring':
 		from PascalX import xscorer
@@ -207,17 +238,15 @@ if __name__ == "__main__":
 					f.write(x[0]+"\n")
 				f.close()
 
-			c = 0
 			L = []
-			bfcut = 0.025/(len(R[0])+len(R[1]))
+			bfcut = 0.05/(len(R[0])+len(R[1]))
 
 			for i in range(0,len(R[0])):
 				if R[0][i][1] < bfcut:
-					c+=1
 					L.append(R[0][i][0])
 
-			if c > 0:
-				print(c,"Bonferroni significant genes found:",L)
+			if len(L) > 0:
+				print(len(L),"Bonferroni significant genes found:",L)
 			else:
 				print("No Bonferroni significant genes found")
 
@@ -236,14 +265,40 @@ if __name__ == "__main__":
 				X._last_EA = "GWAS2"
 				X._last_EB = "GWAS1"
 
+			if args.scores is not None:
+				X.load_scores(args.scores)
+
 			P = pathway.chi2rank(X)
 			M = P.load_modules(args.pathway,args.col_name,args.col_symb)
-			R = P.score(M,parallel=args.parallel,nobar=args.nobar)
 
-			f = open(args.outfile+".tsv","wt")
-			for x in R[0]:
-				f.write(x[0]+"\t"+str(x[2])+"\n")
+			if args.chr == 'all':
+				R = P.score(M,parallel=args.parallel,nobar=args.nobar,genes_only=args.genes_only)
+			else:
+				R = P.score(M,parallel=args.parallel,nobar=args.nobar,chrs_only=args.chr,genes_only=args.genes_only)
 
-			f.close()
+			if args.genes_only:
+				X.save_scores(args.outfile+".tsv")
+			else:
+				f = open(args.outfile+".tsv","wt")
+				L = []
 
+				c = 0
+				for x in R[0]:
+					if len(x[1]) > 0:
+						c+=1
+
+				bfcut = 0.05/c
+
+				for x in R[0]:
+					if len(x[1]) > 0:
+						f.write(x[0]+"\t"+str(x[3])+"\n")
+						if x[3] < bfcut:
+							L.append(x[0])
+							
+				f.close()
+				
+				if len(L) > 0:
+					print(len(L),"Bonferroni significant pathways found:",L)
+				else:
+					print("No Bonferroni significant pathways found")
 
