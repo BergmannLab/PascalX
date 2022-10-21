@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p out
 
 # Genescoring
 echo "~~~ Genescoring demo"

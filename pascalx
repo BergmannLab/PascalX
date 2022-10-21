@@ -36,7 +36,7 @@ subparsers.required = True
 
 # Genescoring
 parser_genescoring = subparsers.add_parser('genescoring',description="Genescorer")
-parser_genescoring.add_argument("gwas",help="tab separated file with GWAS data")
+parser_genescoring.add_argument("gwas",help="tab separated file with GWAS data (can be .gz compressed)")
 parser_genescoring.add_argument("-sh","--skip_head",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
 parser_genescoring.add_argument("-cr","--col_rsid",type=int,default=0,help="column with rsids, default=0")
 parser_genescoring.add_argument("-cp","--col_pval",type=int,default=1,help="column with p-values, default=1")
@@ -44,14 +44,14 @@ parser_genescoring.add_argument("-cp","--col_pval",type=int,default=1,help="colu
 
 # X-scoring
 parser_xscoring = subparsers.add_parser('xscoring',description="Xscorer")
-parser_xscoring.add_argument("gwas1",help="tab separated file with GWAS data")
+parser_xscoring.add_argument("gwas1",help="tab separated file with GWAS data (can be .gz compressed)")
 parser_xscoring.add_argument("-sh1","--skip_head1",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
 parser_xscoring.add_argument("-cr1","--col_rsid1",type=int,default=0,help="column with rsids, default=0")
 parser_xscoring.add_argument("-cp1","--col_pval1",type=int,default=1,help="column with p-values, default=1")
 parser_xscoring.add_argument("-cb1","--col_effect1",type=int,default=2,help="column with effect size, default=2")
 parser_xscoring.add_argument("-ca11","--col_allele11",type=int,default=3,help="column with allele 1, default=3")
 parser_xscoring.add_argument("-ca21","--col_allele21",type=int,default=4,help="column with allele 2, default=4")
-parser_xscoring.add_argument("gwas2",help="tab separated file with GWAS data")
+parser_xscoring.add_argument("gwas2",help="tab separated file with GWAS data (can be .gz compressed)")
 parser_xscoring.add_argument("-sh2","--skip_head2",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
 parser_xscoring.add_argument("-cr2","--col_rsid2",type=int,default=0,help="column with rsids, default=0")
 parser_xscoring.add_argument("-cp2","--col_pval2",type=int,default=1,help="column with p-values, default=1")
@@ -110,13 +110,15 @@ if __name__ == "__main__":
 			G.load_refpanel(args.refpanel,parallel=args.parallel,chrlist=list(ast.literal_eval(args.chr)))
 
 		G.load_GWAS(args.gwas,rscol=args.col_rsid,pcol=args.col_pval,delimiter="\t",header=args.skip_head)
-		if args.pathway is None:
+		if args.scores is None:
 			print("Starting genescoring")
+			
 			if args.chr == 'all':
 				R = G.score_all(parallel=args.parallel,nobar=args.nobar)
 			else:
 				R = G.score_chr(chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
-
+		
+		if args.pathway is None:
 			G.save_scores(args.outfile+".tsv")
 			
 			if len(R[1]) > 0:
@@ -144,8 +146,7 @@ if __name__ == "__main__":
 			else:
 				print("No Bonferroni significant genes found")
 
-
-		else:
+		if args.pathway is not None:
 			print("Starting genescoring based pathway scoring")
 			from PascalX import pathway
 
@@ -206,7 +207,7 @@ if __name__ == "__main__":
 		X.load_GWAS(args.gwas2,name="GWAS2",rscol=args.col_rsid2,pcol=args.col_pval2,bcol=args.col_effect2,a1col=args.col_allele12,a2col=args.col_allele22,header=args.skip_head2)
 		X.matchAlleles("GWAS1","GWAS2")
 		X.jointlyRank("GWAS1","GWAS2")
-		if args.pathway is None:
+		if args.scores is None:
 			print("Starting xscoring")
 			if args.chr == 'all':
 				if not args.flip:
@@ -218,7 +219,8 @@ if __name__ == "__main__":
 					R = X.score_chr("GWAS1","GWAS2",chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
 				else:
 					R = X.score_chr("GWAS2","GWAS1",chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
-
+		
+		if args.pathway is None:
 			f = open(args.outfile+".tsv","wt")
 
 			for x in R[0]:
@@ -254,7 +256,7 @@ if __name__ == "__main__":
 
 
 
-		else:
+		if args.pathway is not None:
 			print("Starting xscoring based pathway scoring")
 			from PascalX import pathway
 			

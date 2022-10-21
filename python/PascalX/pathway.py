@@ -201,9 +201,18 @@ class pathwayscorer(ABC):
             cutoff(float) : Significance threshold to print pathways
             
         """
+        p = []
+        idx = []
         for i in range(0,len(RESULT[0])):
             if RESULT[0][i][3] < cutoff:
-                print(i,RESULT[0][i][0],"|",RESULT[0][i][3])
+                idx.append(i)
+                p.append(RESULT[0][i][3])
+            
+        # Sort and print
+        so = np.argsort(p)
+        indices = np.array(idx)[so]
+        for i in indices:
+            print(i,RESULT[0][i][0],"|",RESULT[0][i][3])
 
 class chi2rank(pathwayscorer):
     """
