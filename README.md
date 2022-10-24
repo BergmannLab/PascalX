@@ -25,7 +25,8 @@ If you make use of the X-scorer (gene-wise coherence test between two GWAS), ple
 
 *Krefl D., Bergmann S.*  
 *Cross-GWAS coherence test at the gene and pathway level*  
-[doi.org/10.1101/2021.05.16.21257289](https://doi.org/10.1101/2021.05.16.21257289)
+*PLOS Computational Biology 18(9): e1010517*  
+[doi.org/10.1371/journal.pcbi.1010517](https://doi.org/10.1371/journal.pcbi.1010517)
 
 
 
@@ -73,7 +74,33 @@ docker run --mount src=/your/workdir,target=/data,type=bind -p 8888:8888 -it pas
 ```
 Jupyter notebook comes pre-installed and is listening on port ```8888```.
 
-## Usage
+## Usage (via command-line interface)
+
+PascalX can be utilized directly from the command line via the python script ```pascalx```. To display available options and settings, execute
+
+```bash
+./pascalx -h
+```
+
+The script has global settings, and command specific settings for ```genescoring``` and ```xscoring```. The latter can be displayed after specifying the required global (positional) arguments, for example
+
+```bash
+./pascalx ensemble.txt demo/EUR.simulated out.txt genescoring -h
+```
+
+The first global argument specifies the gene annotation file (will be downloaded automatically from ensembl biomart if the specified file does not exist), the second the reference panel (will be imported automatically from .vcf files if not imported yet), and the third the operation to perform (```genescoring``` or ```xscoring```). For example 
+
+```bash
+./pascalx -c [1] -p 4 ensemble.txt EUR.simulated out.txt genescoring -sh False -cr 0 -cp 4 gwasA.tsv.gz
+```
+The ```-c``` options specifies a list of chromosomes to score (drop to score all) and ```-p``` how many parallel compute threads to use. ```-sh``` specifies if the GWAS file contains a header line, ```-cr``` the column with rsids and ```-cp``` the column with p-values.  
+
+Further examples on how to utilize the command-line interface are given in the ```demo/demo.sh``` script.
+
+**Note:** The command-line interface uses exclusively the saddle-point approximation to calculate CDFs. 
+
+
+## Usage (as python library)
 
 ### Initialization:
 **Import:**
