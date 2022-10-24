@@ -281,7 +281,7 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">PascalX.genescorer.</span></span><span class="sig-name descname"><span class="pre">chi2sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varcutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="PascalX.genescorer.chi2sum.load_refpanel">
-<span class="sig-name descname"><span class="pre">load_refpanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualityT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNPonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_refpanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualityT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNPonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.load_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -291,6 +291,7 @@
 <li><p><strong>keepfile</strong> – File with sample ids (one per line) to keep (only for .vcf)</p></li>
 <li><p><strong>qualityT</strong> – Quality threshold for variant to keep (only for .vcf)</p></li>
 <li><p><strong>SNPonly</strong> – Import only SNPs (only for .vcf)</p></li>
+<li><p><strong>chrlist</strong> (<em>list</em>) – List of chromosomes to import. (None to import 1-22)</p></li>
 </ul>
 </dd>
 </dl>
@@ -472,7 +473,7 @@
 <li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’,’auto’)</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
 <li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 <li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes via Pearson’s algorithm</p></li>
 </ul>
 </dd>
@@ -509,7 +510,7 @@
 <li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’,’auto’)</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
 <li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
-<li><p><strong>nobar</strong> – Show progress bar</p></li>
+<li><p><strong>nobar</strong> – Do not show progress bar</p></li>
 </ul>
 </dd>
 </dl>
@@ -529,7 +530,7 @@
 <li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
 <li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
 <li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 <li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes via Pearson’s algorithm</p></li>
 </ul>
 </dd>
@@ -548,7 +549,7 @@
 <li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’,’auto’)</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
 <li><p><strong>intlimit</strong> (<em>int</em>) – Max # integration terms to use</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 <li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes via Pearson’s algorithm</p></li>
 </ul>
 </dd>
@@ -557,7 +558,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.genescorer.chi2sum.score_gene_bulk_chr">
-<span class="sig-name descname"><span class="pre">score_gene_bulk_chr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unloadRef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intlimit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorescore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_gene_bulk_chr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_gene_bulk_chr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unloadRef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'saddle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intlimit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorescore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/genescorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.genescorer.chi2sum.score_gene_bulk_chr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform scoring in bulk for supplied set of SNPs</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -565,6 +566,7 @@
 <li><p><strong>chrs</strong> (<em>int</em>) – Chromosome number the supplied SNPs are located on</p></li>
 <li><p><strong>gene</strong> (<em>string</em>) – Gene symbol for the SNPs</p></li>
 <li><p><strong>data</strong><strong>(</strong><strong>list}</strong> – List of SNP data in format [ [rsid1,rsid2,…], [GWASid1, GWASid2,…], M ] with M a pvalue matrix (rows: GWAS, cols: rsid)</p></li>
+<li><p><strong>unloadRef</strong> (<em>bool</em>) – Remove loaded reference data from memory</p></li>
 <li><p><strong>method</strong> (<em>string</em>) – Method to use to evaluate tail probability (‘auto’,’davies’,’ruben’,’satterthwaite’,’pearson’,’saddle’)</p></li>
 <li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’,’auto’)</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
@@ -674,7 +676,7 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.pathway.chi2rank.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.score" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'saddle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrs_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.pathway.chi2rank.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scores a set of pathways/modules</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -685,6 +687,8 @@
 <li><p><strong>mode</strong> (<em>string</em>) – Precision mode to use (‘’,’128b’,’100d’,’auto’)</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – requested accuracy</p></li>
 <li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>genes_only</strong> (<em>bool</em>) – Compute only (fused)-genescores (accessible via genescorer method)</p></li>
+<li><p><strong>chrs_only</strong> (<em>list</em>) – Only consider genes on listed chromosomes. None for all.</p></li>
 </ul>
 </dd>
 </dl>
@@ -713,7 +717,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file</strong> (<em>string</em>) – path/filename</p></li>
 <li><p><strong>ncol</strong> (<em>int</em>) – Column with name of module</p></li>
-<li><p><strong>fcol</strong> (<em>int</em>) – Column with first gene (symbol) in module. Remaining genes have to follow         separated</p></li>
+<li><p><strong>fcol</strong> (<em>int</em>) – Column with first gene (symbol) in module. Remaining genes have to follow tab (  ) separated</p></li>
 </ul>
 </dd>
 </dl>
@@ -751,7 +755,7 @@
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.pathway.chi2perm.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.score" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'saddle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/pathway.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.pathway.chi2perm.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scores a set of pathways/modules</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -790,7 +794,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file</strong> (<em>string</em>) – path/filename</p></li>
 <li><p><strong>ncol</strong> (<em>int</em>) – Column with name of module</p></li>
-<li><p><strong>fcol</strong> (<em>int</em>) – Column with first gene (symbol) in module. Remaining genes have to follow         separated</p></li>
+<li><p><strong>fcol</strong> (<em>int</em>) – Column with first gene (symbol) in module. Remaining genes have to follow tab (  ) separated</p></li>
 </ul>
 </dd>
 </dl>
@@ -955,7 +959,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.load_refpanel">
-<span class="sig-name descname"><span class="pre">load_refpanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualityT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNPonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.load_refpanel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_refpanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualityT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNPonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.load_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -965,6 +969,7 @@
 <li><p><strong>keepfile</strong> – File with sample ids (one per line) to keep (only for .vcf)</p></li>
 <li><p><strong>qualityT</strong> – Quality threshold for variant to keep (only for .vcf)</p></li>
 <li><p><strong>SNPonly</strong> – Import only SNPs (only for .vcf)</p></li>
+<li><p><strong>chrlist</strong> (<em>list</em>) – List of chromosomes to import. (None to import 1-22)</p></li>
 </ul>
 </dd>
 </dl>
@@ -972,6 +977,22 @@
 <p class="admonition-title">Note</p>
 <p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.</p>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PascalX.xscorer.zsum.load_scores">
+<span class="sig-name descname"><span class="pre">load_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.load_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load computed gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – Filename of data to load</p></li>
+<li><p><strong>gcol</strong> (<em>int</em>) – Column with gene symbol</p></li>
+<li><p><strong>pcol</strong> (<em>int</em>) – Column with p-value</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – File contains a header (True|False)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1030,8 +1051,19 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="PascalX.xscorer.zsum.save_scores">
+<span class="sig-name descname"><span class="pre">save_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.save_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save computed gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>string</em>) – Filename to store data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorescore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorescore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for a given list of gene symbols</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1046,8 +1078,9 @@
 <li><p><strong>reqacc</strong> (<em>float</em>) – Not used</p></li>
 <li><p><strong>intlimit</strong> (<em>int</em>) – Not used</p></li>
 <li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 <li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes</p></li>
+<li><p><strong>pcorr</strong> (<em>float</em>) – Sample overlap correction factor</p></li>
 </ul>
 </dd>
 </dl>
@@ -1055,7 +1088,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.score_all">
-<span class="sig-name descname"><span class="pre">score_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score_all" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for all gene symbols</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1067,7 +1100,7 @@
 <li><p><strong>method</strong> (<em>string</em>) – Not used</p></li>
 <li><p><strong>mode</strong> (<em>string</em>) – Not used</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – Not used</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 </ul>
 </dd>
 </dl>
@@ -1075,15 +1108,17 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.score_chr">
-<span class="sig-name descname"><span class="pre">score_chr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['1',</span> <span class="pre">'2',</span> <span class="pre">'3',</span> <span class="pre">'4',</span> <span class="pre">'5',</span> <span class="pre">'6',</span> <span class="pre">'7',</span> <span class="pre">'8',</span> <span class="pre">'9',</span> <span class="pre">'10',</span> <span class="pre">'11',</span> <span class="pre">'12',</span> <span class="pre">'13',</span> <span class="pre">'14',</span> <span class="pre">'15',</span> <span class="pre">'16',</span> <span class="pre">'17',</span> <span class="pre">'18',</span> <span class="pre">'19',</span> <span class="pre">'20',</span> <span class="pre">'21',</span> <span class="pre">'22']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score_chr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_chr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['1',</span> <span class="pre">'2',</span> <span class="pre">'3',</span> <span class="pre">'4',</span> <span class="pre">'5',</span> <span class="pre">'6',</span> <span class="pre">'7',</span> <span class="pre">'8',</span> <span class="pre">'9',</span> <span class="pre">'10',</span> <span class="pre">'11',</span> <span class="pre">'12',</span> <span class="pre">'13',</span> <span class="pre">'14',</span> <span class="pre">'15',</span> <span class="pre">'16',</span> <span class="pre">'17',</span> <span class="pre">'18',</span> <span class="pre">'19',</span> <span class="pre">'20',</span> <span class="pre">'21',</span> <span class="pre">'22']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score_chr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for gene symbols on given chromosomes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>chr</strong> (<em>list</em>) – Chromosomes to score.</p></li>
 <li><p><strong>E_A</strong> (<em>str</em>) – First GWAS to use</p></li>
 <li><p><strong>E_B</strong> (<em>str</em>) – Second GWAS to use</p></li>
+<li><p><strong>chrs</strong> (<em>list</em>) – Chromosomes to score.</p></li>
 <li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>pcorr</strong> (<em>float</em>) – Sample overlap correction factor</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 </ul>
 </dd>
 </dl>
@@ -1245,7 +1280,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.load_refpanel">
-<span class="sig-name descname"><span class="pre">load_refpanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualityT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNPonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.load_refpanel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_refpanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualityT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNPonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.load_refpanel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the reference panel to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1255,6 +1290,7 @@
 <li><p><strong>keepfile</strong> – File with sample ids (one per line) to keep (only for .vcf)</p></li>
 <li><p><strong>qualityT</strong> – Quality threshold for variant to keep (only for .vcf)</p></li>
 <li><p><strong>SNPonly</strong> – Import only SNPs (only for .vcf)</p></li>
+<li><p><strong>chrlist</strong> (<em>list</em>) – List of chromosomes to import. (None to import 1-22)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1262,6 +1298,22 @@
 <p class="admonition-title">Note</p>
 <p>One file per chromosome with ending .chr#.db required (#: 1-22). If imported reference panel is not present, PascalX will automatically try to import from .chr#.tped.gz or .chr#.vcf.gz files.</p>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PascalX.xscorer.rsum.load_scores">
+<span class="sig-name descname"><span class="pre">load_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.load_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load computed gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – Filename of data to load</p></li>
+<li><p><strong>gcol</strong> (<em>int</em>) – Column with gene symbol</p></li>
+<li><p><strong>pcol</strong> (<em>int</em>) – Column with p-value</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – File contains a header (True|False)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1320,8 +1372,19 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="PascalX.xscorer.rsum.save_scores">
+<span class="sig-name descname"><span class="pre">save_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.save_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save computed gene scores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>string</em>) – Filename to store data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorescore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorescore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for a given list of gene symbols</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1336,8 +1399,9 @@
 <li><p><strong>reqacc</strong> (<em>float</em>) – Not used</p></li>
 <li><p><strong>intlimit</strong> (<em>int</em>) – Not used</p></li>
 <li><p><strong>threshold</strong> (<em>bool</em>) – Threshold p-value to reqacc</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 <li><p><strong>autorescore</strong> (<em>bool</em>) – Automatically try to re-score failed genes</p></li>
+<li><p><strong>pcorr</strong> (<em>float</em>) – Sample overlap correction factor</p></li>
 </ul>
 </dd>
 </dl>
@@ -1345,7 +1409,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.score_all">
-<span class="sig-name descname"><span class="pre">score_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score_all" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reqacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for all gene symbols</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1357,7 +1421,7 @@
 <li><p><strong>method</strong> (<em>string</em>) – Not used</p></li>
 <li><p><strong>mode</strong> (<em>string</em>) – Not used</p></li>
 <li><p><strong>reqacc</strong> (<em>float</em>) – Not used</p></li>
-<li><p><strong>nobar</strong> (<em>bool</em>) – Show progress bar</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 </ul>
 </dd>
 </dl>
@@ -1365,15 +1429,17 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.score_chr">
-<span class="sig-name descname"><span class="pre">score_chr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['1',</span> <span class="pre">'2',</span> <span class="pre">'3',</span> <span class="pre">'4',</span> <span class="pre">'5',</span> <span class="pre">'6',</span> <span class="pre">'7',</span> <span class="pre">'8',</span> <span class="pre">'9',</span> <span class="pre">'10',</span> <span class="pre">'11',</span> <span class="pre">'12',</span> <span class="pre">'13',</span> <span class="pre">'14',</span> <span class="pre">'15',</span> <span class="pre">'16',</span> <span class="pre">'17',</span> <span class="pre">'18',</span> <span class="pre">'19',</span> <span class="pre">'20',</span> <span class="pre">'21',</span> <span class="pre">'22']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score_chr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_chr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['1',</span> <span class="pre">'2',</span> <span class="pre">'3',</span> <span class="pre">'4',</span> <span class="pre">'5',</span> <span class="pre">'6',</span> <span class="pre">'7',</span> <span class="pre">'8',</span> <span class="pre">'9',</span> <span class="pre">'10',</span> <span class="pre">'11',</span> <span class="pre">'12',</span> <span class="pre">'13',</span> <span class="pre">'14',</span> <span class="pre">'15',</span> <span class="pre">'16',</span> <span class="pre">'17',</span> <span class="pre">'18',</span> <span class="pre">'19',</span> <span class="pre">'20',</span> <span class="pre">'21',</span> <span class="pre">'22']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score_chr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for gene symbols on given chromosomes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>chr</strong> (<em>list</em>) – Chromosomes to score.</p></li>
 <li><p><strong>E_A</strong> (<em>str</em>) – First GWAS to use</p></li>
 <li><p><strong>E_B</strong> (<em>str</em>) – Second GWAS to use</p></li>
+<li><p><strong>chrs</strong> (<em>list</em>) – Chromosomes to score.</p></li>
 <li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>pcorr</strong> (<em>float</em>) – Sample overlap correction factor</p></li>
+<li><p><strong>nobar</strong> (<em>bool</em>) – Do not show progress bar</p></li>
 </ul>
 </dd>
 </dl>
@@ -1689,27 +1755,23 @@ WARNING: Inefficient</p>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="PascalX.mapper.mapper.load_mapping">
 <span class="sig-name descname"><span class="pre">load_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfilter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/mapper.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.mapper.mapper.load_mapping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads a SNP to gene mapping
-:param file: File to load
-:type file: string
-:param gcol: Column with gene id
-:type gcol: int
-:param rcol: Column with SNP id
-:type rcol: int
-:param wcol: Column with weight
-:type wcol: int
-:param a1col: Column of alternate allele (None for ignoring alleles)
-:type a1col: int
-:param a2col: Column of reference allele (None for ignoring alleles)
-:type a2col: int
-:param bcol: Column with additional weight
-:type bcol: int
-:param delimiter: Character used to separate columns
-:type delimiter: string
-:param header: Header present
-:type header: bool
-:param pfilter: Only include rows with wcol &lt; pfilter
-:type pfilter: float</p>
+<dd><p>Loads a SNP to gene mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>string</em>) – File to load</p></li>
+<li><p><strong>gcol</strong> (<em>int</em>) – Column with gene id</p></li>
+<li><p><strong>rcol</strong> (<em>int</em>) – Column with SNP id</p></li>
+<li><p><strong>wcol</strong> (<em>int</em>) – Column with weight</p></li>
+<li><p><strong>a1col</strong> (<em>int</em>) – Column of alternate allele (None for ignoring alleles)</p></li>
+<li><p><strong>a2col</strong> (<em>int</em>) – Column of reference allele (None for ignoring alleles)</p></li>
+<li><p><strong>bcol</strong> (<em>int</em>) – Column with additional weight</p></li>
+<li><p><strong>delimiter</strong> (<em>string</em>) – Character used to separate columns</p></li>
+<li><p><strong>header</strong> (<em>bool</em>) – Header present</p></li>
+<li><p><strong>pfilter</strong> (<em>float</em>) – Only include rows with wcol &lt; pfilter</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

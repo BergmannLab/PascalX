@@ -95,6 +95,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command-line interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gene-scoring">Gene scoring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pathway-scoring">Pathway scoring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#x-scoring">X scoring</a></li>
@@ -172,6 +173,29 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>PascalX can be used either via a command-line interface or as a python3 library. The latter unlocks the full potential of PascalX.</p>
+<div class="section" id="command-line-interface">
+<h2>Command-line interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>The command-line interface is invoked by calling <code class="docutils literal notranslate"><span class="pre">./pascalx</span></code>. Available options and settings can be displayed by executing</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./pascalx -h</span>
+</pre></div>
+</div>
+<p>Note that the script possesses global and command specific settings. The latter can be displayed after specifying the required global (positional) arguments and choice of command (<code class="docutils literal notranslate"><span class="pre">genescoring</span></code> or <code class="docutils literal notranslate"><span class="pre">xscoring</span></code>), for example</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./pascalx ensemble.txt demo/EUR.simulated out.txt genescoring -h</span>
+</pre></div>
+</div>
+<p>The first argument specifies the gene annotation file (will be downloaded automatically from ensembl biomart if the specified file does not exist). The second argument sets the reference panel to use (will be imported automatically from corresponding .vcf files if not imported yet). The third argument specifies the file to store results in, and the fourth argument sets the operation to perform (<code class="docutils literal notranslate"><span class="pre">genescoring</span></code> or <code class="docutils literal notranslate"><span class="pre">xscoring</span></code>).</p>
+<p>Pathway scoring can be performed by prepending <code class="docutils literal notranslate"><span class="pre">-pw</span></code> followed by a file containing gene modules, for example</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./pascalx -pw pathways.txt ensemble.txt refpanel out.txt genescoring gwasA.tsv.gz</span>
+</pre></div>
+</div>
+<p>For the parameters to specify the data columns in your pathway or GWAS file, please consult the <code class="docutils literal notranslate"><span class="pre">-h</span></code> option.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The command line interface uses a saddle point approximation to evaluate CDFs.</p>
+</div>
+</div>
+<hr class="docutils" />
 <div class="section" id="gene-scoring">
 <h2>Gene scoring<a class="headerlink" href="#gene-scoring" title="Permalink to this headline">¶</a></h2>
 <p><strong>Initialization:</strong></p>
