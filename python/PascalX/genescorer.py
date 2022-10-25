@@ -1185,7 +1185,7 @@ class chi2sum:
                 P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
 
                 if gene in self._MAP:
-                    P.update(list(REF[str(cr)][0].getSNPsPos(self._MAP[gene][0])))
+                    P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
                     #P = list(set(P))
                 
             elif self._MAP is None:
@@ -1194,7 +1194,7 @@ class chi2sum:
                 P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
             else:
                 if gene in self._MAP:
-                    P = set(REF[str(cr)][0].getSNPsPos(self._MAP[gene][0]))
+                    P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
                 else:
                     P = []
                     

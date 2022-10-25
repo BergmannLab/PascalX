@@ -853,11 +853,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.jointlyRank_mapper">
-<span class="sig-name descname"><span class="pre">jointlyRank_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.jointlyRank_mapper" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">jointlyRank_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.jointlyRank_mapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Jointly QQ normalizes the p-values of GWAS and Mapper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>E_A</strong> (<em>str</em>) – Identifier of first GWAS</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E_A</strong> (<em>str</em>) – Identifier of first GWAS</p></li>
+<li><p><strong>E_B</strong> (<em>str</em>) – Identifier of MAP</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -937,12 +940,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.load_mapping">
-<span class="sig-name descname"><span class="pre">load_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfilter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.load_mapping" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MAP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfilter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.load_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a SNP to gene mapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file</strong> (<em>string</em>) – File to load</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Identifier code for mapping (needs to be unique)</p></li>
 <li><p><strong>gcol</strong> (<em>int</em>) – Column with gene id</p></li>
 <li><p><strong>rcol</strong> (<em>int</em>) – Column with SNP id</p></li>
 <li><p><strong>wcol</strong> (<em>int</em>) – Column with weight</p></li>
@@ -952,6 +956,7 @@
 <li><p><strong>a2col</strong> (<em>int</em>) – Column of reference allele (None for ignoring alleles)</p></li>
 <li><p><strong>pfilter</strong> (<em>float</em>) – Only include rows with wcol &lt; pfilter</p></li>
 <li><p><strong>header</strong> (<em>bool</em>) – Header present</p></li>
+<li><p><strong>joint</strong> (<em>bool</em>) – Use mapping SNPs and gene window based SNPs</p></li>
 </ul>
 </dd>
 </dl>
@@ -1017,13 +1022,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.matchAlleles_mapper">
-<span class="sig-name descname"><span class="pre">matchAlleles_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchRefPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.matchAlleles_mapper" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">matchAlleles_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchRefPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.matchAlleles_mapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches alleles between GWAS and Mapper loaded data
 (SNPs with non matching alleles are removed)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>E_A</strong> (<em>str</em>) – Identifier of GWAS</p></li>
+<li><p><strong>E_B</strong> (<em>str</em>) – Identifier of MAP</p></li>
 <li><p><strong>matchRefPanel</strong> (<em>bool</em>) – Match also with reference panel alleles</p></li>
 </ul>
 </dd>
@@ -1126,11 +1132,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.zsum.score_map">
-<span class="sig-name descname"><span class="pre">score_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score_map" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.zsum.score_map" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for gene symbols given by mapper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>E_B</strong> (<em>string</em>) – Identifier of loaded MAP</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1174,11 +1183,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.jointlyRank_mapper">
-<span class="sig-name descname"><span class="pre">jointlyRank_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.jointlyRank_mapper" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">jointlyRank_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.jointlyRank_mapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Jointly QQ normalizes the p-values of GWAS and Mapper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>E_A</strong> (<em>str</em>) – Identifier of first GWAS</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E_A</strong> (<em>str</em>) – Identifier of first GWAS</p></li>
+<li><p><strong>E_B</strong> (<em>str</em>) – Identifier of MAP</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1258,12 +1270,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.load_mapping">
-<span class="sig-name descname"><span class="pre">load_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfilter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.load_mapping" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MAP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfilter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.load_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a SNP to gene mapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file</strong> (<em>string</em>) – File to load</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Identifier code for mapping (needs to be unique)</p></li>
 <li><p><strong>gcol</strong> (<em>int</em>) – Column with gene id</p></li>
 <li><p><strong>rcol</strong> (<em>int</em>) – Column with SNP id</p></li>
 <li><p><strong>wcol</strong> (<em>int</em>) – Column with weight</p></li>
@@ -1273,6 +1286,7 @@
 <li><p><strong>a2col</strong> (<em>int</em>) – Column of reference allele (None for ignoring alleles)</p></li>
 <li><p><strong>pfilter</strong> (<em>float</em>) – Only include rows with wcol &lt; pfilter</p></li>
 <li><p><strong>header</strong> (<em>bool</em>) – Header present</p></li>
+<li><p><strong>joint</strong> (<em>bool</em>) – Use mapping SNPs and gene window based SNPs</p></li>
 </ul>
 </dd>
 </dl>
@@ -1338,13 +1352,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.matchAlleles_mapper">
-<span class="sig-name descname"><span class="pre">matchAlleles_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchRefPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.matchAlleles_mapper" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">matchAlleles_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matchRefPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.matchAlleles_mapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches alleles between GWAS and Mapper loaded data
 (SNPs with non matching alleles are removed)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>E_A</strong> (<em>str</em>) – Identifier of GWAS</p></li>
+<li><p><strong>E_B</strong> (<em>str</em>) – Identifier of MAP</p></li>
 <li><p><strong>matchRefPanel</strong> (<em>bool</em>) – Match also with reference panel alleles</p></li>
 </ul>
 </dd>
@@ -1447,11 +1462,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="PascalX.xscorer.rsum.score_map">
-<span class="sig-name descname"><span class="pre">score_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score_map" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nobar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcorr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/BergmannLab/PascalX/tree/main/python/PascalX/xscorer.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PascalX.xscorer.rsum.score_map" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs cross scoring for gene symbols given by mapper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parallel</strong> (<em>int</em>) – # of cores to use</p></li>
+<li><p><strong>E_B</strong> (<em>string</em>) – Identifier of loaded MAP</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

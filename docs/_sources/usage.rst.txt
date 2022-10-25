@@ -80,7 +80,7 @@ Set the reference panel to use via
 
 .. note::
     
-    The import can take more than an hour per chromosome. A high parallel setting is therefore recommended.
+    The 1KG data download for GRCh38 is around 50GB. The import can take more than an hour per chromosome. A high parallel setting is therefore recommended.
 
 
 **Gene annotation:**
