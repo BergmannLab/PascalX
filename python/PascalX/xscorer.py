@@ -1133,7 +1133,7 @@ class crosscorer(ABC):
         """
         self._SCORES = {}
         
-        if E_A is None and self._gMAP is None:
+        if E_A is None and len(self._gMAP)==0:
             if self._last_EA is not None:
                 E_A = self._last_EA     
             else:
@@ -1142,7 +1142,7 @@ class crosscorer(ABC):
         else:
             self._last_EA = E_A
             
-        if E_B is None and self._gMAP is None:
+        if E_B is None and len(self._gMAP)==0:
             if self._last_EA is not None:
                 E_B = self._last_EB
             else:
@@ -1151,7 +1151,7 @@ class crosscorer(ABC):
         else:
             self._last_EB = E_B    
         
-        if self._gMAP is None:
+        if len(self._gMAP)==0:
             Clist = self.score_chr(E_A, E_B, parallel=parallel,threshold=threshold,pcorr=pcorr,nobar=nobar)
         else:
             Clist = self.score_map(E_B,parallel=parallel,nobar=nobar,pcorr=pcorr)
