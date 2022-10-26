@@ -150,14 +150,21 @@ class db:
         """
         positions = []
         for snpid in snpids:
+            stop = False
             if snpid in self._idx[1]:
                 fseek = self._idx[1][snpid]
         
                 for pos, fs in self._idx[0].items(): 
-                    for i in range(0,len(fs[0])):
-                        if fseek[0] == fs[0][i]:
-                            positions.append(pos)
+                    for i in range(0,len(fs)):
+                        for j in range(0,len(fseek)):
+                            if fseek[j] == fs[i]:
+                                positions.append(pos)
+                                stop = True
+                                break
+                        if stop:
                             break
+                    if stop:
+                        break
                             
         return positions
         

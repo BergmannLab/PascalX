@@ -1,6 +1,41 @@
 Usage
 =====
 
+PascalX can be used either via a command-line interface or as a python3 library. The latter unlocks the full potential of PascalX. 
+
+
+Command-line interface
+----------------------
+
+The command-line interface is invoked by calling ``./pascalx``. Available options and settings can be displayed by executing
+
+.. code-block:: console
+    
+    ./pascalx -h
+
+Note that the script possesses global and command specific settings. The latter can be displayed after specifying the required global (positional) arguments and choice of command (``genescoring`` or ``xscoring``), for example
+
+.. code-block:: console
+    
+    ./pascalx ensemble.txt demo/EUR.simulated out.txt genescoring -h
+
+The first argument specifies the gene annotation file (will be downloaded automatically from ensembl biomart if the specified file does not exist). The second argument sets the reference panel to use (will be imported automatically from corresponding .vcf files if not imported yet). The third argument specifies the file to store results in, and the fourth argument sets the operation to perform (``genescoring`` or ``xscoring``).
+
+Pathway scoring can be performed by prepending ``-pw`` followed by a file containing gene modules, for example
+
+.. code-block:: console
+
+   ./pascalx -pw pathways.txt ensemble.txt refpanel out.txt genescoring gwasA.tsv.gz 
+
+For the parameters to specify the data columns in your pathway or GWAS file, please consult the ``-h`` option. 
+
+.. note::
+
+    The command line interface uses a saddle point approximation to evaluate CDFs. 
+
+
+------
+
 
 Gene scoring
 ------------
@@ -45,7 +80,7 @@ Set the reference panel to use via
 
 .. note::
     
-    The import can take more than an hour per chromosome. A high parallel setting is therefore recommended.
+    The 1KG data download for GRCh38 is around 50GB. The import can take more than an hour per chromosome. A high parallel setting is therefore recommended.
 
 
 **Gene annotation:**

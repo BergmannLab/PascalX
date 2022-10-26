@@ -134,8 +134,8 @@ class genome:
 
                 line = line.rstrip().split(splitchr)
 
-                # Continue if in skip list or N/A    
-                if line[cid] in self._SKIPPED or line[cid] == NAgeneid:
+                # Continue if in skip list or N/A or no symbol 
+                if line[cid] in self._SKIPPED or line[cid] == NAgeneid or line[csymb] == '':
                     continue
 
                 # Continue if duplicate symbol with different id

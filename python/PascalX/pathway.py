@@ -60,7 +60,7 @@ class pathwayscorer(ABC):
         
             file(string): path/filename
             ncol(int): Column with name of module
-            fcol(int): Column with first gene (symbol) in module. Remaining genes have to follow \t separated
+            fcol(int): Column with first gene (symbol) in module. Remaining genes have to follow tab (\t) separated
         
         """
         F = []
@@ -79,7 +79,7 @@ class pathwayscorer(ABC):
         
         return F
     
-    def _genefusion_fuse(self,modules):
+    def _genefusion_fuse(self,modules,chrs=None):
         FUSION_SET = []
         COMPUTE_SET = {}
         
@@ -92,10 +92,11 @@ class pathwayscorer(ABC):
                 if G in self._genescorer._GENESYMB:
                     D = self._genescorer._GENEID[self._genescorer._GENESYMB[G]]
 
-                    if D[0] not in CHR_GENES:
-                        CHR_GENES[D[0]] = [ D ]
-                    else:
-                        CHR_GENES[D[0]].append(D)
+                    if chrs is None or D[0] in chrs:
+                        if D[0] not in CHR_GENES:
+                            CHR_GENES[D[0]] = [ D ]
+                        else:
+                            CHR_GENES[D[0]].append(D)
                 #else:
                     #print("[WARNING]:",G,"not in annotation")
                     
@@ -164,9 +165,9 @@ class pathwayscorer(ABC):
         
         return COMPUTE_SET, FUSION_SET
     
-    def _genefusion(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
+    def _genefusion(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False,chrs=None):
         
-        COMPUTE_SET, FUSION_SET = self._genefusion_fuse(modules)
+        COMPUTE_SET, FUSION_SET = self._genefusion_fuse(modules,chrs)
         
         # Generate ordered list:
         SET = []
@@ -200,9 +201,18 @@ class pathwayscorer(ABC):
             cutoff(float) : Significance threshold to print pathways
             
         """
+        p = []
+        idx = []
         for i in range(0,len(RESULT[0])):
             if RESULT[0][i][3] < cutoff:
-                print(i,RESULT[0][i][0],"|",RESULT[0][i][3])
+                idx.append(i)
+                p.append(RESULT[0][i][3])
+            
+        # Sort and print
+        so = np.argsort(p)
+        indices = np.array(idx)[so]
+        for i in indices:
+            print(i,RESULT[0][i][0],"|",RESULT[0][i][3])
 
 class chi2rank(pathwayscorer):
     """
@@ -216,7 +226,7 @@ class chi2rank(pathwayscorer):
         
     """
        
-    def score(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
+    def score(self,modules,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False,genes_only=False,chrs_only=None):
         """
         Scores a set of pathways/modules
         
@@ -228,104 +238,111 @@ class chi2rank(pathwayscorer):
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             nobar(bool): Show progress bar
-            
+            genes_only(bool): Compute only (fused)-genescores (accessible via genescorer method)
+            chrs_only(list): Only consider genes on listed chromosomes. None for all.
         """
+        
         # Compute fusion sets
         if self._fuse:
-            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar)
+            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,chrs=chrs_only)
         else:
             COMPUTE_SET,FUSION_SET,R = self._nogenefusion(modules)
             
-        # Build dictionary
-        META_DIC = {}
-        for m in R[0]:
-            if m[0][:9] == 'METAGENE:':
-                META_DIC[m[0]] = m[1]
-        
-        
-        # Remove from ._SCORES to have almost same baseline for all modules
-        for C in COMPUTE_SET:
-            if C[:9] == 'METAGENE:' and C in self._genescorer._SCORES:
-                del self._genescorer._SCORES[C]
-          
-   
-        RESULT = []
-        FAILS = R[1]
-        
-        # Score modules
-        for F in FUSION_SET:
-            
-            # Note: Ranking inside the F loop because META-GENES have to be added on case by case basis
-            # Rank gene scores
-            L = list(self._genescorer._SCORES.keys())
-            S = []
-            
-            for i in range(0,len(L)):
-                S.append(self._genescorer._SCORES[L[i]])
-            
-            # Add meta genes
-            for i in range(0,len(F[1])):
-                if F[1][i][:9] == 'METAGENE:' and F[1][i] in META_DIC:
-                    L.append(F[1][i])
-                    S.append(META_DIC[F[1][i]])
-                    
-                    # Remove metagene member genes from background gene list
-                    mgenes = F[1][i][9:].split("_")
-                    
-                    for g in mgenes:
-                        if g in self._genescorer._SCORES:
-                            I = L.index(g)
-                            #print(I,"-", g)
-                            del L[I]
-                            del S[I]
-
-            # Rank        
-            ra = np.argsort(S)
-            
-            RANKS = {}
-            for i in range(0,len(ra)):
-                RANKS[L[ra[i]]] = (i+1.)/(len(L)+1.) # +1: Ranking t start at 1
-            
-            # Calc chi2
-            chi = np.zeros(len(F[1]))
-            gpval = np.zeros(len(F[1]))
-            fail = 0
-            for i in range(0,len(F[1])):
-                if F[1][i] in RANKS:
-                    chi[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(RANKS[F[1][i]])
-                    gpval[i] = RANKS[F[1][i]]
-                    
-                else:
-                    fail = fail + 1
-                    gpval[i] = np.NaN
-                    
-                    #print("[WARNING]: No gene score for",F[1][i])
-            
-            # Calc p-value
-            df = len(chi)-fail
-            
-            if df > 0:
-                S = np.sum(chi)
-
-                p = hpstats.onemin_chi2_cdf(S,dof=df)
-                
-                
-                chi[chi == 0] = np.NaN
-                RESULT.append([F[0],F[1],gpval,p])
-            else:
-                chi[chi == 0] = np.NaN
-                RESULT.append([F[0],F[1],gpval,np.NaN])
-                
-        # Cleanup
-        for G in COMPUTE_SET:
-            if G in self._genescorer._SCORES:
-                del self._genescorer._SCORES[G]
-            
-        # Return
-        return [RESULT,FAILS,META_DIC]
-    
-    
        
+
+        if not genes_only: 
+            # Build dictionary
+            META_DIC = {}
+            for m in self._genescorer._SCORES:
+                if m[:9] == 'METAGENE:':
+                    META_DIC[m] = self._genescorer._SCORES[m]
+                    
+            # Remove from ._SCORES to have almost same baseline for all modules
+            for C in COMPUTE_SET:
+                if C[:9] == 'METAGENE:' and C in self._genescorer._SCORES:
+                    del self._genescorer._SCORES[C]
+                  
+            RESULT = []
+            FAILS = R[1]
+
+            # Score modules
+            for F in FUSION_SET:
+
+                # Note: Ranking inside the F loop because META-GENES have to be added on case by case basis
+                # Rank gene scores
+                L = list(self._genescorer._SCORES.keys())
+                S = []
+
+                for i in range(0,len(L)):
+                    S.append(self._genescorer._SCORES[L[i]])
+
+                # Add meta genes
+                for i in range(0,len(F[1])):
+                    if F[1][i][:9] == 'METAGENE:' and F[1][i] in META_DIC:
+                        L.append(F[1][i])
+                        S.append(META_DIC[F[1][i]])
+
+                        # Remove metagene member genes from background gene list
+                        mgenes = F[1][i][9:].split("_")
+
+                        for g in mgenes:
+                            if g in self._genescorer._SCORES:
+                                I = L.index(g)
+                                #print(I,"-", g)
+                                del L[I]
+                                del S[I]
+
+                # Rank        
+                ra = np.argsort(S)
+
+                RANKS = {}
+                for i in range(0,len(ra)):
+                    RANKS[L[ra[i]]] = (i+1.)/(len(L)+1.) # +1: Ranking t start at 1
+
+                # Calc chi2
+                chi = np.zeros(len(F[1]))
+                gpval = np.zeros(len(F[1]))
+                fail = 0
+                for i in range(0,len(F[1])):
+                    if F[1][i] in RANKS:
+                        chi[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(RANKS[F[1][i]])
+                        gpval[i] = RANKS[F[1][i]]
+
+                    else:
+                        fail = fail + 1
+                        gpval[i] = np.NaN
+
+                        #print("[WARNING]: No gene score for",F[1][i])
+
+                # Calc p-value
+                df = len(chi)-fail
+
+                if df > 0:
+                    S = np.sum(chi)
+
+                    p = hpstats.onemin_chi2_cdf(S,dof=df)
+
+
+                    chi[chi == 0] = np.NaN
+                    RESULT.append([F[0],F[1],gpval,p])
+                else:
+                    chi[chi == 0] = np.NaN
+                    RESULT.append([F[0],F[1],gpval,np.NaN])
+
+            # Cleanup
+            for G in COMPUTE_SET:
+                if G in self._genescorer._SCORES:
+                    del self._genescorer._SCORES[G]
+            
+            
+            # Return
+            return [RESULT,FAILS,META_DIC]
+        
+        else:
+            print("Only (fused)-gene scores computed")
+        
+        
+        
 class chi2perm(pathwayscorer):
     """
     Pathway scoring via testing summed inverse chi2 transformed gene p-values against equally size random samples of gene sets.
@@ -341,7 +358,7 @@ class chi2perm(pathwayscorer):
         Genes in the background gene sets are NOT fused.
     """
     
-    def score(self,modules,samples=100000,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
+    def score(self,modules,samples=100000,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
         """
         Scores a set of pathways/modules
         

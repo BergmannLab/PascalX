@@ -57,7 +57,8 @@ If you make use of the X-scorer (gene-wise coherence test between GWAS), please 
 
 | *Krefl D., Bergmann S.* 
 | *Cross-GWAS coherence test at the gene and pathway level* 
-| *doi:10.1101/2021.05.16.21257289*
+| *PLOS Computational Biology 18(9): e1010517*
+| *doi:10.1371/journal.pcbi.1010517*
 
 
 Contact
