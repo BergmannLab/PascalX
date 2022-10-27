@@ -35,7 +35,7 @@ setup(
     long_description=open('README.md').read(),
     install_requires=[
 	"cffi>=1.0.0",
-	"matplotlib>=3.1.0",
+	"matplotlib!=3.6.1,>=3.1",
 	"sortedcontainers>=2.1.0",
 	"tqdm>=4.43.0",
 	"scipy>=1.4.0",
@@ -43,7 +43,7 @@ setup(
 	"seaborn>=0.11.0",
 	"progressbar>=2.5",
 	"docutils<0.18",
-	"sphinx>=3.2.1",
+	"sphinx<6,>=1.6",
 	"sphinx-rtd-theme>=0.5.0",
 	"fastnumbers>=3.1.0"
     ],
