@@ -6,11 +6,11 @@
 Welcome to PascalX's documentation!
 ===================================
 
-PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_) for high precision gene and pathway scoring for GWAS summary statistics. Aggregation of SNP p-values to gene and pathway scores follows the `Pascal <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004714>`_ methodology, which is based on :math:`\chi^2` statistics. The cummulative distribution function of the weighted :math:`\chi^2` distribution is calculated approximatively or exactly via a multi-precision C++ implementation of Ruben's and Davies algorithm. This allows to apply the Pascal methodology to modern UK BioBank scale GWAS. In addition, PascalX offers a novel coherence test between two different GWAS on the level of genes, based on the product-normal distribution, as described `here <https://doi.org/10.1101/2021.05.16.21257289>`_.    
+PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_) for high precision gene and pathway scoring for GWAS summary statistics. Aggregation of SNP p-values to gene and pathway scores follows the `Pascal <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004714>`_ methodology, which is based on :math:`\chi^2` statistics. The cummulative distribution function of the weighted :math:`\chi^2` distribution is calculated approximately or exactly via a multi-precision C++ implementation of Ruben's and Davies algorithm. This allows to apply the Pascal methodology to modern UK BioBank scale GWAS. In addition, PascalX offers a novel coherence test between two different GWAS on the level of genes, based on the product-normal distribution, as described `here <https://doi.org/10.1101/2021.05.16.21257289>`_.    
 
 **Highlights:**
 
-    * Multi-precision weighted :math:`\chi^2` cdf calculation (approximatively or exactly up to 100 digits) 
+    * Multi-precision weighted :math:`\chi^2` cdf calculation (approximately or exactly up to 100 digits) 
     * Parallelization over chromosomes and/or genes
     * GPU support for acceleration of linear algebra operations
     * Fast random access to reference panel genomic data via own indexed SNP database
