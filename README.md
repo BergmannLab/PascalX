@@ -4,7 +4,7 @@ High precision gene, pathway and cross scoring for GWAS summary statistics in py
 
 ## Features
 
-- Internal quad and multi-precision arithmetic support for high precision gene scoring via exact (up to 100 digits) or approximative CDF calculations  
+- Internal quad and multi-precision arithmetic support for high precision gene scoring via exact (up to 100 digits) or approximate CDF calculations  
 - Fast random access to SNP reference panel genomic data with minimal memory footprint
 - Parallelization over chromosomes and/or genes
 - GPU acceleration support via cupy
