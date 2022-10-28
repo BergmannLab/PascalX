@@ -91,7 +91,7 @@ The script has global settings, and command specific settings for ```genescoring
 The first global argument specifies the gene annotation file (will be downloaded automatically from ensembl biomart if the specified file does not exist), the second the reference panel (will be imported automatically from .vcf files if not imported yet), the third argument the file to store results in and the fourth the operation to perform (```genescoring``` or ```xscoring```). For example 
 
 ```bash
-./pascalx -c [1] -p 4 ensemble.txt EUR.simulated out.txt genescoring -sh False -cr 0 -cp 4 gwasA.tsv.gz
+./pascalx -c [1] -p 4 ensemble.txt demo/EUR.simulated out.txt genescoring -sh False -cr 0 -cp 4 gwasA.tsv.gz
 ```
 The ```-c``` options specifies a list of chromosomes to score (drop to score all) and ```-p``` how many parallel compute threads to use. ```-sh``` specifies if the GWAS file contains a header line, ```-cr``` the column with rsids and ```-cp``` the column with p-values.  
 
