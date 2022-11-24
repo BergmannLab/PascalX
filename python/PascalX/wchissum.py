@@ -384,5 +384,8 @@ def onemin_cdf_saddle(X, lb, mode='auto'):
         rf = 1e-15
     
     toc = time.time()
-
-    return [max(rf,res), 0, round(toc-tic,5)]
+    
+    if res > 0:
+        return [max(rf,res), 0, round(toc-tic,5)]
+    else:
+        return [-1,1,round(toc-tic,5)]
