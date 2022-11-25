@@ -858,6 +858,8 @@ double oneminwchissum_m1nc0_pearson_auto(double* lambda, int N, double X) {
     
     following Kuonen:
     Biometrika (1999) 86, 4, pp. 929-935
+    
+    returns -1 if error occurs
 */
     
 double K(double* lambda, int N, double zeta) {
@@ -889,16 +891,25 @@ double K2(double* lambda, int N, double zeta) {
 
 extern "C"
 double oneminwchissum_m1nc0_saddle(double* lambda, int N, double X) {
-    
+    double sum = lambda[0];
+        
     // find maxb
     double ma = 1./lambda[0];
     for(int i=1;i<N;i++) {
         double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
         if(tmp < ma) {
             ma = tmp;
         }
     }
     ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
     
@@ -929,16 +940,25 @@ double oneminwchissum_m1nc0_saddle(double* lambda, int N, double X) {
 
 extern "C"
 double oneminwchissum_m1nc0_saddle_float128(double* lambda, int N, double X) {
-    
+    double sum = lambda[0];
+        
     // find maxb
     double ma = 1./lambda[0];
     for(int i=1;i<N;i++) {
         double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
         if(tmp < ma) {
             ma = tmp;
         }
     }
     ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
     
@@ -973,16 +993,25 @@ double oneminwchissum_m1nc0_saddle_float128(double* lambda, int N, double X) {
 
 extern "C"
 double oneminwchissum_m1nc0_saddle_100d(double* lambda, int N, double X) {
-    
+    double sum = lambda[0];
+        
     // find maxb
     double ma = 1./lambda[0];
     for(int i=1;i<N;i++) {
         double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
         if(tmp < ma) {
             ma = tmp;
         }
     }
     ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
     
@@ -1017,16 +1046,25 @@ double oneminwchissum_m1nc0_saddle_100d(double* lambda, int N, double X) {
 
 extern "C"
 double oneminwchissum_m1nc0_saddle_200d(double* lambda, int N, double X) {
-    
+    double sum = lambda[0];
+        
     // find maxb
     double ma = 1./lambda[0];
     for(int i=1;i<N;i++) {
         double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
         if(tmp < ma) {
             ma = tmp;
         }
     }
     ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
     
@@ -1059,16 +1097,25 @@ double oneminwchissum_m1nc0_saddle_200d(double* lambda, int N, double X) {
 
 extern "C"
 double oneminwchissum_m1nc0_saddle_500d(double* lambda, int N, double X) {
-    
+    double sum = lambda[0];
+        
     // find maxb
     double ma = 1./lambda[0];
     for(int i=1;i<N;i++) {
         double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
         if(tmp < ma) {
             ma = tmp;
         }
     }
     ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
     
@@ -1103,16 +1150,16 @@ extern "C"
 double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X) {
     double res = oneminwchissum_m1nc0_saddle(lambda,N,X);
     
-    if (res < 1e-15) {
+    if ((res < 1e-15) && (res >= 0)) {
         res = oneminwchissum_m1nc0_saddle_float128(lambda,N,X);
         
-        if(res < 1e-32) {
+        if ((res < 1e-32)  && (res >= 0)) {
             res = oneminwchissum_m1nc0_saddle_100d(lambda,N,X);
         
-            if(res < 1e-98) {
+            if ((res < 1e-98)  && (res >= 0)) {
                 res = oneminwchissum_m1nc0_saddle_200d(lambda,N,X);
                 
-                if(res < 1e-195) {
+                if ((res < 1e-195)  && (res >= 0)) {
                     res = oneminwchissum_m1nc0_saddle_500d(lambda,N,X);
                 }
             }

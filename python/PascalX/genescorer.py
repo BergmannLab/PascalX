@@ -787,7 +787,7 @@ class chi2sum:
             
         RESULT[1].clear()
         
-    def rescore(self,RESULT,method='davies',mode='128b',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False):
+    def rescore(self,RESULT,method='pearson',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False):
         """
         Function to re-score only the failed gene scorings of a previous scoring run with different scorer settings. 
        
@@ -817,7 +817,7 @@ class chi2sum:
         lock = mp.Manager().Lock()
         
         if parallel <= 1:
-            RES = self._scoremain(G,True,method,mode,reqacc,intlimit,lock)
+            RES = self._scoremain(G,True,method,mode,reqacc,intlimit,'',i,nobar,lock)
         else:
             RES = [[],[],[]]
             S = np.array_split(G,parallel)
