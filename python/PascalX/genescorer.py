@@ -199,7 +199,7 @@ class chi2sum:
         self._iMAP = M._SNPtoGENEID
         self._joint = joint
           
-    def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,a1col=None,a2col=None,delimiter=None,header=False,NAid='NA',log10p=False):
+    def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,a1col=None,a2col=None,delimiter=None,header=False,NAid='NA',log10p=False,cutoff=1e-300):
         """
         Load GWAS summary statistics p-values
         
@@ -215,7 +215,7 @@ class chi2sum:
             header(bool): Header present
             NAid(String): Code for not available (rows are ignored)
             log10p(bool): p-values are given -log10 transformed 
-            
+            cutoff(float): Cutoff value for p-values (None for no cutoff)
         """
         self._GWAS = {}
         self._GWAS_beta = {}
@@ -228,7 +228,8 @@ class chi2sum:
             
         if header:
             f.readline()
-
+        
+        c = 0
         for line in f:
             if delimiter is None:
                 L = line.split()
@@ -237,6 +238,12 @@ class chi2sum:
 
             if L[pcol] != NAid and L[rscol] != NAid:
                 p = float(L[pcol])
+                
+                # Threshold very small SNPs (1e-300 recommended for numerical stability)
+                if cutoff is not None and p < cutoff:
+                    p = cutoff
+                    c +=1
+                    
                 if log10p:
                     p = 10**(-p)
                     
@@ -255,10 +262,12 @@ class chi2sum:
                 self._GWAS_alleles[L[rscol]] = [L[a1col].upper(),L[a2col].upper()]
             
         f.close()
-                    
-        print(len(self._GWAS),"SNPs loaded")
-
     
+        if c > 0:
+            print(c,"SNPs cutoff to",cutoff)
+                
+        print(len(self._GWAS),"SNPs loaded")
+        
     def matchAlleles(self, SNPonly=False):
         """
         Matches alleles between loaded GWAS and reference panel 
