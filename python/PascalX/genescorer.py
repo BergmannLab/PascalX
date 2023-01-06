@@ -166,10 +166,8 @@ class genescorer(ABC):
         self._MAP = M._GENEIDtoSNP
         self._iMAP = M._SNPtoGENEID
         self._joint = joint
-    
-    
-    
-    def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,a1col=None,a2col=None,delimiter=None,header=False,NAid='NA',log10p=False):
+
+    def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,a1col=None,a2col=None,delimiter=None,header=False,NAid='NA',log10p=False,cutoff=1e-300):
         """
         Load GWAS summary statistics p-values
         
@@ -185,7 +183,7 @@ class genescorer(ABC):
             header(bool): Header present
             NAid(String): Code for not available (rows are ignored)
             log10p(bool): p-values are given -log10 transformed 
-            
+            cutoff(float): Cutoff value for p-values (None for no cutoff)
         """
         self._GWAS = {}
         self._GWAS_beta = {}
@@ -198,7 +196,8 @@ class genescorer(ABC):
             
         if header:
             f.readline()
-
+        
+        c = 0
         for line in f:
             if delimiter is None:
                 L = line.split()
@@ -207,6 +206,12 @@ class genescorer(ABC):
 
             if L[pcol] != NAid and L[rscol] != NAid:
                 p = float(L[pcol])
+                
+                # Threshold very small SNPs (1e-300 recommended for numerical stability)
+                if cutoff is not None and p < cutoff:
+                    p = cutoff
+                    c +=1
+                    
                 if log10p:
                     p = 10**(-p)
                     
@@ -225,13 +230,12 @@ class genescorer(ABC):
                 self._GWAS_alleles[L[rscol]] = [L[a1col].upper(),L[a2col].upper()]
             
         f.close()
-                    
+
+        if c > 0:
+            print(c,"SNPs cutoff to",cutoff)
+                
         print(len(self._GWAS),"SNPs loaded")
-
         
-
-   
-    
     def matchAlleles(self, SNPonly=False):
         """
         Matches alleles between loaded GWAS and reference panel 
@@ -1479,14 +1483,14 @@ class cauchy(genescorer):
     
     Implementation of cauchy distribution based genescorer
     
-    see Yaowu Liua and Jun Xie,
+    following math of Yaowu Liua and Jun Xie,
     doi.org/10.1080/01621459.2018.1554485
     
     """
     
     def __init__(self,window=50000,varcutoff=0.99,MAF=0.05,genome=None,gpu=False):
         """
-        Gene scoring via sum of chi2
+        Gene scoring via cauchy distribution
         
         Args:
         
