@@ -1139,7 +1139,7 @@ class chi2sum(genescorer):
         res = self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)
         
         toc = time.time()
-        print("[time]:",str(round(toc-tic,2))+"s;",round((toc-tic)/len(G),2),"genes/s")
+        print("[time]:",str(round(toc-tic,2))+"s;",round(len(G)/(toc-tic),2),"genes/s")
         
         return res
         
