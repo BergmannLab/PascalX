@@ -605,6 +605,30 @@ double oneminwchissum_m1nc0_satterthwaite_200d(double* lambda, int N, double X) 
 }
 
 extern "C"
+double oneminwchissum_m1nc0_satterthwaite_300d(double* lambda, int N, double X) {
+    
+    // Calc g,h
+    double sum1 = 0;
+    double sum2 = 0;
+    for(int i =0; i < N; i++) {
+        sum1 += lambda[i];
+        sum2 += lambda[i]*lambda[i];
+    }
+    
+    double g = sum2/sum1;
+    double h = sum1*sum1/sum2;
+   
+    // Calc cdf
+    number<cpp_bin_float<300>> x = number<cpp_bin_float<300>>(X);
+    
+    gamma_distribution<number<cpp_bin_float<300>>> gamma(h/2,2*g);
+   
+    x = number<cpp_bin_float<300>>(1.) - cdf(gamma,x);
+    
+    return x.convert_to<double>(); 
+}
+
+extern "C"
 double oneminwchissum_m1nc0_satterthwaite_500d(double* lambda, int N, double X) {
     
     // Calc g,h
@@ -666,7 +690,7 @@ double oneminwchissum_m1nc0_satterthwaite_auto(double* lambda, int N, double X) 
                 res = oneminwchissum_m1nc0_satterthwaite_200d(lambda,N,X);
                 
                 if(res < 1e-195) {
-                    res = oneminwchissum_m1nc0_satterthwaite_500d(lambda,N,X);
+                    res = oneminwchissum_m1nc0_satterthwaite_300d(lambda,N,X);
                 }
             }
         }
@@ -781,6 +805,31 @@ double oneminwchissum_m1nc0_pearson_200d(double* lambda, int N, double X) {
     return x.convert_to<double>(); 
 }
 
+
+extern "C"
+double oneminwchissum_m1nc0_pearson_300d(double* lambda, int N, double X) {
+    double c1 = 0;
+    double c2 = 0;
+    double c3 = 0;
+    
+    for(int i = 0; i < N; i++) {
+        c1 += lambda[i];
+        c2 += lambda[i]*lambda[i];
+        c3 += lambda[i]*lambda[i]*lambda[i];
+    }
+    
+    double h = c2*c2*c2/(c3*c3);
+    double y = std::max(0.,(X-c1)*sqrt(h/c2)+h);
+    number<cpp_bin_float<300>> Y(y);
+    
+    // Calc cdf  
+    chi_squared_distribution<number<cpp_bin_float<300>>> chisq(h);
+   
+    number<cpp_bin_float<300>> x = 1. - cdf(chisq,Y);
+    
+    return x.convert_to<double>(); 
+}
+
 extern "C"
 double oneminwchissum_m1nc0_pearson_500d(double* lambda, int N, double X) {
     double c1 = 0;
@@ -843,7 +892,7 @@ double oneminwchissum_m1nc0_pearson_auto(double* lambda, int N, double X) {
                 res = oneminwchissum_m1nc0_pearson_200d(lambda,N,X);
                 
                 if(res < 1e-195) {
-                    res = oneminwchissum_m1nc0_pearson_500d(lambda,N,X);
+                    res = oneminwchissum_m1nc0_pearson_300d(lambda,N,X);
                 }
             }
         }
@@ -1096,6 +1145,57 @@ double oneminwchissum_m1nc0_saddle_200d(double* lambda, int N, double X) {
 }
 
 extern "C"
+double oneminwchissum_m1nc0_saddle_300d(double* lambda, int N, double X) {
+    double sum = lambda[0];
+        
+    // find maxb
+    double ma = 1./lambda[0];
+    for(int i=1;i<N;i++) {
+        double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
+        if(tmp < ma) {
+            ma = tmp;
+        }
+    }
+    ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
+    const int digits = std::numeric_limits<double>::digits; 
+    int get_digits = static_cast<int>(digits * 0.6);
+    
+    // Solve for zeta 
+    const boost::uintmax_t maxit = 10000;
+    boost::uintmax_t it = maxit;
+    try {
+        double zeta = boost::math::tools::newton_raphson_iterate(
+        [lambda,N,X](double x) {
+            return std::make_pair(K1(lambda,N,x)-X,K2(lambda,N,x));
+        },
+        -0.5*N/X,-0.5*N/X-1,ma,
+        get_digits, it
+        );
+        
+        // Calc parameters    
+        double v = zeta*sqrt(K2(lambda,N,zeta));
+        double w = sign(zeta)*sqrt(2*(zeta*X - K(lambda,N,zeta)));
+        double z = (w + log(v/w)/w)/sqrt(2.);
+        
+        number<cpp_bin_float<300>> Z(z);
+        
+        // Calc and return solution
+        return (0.5 - 0.5*erf( Z )).convert_to<double>();
+        
+    } catch(...) {
+        return -1;
+    }   
+}
+
+extern "C"
 double oneminwchissum_m1nc0_saddle_500d(double* lambda, int N, double X) {
     double sum = lambda[0];
         
@@ -1160,7 +1260,7 @@ double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X) {
                 res = oneminwchissum_m1nc0_saddle_200d(lambda,N,X);
                 
                 if ((res < 1e-195)  && (res >= 0)) {
-                    res = oneminwchissum_m1nc0_saddle_500d(lambda,N,X);
+                    res = oneminwchissum_m1nc0_saddle_300d(lambda,N,X);
                 }
             }
         }

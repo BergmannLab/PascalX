@@ -237,3 +237,71 @@ class db:
         # close 
         self._datafile.close()
         
+
+class db_subset(db):
+    """
+    Class for handling storage of the raw genotype data. The data is indexed and stored for each chromosome individually as zlib compressed pickle. The indexing allows fast random access via SNP ids or positions.
+    
+    Allows to set indices for samples to keep
+    
+    """
+    def __init__(self,keep_idx):
+        self._modified = False;
+        self._idx = [{},{},{}]
+    
+        self._keep = keep_idx
+        
+        pass
+    
+    
+    def get(self,pos):
+        """
+        Returns all stored data for a set of SNPs indexed via positions
+        
+        Args:
+            
+            pos(list): Positions of SNPs to retrieve 
+            
+        """
+        E = []
+        for R in pos:
+            if R in self._idx[0]:
+                for p in self._idx[0][R]:
+                    self._datafile.seek(p[0])
+                    data = self._datafile.read(p[1]-p[0])
+
+                    D = pickle.loads(zlib.decompress(data))
+                    D[2] = D[2][self._keep]
+                    E.append( D ) 
+            else:
+                #print("Error:",R,"not found in index")
+                E.append(None)
+        
+        return E
+    
+    
+    def getSNPs(self,snps):
+        """
+        Returns all stored data for a set of SNPs indexed via SNP ids
+        
+        Args:
+            
+            snp(list): ids of SNPs to retrieve 
+            
+        """
+        E = []
+        for R in snps:
+            if R in self._idx[1]:
+                for p in self._idx[1][R]:
+                    self._datafile.seek(p[0])
+                    data = self._datafile.read(p[1]-p[0])
+
+                    D = pickle.loads(zlib.decompress(data))
+                    D[2] = D[2][self._keep]
+                    E.append( D ) 
+            else:
+                #print("Error:",R,"not found in index")
+                E.append(None)
+        
+        return E
+    

@@ -41,6 +41,10 @@ from scipy.stats import norm
 
 from sortedcontainers import SortedSet
 
+from abc import ABC
+
+import time
+
 try:
     import cupy as cp
     pool = cp.cuda.MemoryPool(cp.cuda.malloc_managed)
@@ -803,45 +807,58 @@ class chi2sum(genescorer):
         return np.sum(ps)
     
     def _calcAndFilterEV(self,C):
-    
-        if self._useGPU:
-            L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
-        else:
-            L = np.linalg.eigvalsh(C)
-            
-        L = L[L>0][::-1]
-        N_L = []
-
-        # Leading EV
-        c = L[0]
-        N_L.append(L[0])
+        try:
+            if self._useGPU:
+                L = cp.asnumpy(cp.linalg.eigvalsh(cp.asarray(C)))
+            else:
+                L = np.linalg.eigvalsh(C)
+        except: 
+            return None
         
-        # Cutoff variance for remaining EVs
-        for i in range(1,len(L)):
-            c = c + L[i]
-            if c < self._varcutoff*np.sum(L):
-                N_L.append(L[i])
-                
-        return N_L
+        F = L > 0
+        
+        if len(F) > 0:
+            L = L[F][::-1]
+            N_L = []
+
+            # Leading EV
+            c = L[0]
+            N_L.append(L[0])
+            
+            T = np.sum(L)
+            
+            # Cutoff variance for remaining EVs
+            for i in range(1,len(L)):
+                c = c + L[i]
+                if c < self._varcutoff*T:
+                    N_L.append(L[i])
+
+            return N_L
+        
+        else:
+            return None
     
     def _scoreThread(self,N_L,S,g,method,mode,reqacc,intlimit):
         
-        if method=='davies':
-            RESULT = [g,wchissum.onemin_cdf_davies(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
-        elif method=='ruben':
-            RESULT = [g,wchissum.onemin_cdf_ruben(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
-        elif method=='satterthwaite':
-            RESULT = [g,wchissum.onemin_cdf_satterthwaite(S,N_L,mode=mode)]
-        elif method=='pearson':
-            RESULT = [g,wchissum.onemin_cdf_pearson(S,N_L,mode=mode)]
-        elif method=='saddle':
-            RESULT = [g,wchissum.onemin_cdf_saddle(S,N_L,mode=mode)]        
-        else:
-            RESULT = [g,wchissum.onemin_cdf_auto(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
+        if N_L is not None:
+            if method=='davies':
+                RESULT = [g,wchissum.onemin_cdf_davies(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
+            elif method=='ruben':
+                RESULT = [g,wchissum.onemin_cdf_ruben(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
+            elif method=='satterthwaite':
+                RESULT = [g,wchissum.onemin_cdf_satterthwaite(S,N_L,mode=mode)]
+            elif method=='pearson':
+                RESULT = [g,wchissum.onemin_cdf_pearson(S,N_L,mode=mode)]
+            elif method=='saddle':
+                RESULT = [g,wchissum.onemin_cdf_saddle(S,N_L,mode=mode)]        
+            else:
+                RESULT = [g,wchissum.onemin_cdf_auto(S,N_L,acc=reqacc,mode=mode,lim=intlimit)]
 
-        return RESULT
+            return RESULT
+        else:
+            return None
         
-    def _scoremain(self,gene,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,label='',baroffset=0,nobar=False,lock=None):
+    def _scoremain(self,gene,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,label='',baroffset=0,nobar=False,lock=None,keep_idx=None):
         
         G = np.array(gene)
         RESULT = []
@@ -858,12 +875,17 @@ class chi2sum(genescorer):
             print(' ', end='', flush=True) # Hack to work with jupyter notebook 
        
         with lock:
-            pbar = tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", position=baroffset, leave=True,disable=nobar)
-            pbar.set_description(label)#+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
+            pbar = tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ] {postfix}", position=baroffset, leave=True,disable=nobar)
+            #pbar.set_description(label.rjust(15,"_"))#+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
 
         for i in range(pbar.total):
             #print(i)
             if G[i] in self._GENEID:
+                
+                with lock:
+                    pbar.set_postfix_str(str(self._GENEID[G[i]][4]))
+   
+                    
                 cr = self._GENEID[G[i]][0]
 
                 if not cr in REF:
@@ -873,7 +895,7 @@ class chi2sum(genescorer):
                     if unloadRef:
                         REF = {}
 
-                    REF[cr] = self._ref.load_pos_reference(cr)
+                    REF[cr] = self._ref.load_pos_reference(cr,keep_idx)
 
                     
                 if len(self._GWAS_alleles)==0:
@@ -890,11 +912,14 @@ class chi2sum(genescorer):
 
                     RES = self._scoreThread(self._calcAndFilterEV(C),S,G[i],method,mode,reqacc,intlimit)
 
-                    if (RES[1][1]==0 or RES[1][1]==5) and RES[1][0] > 0 and RES[1][0] <= 1 and (RES[1][0] > reqacc*1e3 or ( (method=='auto' or method=='satterthwaite' or method=='pearson' or method=='saddle')  )):
+                    if RES is not None and (RES[1][1]==0 or RES[1][1]==5) and RES[1][0] > 0 and RES[1][0] <= 1 and (RES[1][0] > reqacc*1e3 or ( (method=='auto' or method=='satterthwaite' or method=='pearson' or method=='saddle')  )):
                         RESULT.append( [self._GENEIDtoSYMB[RES[0]],float(RES[1][0]),len(R)])
+                    elif RES is not None:
+                        FAIL.append([self._GENEIDtoSYMB[RES[0]],len(R),RES[1]])
                     else:
-                            FAIL.append([self._GENEIDtoSYMB[RES[0]],len(R),RES[1]])
-
+                        TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"Singular covariance matrix"])
+                        
+                        
                     with lock:
                         pbar.update(1)
 
@@ -924,7 +949,7 @@ class chi2sum(genescorer):
         
         return RESULT,FAIL,TOTALFAIL
     
-    def score(self,gene,parallel=1,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False):
+    def score(self,gene,parallel=1,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False,keep_idx=None):
         """
         Performs gene scoring for a given list of gene symbols
         
@@ -954,7 +979,7 @@ class chi2sum(genescorer):
         lock = mp.Manager().Lock()
         
         if parallel <= 1:
-            R = self._scoremain(G,unloadRef,method,mode,reqacc,intlimit,'',0,nobar,lock)
+            R = self._scoremain(G,unloadRef,method,mode,reqacc,intlimit,'',0,nobar,lock,keep_idx)
         else:
             R = [[],[],[]]
             S = np.array_split(G,parallel)
@@ -964,7 +989,7 @@ class chi2sum(genescorer):
                 
             for i in range(0,len(S)): 
 
-                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock))
+                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx))
                 result_objs.append(result)
 
             results = [result.get() for result in result_objs]    
@@ -989,7 +1014,7 @@ class chi2sum(genescorer):
                
         if autorescore and len(R[1]) > 0:
             print("Rescoreing failed genes")
-            R = self.rescore(R,method='pearson',mode='auto',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar)
+            R = self.rescore(R,method='pearson',mode='auto',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar,keep_idx=keep_idx)
             if len(R[1])>0:
                 print(len(R[1]),"genes failed to be scored")
                 
@@ -1012,7 +1037,7 @@ class chi2sum(genescorer):
             
         RESULT[1].clear()
         
-    def rescore(self,RESULT,method='pearson',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False):
+    def rescore(self,RESULT,method='pearson',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,keep_idx=None):
         """
         Function to re-score only the failed gene scorings of a previous scoring run with different scorer settings. 
        
@@ -1042,7 +1067,7 @@ class chi2sum(genescorer):
         lock = mp.Manager().Lock()
         
         if parallel <= 1:
-            RES = self._scoremain(G,True,method,mode,reqacc,intlimit,'',i,nobar,lock)
+            RES = self._scoremain(G,True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx)
         else:
             RES = [[],[],[]]
             S = np.array_split(G,parallel)
@@ -1053,7 +1078,7 @@ class chi2sum(genescorer):
                 
             for i in range(0,len(S)): 
 
-                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock))
+                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx))
                 result_objs.append(result)
 
             results = [result.get() for result in result_objs]    
@@ -1079,7 +1104,7 @@ class chi2sum(genescorer):
         
         return RESULT
     
-    def score_chr(self,chrs,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False):
+    def score_chr(self,chrs,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False,keep_idx=None):
         """
         Perform gene scoring for full chromosomes
         
@@ -1096,6 +1121,7 @@ class chi2sum(genescorer):
             autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
+        tic = time.time()
         
         S = np.array(chrs)
         
@@ -1109,12 +1135,16 @@ class chi2sum(genescorer):
         G = []
         for c in S:
             G.extend(self._CHR[str(c)][0])
-            
-        return self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore)
-   
+        
+        res = self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)
+        
+        toc = time.time()
+        print("[time]:",str(round(toc-tic,2))+"s;",round((toc-tic)/len(G),2),"genes/s")
+        
+        return res
         
 
-    def score_all(self,parallel=1,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False):
+    def score_all(self,parallel=1,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False,keep_idx=None):
         """
         Perform full gene scoring
         
@@ -1132,7 +1162,9 @@ class chi2sum(genescorer):
         
         self._SCORES = {}
         
-        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore)
+        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore,keep_idx)
+        
+    
     
     def score_gene_bulk_chr(self,chrs,gene,data,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,autorescore=False):
         """
