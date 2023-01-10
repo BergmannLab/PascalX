@@ -336,7 +336,9 @@ def onemin_cdf_satterthwaite(X, lb, mode='auto'):
     toc = time.time()
     
     return [max(rf,res), 0, round(toc-tic,5)]
-  
+    
+    
+    
 def onemin_cdf_pearson(X, lb, mode='auto'):
     tic = time.time()
 
@@ -359,9 +361,9 @@ def onemin_cdf_pearson(X, lb, mode='auto'):
         rf = 1e-15
     
     toc = time.time()
-
+     
     return [max(rf,res), 0, round(toc-tic,5)]
-
+    
 def onemin_cdf_saddle(X, lb, mode='auto'):
     tic = time.time()
 

@@ -616,6 +616,15 @@ class genescorer(ABC):
             plt.axhline(y=-np.log10(sigLine), color='r', linestyle='dotted')
     
 
+    
+    def clean(self):
+        """
+        Removes scores obtained from previous runs
+        
+        """
+        self._SCORES = {}
+        self._SKIPPED = {}
+        
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     
@@ -816,9 +825,9 @@ class chi2sum(genescorer):
             return None
         
         F = L > 0
+        L = L[F][::-1]
         
-        if len(F) > 0:
-            L = L[F][::-1]
+        if len(L) > 0:
             N_L = []
 
             # Leading EV
@@ -943,10 +952,10 @@ class chi2sum(genescorer):
                     pbar.update(1)
 
                     
-        with lock:
+        with lock:  
+            pbar.set_postfix_str("done")
             pbar.close()
-            #pbar.set_description(label+"(done          )")
-        
+            
         return RESULT,FAIL,TOTALFAIL
     
     def score(self,gene,parallel=1,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False,keep_idx=None):

@@ -1246,6 +1246,7 @@ double oneminwchissum_m1nc0_saddle_500d(double* lambda, int N, double X) {
     }   
 }
 
+/*
 extern "C"
 double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X) {
     double res = oneminwchissum_m1nc0_saddle(lambda,N,X);
@@ -1267,6 +1268,82 @@ double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X) {
     }
     
     return res;
+}
+*/
+
+
+extern "C"
+double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X) {
+    double sum = lambda[0];
+        
+    // find maxb
+    double ma = 1./lambda[0];
+    for(int i=1;i<N;i++) {
+        double tmp = 1./lambda[i];
+        sum += lambda[i];
+        
+        if(tmp < ma) {
+            ma = tmp;
+        }
+    }
+    ma *= 0.5;
+    
+    // Do not use in unstable regime
+    if (abs(sum-X)/X < 1e-5) {
+        return -1;
+    }
+    
+    const int digits = std::numeric_limits<double>::digits; 
+    int get_digits = static_cast<int>(digits * 0.6);
+    
+    // Solve for zeta 
+    const boost::uintmax_t maxit = 10000;
+    boost::uintmax_t it = maxit;
+    try {
+        double zeta = boost::math::tools::newton_raphson_iterate(
+        [lambda,N,X](double x) {
+            return std::make_pair(K1(lambda,N,x)-X,K2(lambda,N,x));
+        },
+        -0.5*N/X,-0.5*N/X-1,ma,
+        get_digits, it
+        );
+        
+        // Calc parameters    
+        double v = zeta*sqrt(K2(lambda,N,zeta));
+        double w = sign(zeta)*sqrt(2*(zeta*X - K(lambda,N,zeta)));
+        double z = (w + log(v/w)/w)/sqrt(2.);
+        
+        // Calc cdf using error function
+        double Z = z;
+        
+        double res = ( 0.5*(1 - erf( Z )) );
+        
+        if (res < 1e-15) {
+            float128 Z(z);
+            res = ( 0.5*(1 - erf( Z )) ).convert_to<double>();
+        
+            if (res < 1e-32) {
+                number<cpp_bin_float<100>> Z(z);
+                res = ( 0.5*(1 - erf( Z )) ).convert_to<double>();
+
+                if (res < 1e-98) {
+                    number<cpp_bin_float<200>> Z(z);
+                    res = ( 0.5*(1 - erf( Z )) ).convert_to<double>();
+
+                    if (res < 1e-195) {
+                        number<cpp_bin_float<300>> Z(z);
+                        res = ( 0.5*(1 - erf( Z )) ).convert_to<double>();
+                    }
+                }
+            }
+        }
+        
+        // Calc and return solution
+        return res;
+        
+    } catch(...) {
+        return -1;
+    }   
 }
 
 
