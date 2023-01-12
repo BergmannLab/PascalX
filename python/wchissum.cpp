@@ -676,6 +676,55 @@ double oneminwchissum_m1nc0_satterthwaite_1000d(double* lambda, int N, double X)
     return x.convert_to<double>(); 
 }
 
+
+extern "C"
+double oneminwchissum_m1nc0_satterthwaite_auto(double* lambda, int N, double X) {
+    
+    // Calc g,h
+    double sum1 = 0;
+    double sum2 = 0;
+    for(int i = 0; i < N; i++) {
+        sum1 += lambda[i];
+        sum2 += lambda[i]*lambda[i];
+    }
+    
+    double g = sum2/sum1;
+    double h = sum1*sum1/sum2;
+    
+    gamma_distribution<double> gamma(h/2,2*g);
+   
+    double res =  1. - cdf(gamma,X);
+        
+    if (res < 1e-15) {
+        float128 x = float128(X);
+    
+        gamma_distribution<float128> gamma(h/2,2*g); 
+        res = ( 1. - cdf(gamma,x) ).convert_to<double>();
+        
+        if (res < 1e-32) {
+            number<cpp_bin_float<100>> x(X);
+            gamma_distribution<number<cpp_bin_float<100>>> gamma(h/2,2*g); 
+            res = ( number<cpp_bin_float<100>>(1.) - cdf(gamma,x) ).convert_to<double>();
+     
+            if (res < 1e-98) {
+                number<cpp_bin_float<200>> x(X);
+                gamma_distribution<number<cpp_bin_float<200>>> gamma(h/2,2*g); 
+                res = ( number<cpp_bin_float<200>>(1.) - cdf(gamma,x) ).convert_to<double>();
+     
+                if (res < 1e-195) {
+                     number<cpp_bin_float<300>> x(X);
+                     gamma_distribution<number<cpp_bin_float<300>>> gamma(h/2,2*g); 
+                     res = ( number<cpp_bin_float<300>>(1.) - cdf(gamma,x) ).convert_to<double>();   
+                }
+            }
+        }
+    }
+        
+    // Calc and return solution
+    return res;
+}
+
+/*
 extern "C"
 double oneminwchissum_m1nc0_satterthwaite_auto(double* lambda, int N, double X) {
     double res = oneminwchissum_m1nc0_satterthwaite(lambda,N,X);
@@ -698,6 +747,7 @@ double oneminwchissum_m1nc0_satterthwaite_auto(double* lambda, int N, double X) 
     
     return res;
 }
+*/
 
 /*
     Pearson's approximation
@@ -771,6 +821,7 @@ double oneminwchissum_m1nc0_pearson_100d(double* lambda, int N, double X) {
     
     double h = c2*c2*c2/(c3*c3);
     double y = std::max(0.,(X-c1)*sqrt(h/c2)+h);
+    
     number<cpp_bin_float<100>> Y(y);
     
     // Calc cdf  
@@ -880,6 +931,60 @@ double oneminwchissum_m1nc0_pearson_1000d(double* lambda, int N, double X) {
 
 extern "C"
 double oneminwchissum_m1nc0_pearson_auto(double* lambda, int N, double X) {
+    double c1 = 0;
+    double c2 = 0;
+    double c3 = 0;
+    
+    for(int i = 0; i < N; i++) {
+        c1 += lambda[i];
+        c2 += lambda[i]*lambda[i];
+        c3 += lambda[i]*lambda[i]*lambda[i];
+    }
+    
+    double h = c2*c2*c2/(c3*c3);
+    double y = std::max(0.,(X-c1)*sqrt(h/c2)+h);
+    
+    chi_squared chisq(h);
+   
+    double res = 1. - cdf(chisq,y);
+     
+    if (res < 1e-15) {
+        float128 Y(y);
+    
+        chi_squared_distribution<float128> chisq(h);
+        res =  ( 1. - cdf(chisq,Y) ).convert_to<double>();
+     
+        if (res < 1e-32) {
+            number<cpp_bin_float<1000>> Y(y);
+            chi_squared_distribution<number<cpp_bin_float<100>>> chisq(h);
+
+            res =  ( 1. - cdf(chisq,Y) ).convert_to<double>();
+
+            if (res < 1e-98) {
+                number<cpp_bin_float<200>> Y(y);
+                chi_squared_distribution<number<cpp_bin_float<200>>> chisq(h);
+
+                res =  ( 1. - cdf(chisq,Y) ).convert_to<double>();
+
+                if (res < 1e-195) {
+                    number<cpp_bin_float<300>> Y(y);
+                    chi_squared_distribution<number<cpp_bin_float<300>>> chisq(h);
+
+                    res =  ( 1. - cdf(chisq,Y) ).convert_to<double>();
+                }
+            }
+        }
+    }
+        
+    // Calc and return solution
+    return res;
+}
+
+
+
+/*
+extern "C"
+double oneminwchissum_m1nc0_pearson_auto(double* lambda, int N, double X) {
     double res = oneminwchissum_m1nc0_pearson(lambda,N,X);
     
     if (res < 1e-15) {
@@ -900,7 +1005,7 @@ double oneminwchissum_m1nc0_pearson_auto(double* lambda, int N, double X) {
     
     return res;
 }
-
+*/
 /*
     Saddle-point approximation
     (central case)

@@ -133,6 +133,7 @@ class genescorer(ABC):
         GEN = genome.genome()
         GEN.load_genome(file,ccol,cid,csymb,cstx,cetx,cs,cb,chrStart,splitchr,NAgeneid,useNAgenes,header)
         
+        self._GENOME = GEN
         self._GENEID = GEN._GENEID
         self._GENESYMB = GEN._GENESYMB
         self._GENEIDtoSYMB = GEN._GENEIDtoSYMB
@@ -142,7 +143,7 @@ class genescorer(ABC):
         self._SKIPPED = GEN._SKIPPED
 
     
-    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,delimiter="\t",a1col=None,a2col=None,bcol=None,pfilter=1,header=False,joint=True):
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,delimiter="\t",a1col=None,a2col=None,bcol=None,pfilter=1,header=False,joint=True,symbol=False):
         """
         Loads a SNP to gene mapping
         
@@ -159,17 +160,22 @@ class genescorer(ABC):
             pfilter(float): Only include rows with wcol < pfilter
             header(bool): Header present
             joint(bool): Use mapping SNPs and gene window based SNPs
+            symbol(bool): True: Gene id is a gene symbol; False: Gene id is an ensembl gene id
             
         Note:
+        
             * A loaded mapping takes precedence over a loaded positional gene annotation
             * The mapping data is stored statically (same for all class initializations)
             
         """
-        M = mapper()
-        M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,delimiter,pfilter,header)
-        self._MAP = M._GENEIDtoSNP
-        self._iMAP = M._SNPtoGENEID
-        self._joint = joint
+        if symbol and self._GENOME is None:
+            print("For symbol==True a genome has to be loaded first (use .load_genome)")
+        else:
+            M = mapper(self._GENOME)
+            M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,delimiter,pfilter,header,symbol)
+            self._MAP = M._GENEIDtoSNP
+            self._iMAP = M._SNPtoGENEID
+            self._joint = joint
 
     def load_GWAS(self,file,rscol=0,pcol=1,bcol=None,a1col=None,a2col=None,delimiter=None,header=False,NAid='NA',log10p=False,cutoff=1e-300):
         """

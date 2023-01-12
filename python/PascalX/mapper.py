@@ -21,12 +21,14 @@ import gzip
 
 
 class mapper:
-    def __init__(self):
+    def __init__(self,genome=None):
         self._GENEIDtoSNP = {}
         self._SNPtoGENEID = {}
         self._GENEDATA = {}
-        
-    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,delimiter="\t",pfilter=1,header=False):
+
+        self._GENOME = genome
+
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,delimiter="\t",pfilter=1,header=False,symbol=False):
         """
         Loads a SNP to gene mapping
         
@@ -42,6 +44,7 @@ class mapper:
             delimiter(string): Character used to separate columns
             header(bool): Header present
             pfilter(float): Only include rows with wcol < pfilter
+            symbol(bool): Gene id are gene symbols (requires genome to be set on init)
         """
         self._GENEIDtoSNP = {}
         self._SNPtoGENEID = {}
@@ -67,6 +70,12 @@ class mapper:
 
                 gid = line[gcol]
 
+                if symbol:
+                    if gid in self._GENOME._GENESYMB:
+                        gid = self._GENOME._GENESYMB[gid]
+                    else:
+                        continue
+                
                 if gid not in self._GENEIDtoSNP:
                     self._GENEIDtoSNP[gid] = {} #[[],[],[],[],[]]
 
