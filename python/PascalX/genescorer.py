@@ -225,7 +225,7 @@ class genescorer(ABC):
                 if log10p:
                     p = 10**(-p)
                     
-                if p > 0 and p < 1:
+                if p > 0 and p < 1 and L[rscol][:2]=='rs':
                     self._GWAS[L[rscol]] = p
                 else:
                     continue
@@ -706,12 +706,11 @@ class chi2sum(genescorer):
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
-                useAll = True
             else:
                 P = []
         
         DATA = REF[str(cr)][0].get(list(P))
-           
+      
         filtered = {}
         
         #use = []
@@ -763,7 +762,6 @@ class chi2sum(genescorer):
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))
-                useAll = True
             else:
                 P = []
         
@@ -809,8 +807,11 @@ class chi2sum(genescorer):
         ps = np.zeros(len(RIDs))
         for i in range(0,len(ps)):
             #ps = chi2.ppf(1- np.array([GWAS[x] for x in RIDs]),1)
-            if RIDs[i] in self._MAP[gene]:
+            if RIDs[i] in self._MAP[gene] and self._MAP[gene][RIDs[i]][0] is not None:
                 ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._MAP[gene][RIDs[i]][0])
+            else:
+                ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._GWAS[RIDs[i]])
+                
         return np.sum(ps)
         
     def _getChi2Sum(self,RIDs):
@@ -942,8 +943,11 @@ class chi2sum(genescorer):
 
                     if len(R) == 1:
                         if self._MAP is not None and self._joint == False:
-                            if R[0] in self._MAP[G[i]]:
+                            if R[0] in self._MAP[G[i]] and self._MAP[G[i]][R[0]][0] is not None:
                                 RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._MAP[G[i]][R[0]][0]),1] )
+                            else:
+                                RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._GWAS[R[0]]),1] )
+                                
                         else:
                             RESULT.append( [self._GENEIDtoSYMB[G[i]],float(self._GWAS[R[0]]),1] )
                     else:

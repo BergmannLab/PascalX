@@ -63,6 +63,7 @@ class mapper:
                 f.readline()
 
         c = 0
+        s = 0
         for line in f:
             line = line.rstrip().split(delimiter)
 
@@ -99,5 +100,7 @@ class mapper:
                     self._SNPtoGENEID[line[rcol]] = [gid]
                 else:
                     self._SNPtoGENEID[line[rcol]].append(gid)
+                    
+                s += 1
 
-        print(c,"gene to SNP mappings loaded")
+        print(c,"gene to SNP mappings loaded (# SNPs: "+str(s)+")")
