@@ -899,7 +899,7 @@ class chi2sum(genescorer):
             if G[i] in self._GENEID:
                 
                 with lock:
-                    pbar.set_postfix_str(str(self._GENEID[G[i]][4]))
+                    pbar.set_postfix_str(str(self._GENEID[G[i]][4]).ljust(15))
    
                     
                 cr = self._GENEID[G[i]][0]
@@ -963,7 +963,7 @@ class chi2sum(genescorer):
 
                     
         with lock:  
-            pbar.set_postfix_str("done")
+            pbar.set_postfix_str("done".ljust(15))
             pbar.close()
             
         return RESULT,FAIL,TOTALFAIL
@@ -985,6 +985,21 @@ class chi2sum(genescorer):
             autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
         
         """
+        
+        # Check method
+        methods = ['auto','saddle','pearson','satterthwaite','ruben','davies']
+        
+        if method not in methods:
+            print("No valid scoring method set. Available methods:",methods)
+            return None
+        else:
+            print("Scoring with method",method)
+        
+        if type(autorescore) is str and autorescore not in methods:
+            print("No valid scoring method set for rescoring. Available methods:",methods)
+            return None
+            
+                  
         G = []
         
         for i in range(0,len(gene)):
@@ -1004,12 +1019,13 @@ class chi2sum(genescorer):
             S = np.array_split(G,parallel)
             
             result_objs = []
-            pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
+            pool = mp.Pool(max(1,min(len(S),mp.cpu_count())))
                 
             for i in range(0,len(S)): 
-
-                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx))
-                result_objs.append(result)
+                
+                if len(S[i]) > 0:
+                    result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx))
+                    result_objs.append(result)
 
             results = [result.get() for result in result_objs]    
 
@@ -1031,9 +1047,21 @@ class chi2sum(genescorer):
         for X in R[0]:
             self._SCORES[X[0]] = float(X[1])
                
-        if autorescore and len(R[1]) > 0:
-            print("Rescoreing failed genes")
-            R = self.rescore(R,method='pearson',mode='auto',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar,keep_idx=keep_idx)
+        if (len(R[1]) > 0 and 
+            (
+                (type(autorescore)==bool and autorescore)
+                or autorescore in methods
+            )
+           ):
+            
+            if type(autorescore)==bool:
+                method = 'pearson'
+            else:
+                method = autorescore
+            
+            print("Rescoreing failed genes with method",method)
+                
+            R = self.rescore(R,method=method,mode='auto',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar,keep_idx=keep_idx)
             if len(R[1])>0:
                 print(len(R[1]),"genes failed to be scored")
                 
@@ -1091,14 +1119,15 @@ class chi2sum(genescorer):
             RES = [[],[],[]]
             S = np.array_split(G,parallel)
             
-            pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
+            pool = mp.Pool(max(1,min(len(S),mp.cpu_count())))
             
             result_objs = []
                 
             for i in range(0,len(S)): 
 
-                result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx))
-                result_objs.append(result)
+                if len(S[i]) > 0:
+                    result = pool.apply_async(self._scoremain, (S[i],True,method,mode,reqacc,intlimit,'',i,nobar,lock,keep_idx))
+                    result_objs.append(result)
 
             results = [result.get() for result in result_objs]    
 
@@ -1116,6 +1145,9 @@ class chi2sum(genescorer):
         for X in RES[0]:
             self._SCORES[X[0]] = float(X[1])
     
+        print(len(RES[0]),"genes successfully rescored.")
+        if len(RES[1]) > 0:
+            print(len(RES[1]),"genes still failed.")
     
         RESULT[2].extend(RES[2])
         RESULT[1].clear()
@@ -1158,7 +1190,9 @@ class chi2sum(genescorer):
         res = self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)
         
         toc = time.time()
-        print("[time]:",str(round(toc-tic,2))+"s;",round(len(G)/(toc-tic),2),"genes/s")
+        
+        if res is not None:
+            print("[time]:",str(round(toc-tic,2))+"s;",round(len(G)/(toc-tic),2),"genes/s")
         
         return res
         

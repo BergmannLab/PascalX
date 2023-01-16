@@ -40,7 +40,8 @@ parser_genescoring.add_argument("gwas",help="tab separated file with GWAS data (
 parser_genescoring.add_argument("-sh","--skip_head",type=lambda x: (str(x).lower() == 'true'),default=True,help="first line is header [True|False], default=True")
 parser_genescoring.add_argument("-cr","--col_rsid",type=int,default=0,help="column with rsids, default=0")
 parser_genescoring.add_argument("-cp","--col_pval",type=int,default=1,help="column with p-values, default=1")
-
+parser_genescoring.add_argument("-m","--method",type=str,default='saddle',help="method for gene scoring [saddle|auto|pearson|satterthwaite|ruben|davies], default=saddle")
+parser_genescoring.add_argument("-mr","--rescore",type=bool,default=True,help="Rescore failed genes with backup method [True|False]")
 
 # X-scoring
 parser_xscoring = subparsers.add_parser('xscoring',description="Xscorer")
@@ -114,9 +115,9 @@ if __name__ == "__main__":
 			print("Starting genescoring")
 			
 			if args.chr == 'all':
-				R = G.score_all(parallel=args.parallel,nobar=args.nobar)
+				R = G.score_all(parallel=args.parallel,nobar=args.nobar,method=args.method,autorescore=args.rescore)
 			else:
-				R = G.score_chr(chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar)
+				R = G.score_chr(chrs=list(ast.literal_eval(args.chr)),parallel=args.parallel,nobar=args.nobar,method=args.method,autorescore=args.rescore)
 		
 		if args.pathway is None:
 			G.save_scores(args.outfile+".tsv")
@@ -157,9 +158,9 @@ if __name__ == "__main__":
 			P = pathway.chi2rank(G)
 			M = P.load_modules(args.pathway,args.col_name,args.col_symb)
 			if args.chr == 'all':
-				R = P.score(M,parallel=args.parallel,nobar=args.nobar,genes_only=args.genes_only)
+				R = P.score(M,parallel=args.parallel,nobar=args.nobar,genes_only=args.genes_only,method=args.method,autorescore=args.rescore)
 			else:
-				R = P.score(M,parallel=args.parallel,nobar=args.nobar,chrs_only=args.chr,genes_only=args.genes_only)
+				R = P.score(M,parallel=args.parallel,nobar=args.nobar,chrs_only=args.chr,genes_only=args.genes_only,method=args.method,autorescore=args.rescore)
 
 			if args.genes_only:
 				G.save_scores(args.outfile+".tsv")
