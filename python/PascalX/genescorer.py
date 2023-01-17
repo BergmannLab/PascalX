@@ -143,7 +143,7 @@ class genescorer(ABC):
         self._SKIPPED = GEN._SKIPPED
 
     
-    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,delimiter="\t",a1col=None,a2col=None,bcol=None,pfilter=1,header=False,joint=True,symbol=False):
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,delimiter="\t",a1col=None,a2col=None,bcol=None,pcol=None,pfilter=1,header=False,joint=True,symbol=False):
         """
         Loads a SNP to gene mapping
         
@@ -172,7 +172,7 @@ class genescorer(ABC):
             print("For symbol==True a genome has to be loaded first (use .load_genome)")
         else:
             M = mapper(self._GENOME)
-            M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,delimiter,pfilter,header,symbol)
+            M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,pcol,delimiter,pfilter,header,symbol)
             self._MAP = M._GENEIDtoSNP
             self._iMAP = M._SNPtoGENEID
             self._joint = joint
@@ -807,8 +807,8 @@ class chi2sum(genescorer):
         ps = np.zeros(len(RIDs))
         for i in range(0,len(ps)):
             #ps = chi2.ppf(1- np.array([GWAS[x] for x in RIDs]),1)
-            if RIDs[i] in self._MAP[gene] and self._MAP[gene][RIDs[i]][0] is not None:
-                ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._MAP[gene][RIDs[i]][0])
+            if RIDs[i] in self._MAP[gene] and self._MAP[gene][RIDs[i]][4] is not None:
+                ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._MAP[gene][RIDs[i]][4])
             else:
                 ps[i] = tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._GWAS[RIDs[i]])
                 
@@ -1561,3 +1561,199 @@ class chi2sum(genescorer):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class wchi2sum(chi2sum):
+    """
+    
+    Implementation of weighted chi2 sum based genescorer
+    
+    Note:
+        
+        SNP weights have to be supplied via Mapper
+    
+    """
+    def _getChi2Sum_mapper(self,RIDs,gene):
+        #print([GWAS[x] for x in RIDs])
+        ps = np.zeros(len(RIDs))
+        for i in range(0,len(ps)):
+            
+            if RIDs[i] in self._MAP[gene] and self._MAP[gene][RIDs[i]][0] is not None:
+                w = self._MAP[gene][RIDs[i]][0] 
+            else:
+                w = 1
+                
+            if RIDs[i] in self._MAP[gene] and self._MAP[gene][RIDs[i]][4] is not None:
+                ps[i] = w*tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._MAP[gene][RIDs[i]][4])
+            else:
+                ps[i] = w*tools.chiSquared1dfInverseCumulativeProbabilityUpperTail(self._GWAS[RIDs[i]])
+                
+        return np.sum(ps)
+    
+    
+    def _calcGeneSNPcorr(self,cr,gene,REF,useAll=False):
+        
+        if self._joint and self._MAP is not None:
+            G = self._GENEID[gene]
+            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+
+            if gene in self._MAP:
+                P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
+                #P = list(set(P))
+     
+        elif self._MAP is None:
+            G = self._GENEID[gene]
+
+            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+        else:
+            if gene in self._MAP:
+                P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
+            else:
+                P = []
+        
+        DATA = REF[str(cr)][0].get(list(P))
+      
+        filtered = {}
+        
+        #use = []
+        #RID = []
+        
+        # Sort out
+        for D in DATA:
+            # Select
+            if (D[0] in self._GWAS or useAll) and (D[1] > self._MAF) and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+                filtered[D[0]] = [D[1],D[2]]
+                #use.append(D[2])
+                #RID.append(s)
+                
+
+        # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
+        use = np.array(use)
+        
+        # Get weights
+        w = np.ones(len(RID))
+        for i in range(0,len(RID)):
+            if RID[i] in self._MAP[gene] and self._MAP[gene][RID[i]][0] is not None:
+                w[i] = self._MAP[gene][RID[i]][0] 
+        
+        Wh = np.sqrt(np.diag(w))
+        
+        if len(use) > 1:
+            if self._useGPU:
+                C = cp.corrcoef(cp.asarray(use))
+                Whc = cp.asarray(Wh)
+                C = cp.asnumpy(Whc.dot(C.dot(Whc)))
+            else:
+                C = np.corrcoef(use)
+                C = Wh.dot(C.dot(Wh))   
+        else:
+            C = np.ones((1,1))*Wh
+        
+        return C,np.array(RID)
+
+    
+    def _calcGeneSNPcorr_wAlleles(self,cr,gene,REF,useAll=False):
+        
+        if self._joint and self._MAP is not None:
+            G = self._GENEID[gene]
+            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+
+            if gene in self._MAP:
+                P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
+                #P = list(set(P))
+          
+        elif self._MAP is None:
+            G = self._GENEID[gene]
+
+            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+        else:
+            if gene in self._MAP:
+                P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))
+            else:
+                P = []
+        
+        DATA = REF[str(cr)][0].get(list(P))
+            
+        filtered = {}
+        
+        #use = []
+        #RID = []
+        
+        # Sort out
+        for D in DATA:
+            # Select
+            if (D[0] in self._GWAS or useAll) and D[1] > self._MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]) and self._GWAS_alleles[D[0]][0] == D[3] and self._GWAS_alleles[D[0]][1] == D[4]:
+                          
+                filtered[D[0]] = [D[1],D[2]]
+
+                #use.append(D[2])
+                #RID.append(s)
+
+        # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
+        use = np.array(use)
+        
+        # Calc corr
+        RID = list(filtered.keys())
+        use = []
+        for i in range(0,len(RID)):
+            use.append(filtered[RID[i]][1])
+            
+        use = np.array(use)
+        
+        # Get weights
+        w = np.ones(len(RID))
+        for i in range(0,len(RID)):
+            if RID[i] in self._MAP[gene] and self._MAP[gene][RID[i]][0] is not None:
+                w[i] = self._MAP[gene][RID[i]][0] 
+        
+        Wh = np.sqrt(np.diag(w))
+        
+        if len(use) > 1:
+            if self._useGPU:
+                C = cp.corrcoef(cp.asarray(use))
+                Whc = cp.asarray(Wh)
+                C = cp.asnumpy(Whc.dot(C.dot(Whc)))
+            else:
+                C = np.corrcoef(use)
+                C = Wh.dot(C.dot(Wh))   
+        else:
+            C = np.ones((1,1))*Wh
+        
+        return C,np.array(RID)
+
+    
+    
+    def score(self,gene,parallel=1,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False,keep_idx=None):
+        """
+        Performs gene scoring for a given list of gene symbols
+        
+        Args:
+        
+            gene(list): gene symbols to score.
+            parallel(int) : # of cores to use
+            unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
+            mode(string): Precision mode to use ('','128b','100d','auto')
+            reqacc(float): requested accuracy 
+            intlimit(int) : Max # integration terms to use
+            nobar(bool): Do not show progress bar
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
+        
+        """     
+        if self._MAP is None:
+            print("Weighted chi2sum scorer works only with gene-SNP associations set via Mapper")
+
+            return None
+                  
+        else:
+            return super().score(gene,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)

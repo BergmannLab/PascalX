@@ -28,7 +28,7 @@ class mapper:
 
         self._GENOME = genome
 
-    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,delimiter="\t",pfilter=1,header=False,symbol=False):
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,pcol=None,delimiter="\t",pfilter=1,header=False,symbol=False):
         """
         Loads a SNP to gene mapping
         
@@ -37,13 +37,14 @@ class mapper:
             file(string): File to load
             gcol(int): Column with gene id
             rcol(int): Column with SNP id
-            wcol(int): Column with weight
+            wcol(int): Column with weight (None for none)
             a1col(int): Column of alternate allele (None for ignoring alleles)
             a2col(int): Column of reference allele (None for ignoring alleles)
-            bcol(int): Column with additional weight
+            bcol(int): Column with additional weight (None for none)
+            pcol(int): Column with pvalue (For None p-value is taken from .load_GWAS data)
             delimiter(string): Character used to separate columns
             header(bool): Header present
-            pfilter(float): Only include rows with wcol < pfilter
+            pfilter(float): Only include rows with pcol < pfilter
             symbol(bool): Gene id are gene symbols (requires genome to be set on init)
         """
         self._GENEIDtoSNP = {}
@@ -67,7 +68,7 @@ class mapper:
         for line in f:
             line = line.rstrip().split(delimiter)
 
-            if wcol is None or float(line[wcol]) <= pfilter:
+            if pcol is None or float(line[pcol]) <= pfilter:
 
                 gid = line[gcol]
 
@@ -84,7 +85,7 @@ class mapper:
                 
                 rid = line[rcol]
                 
-                self._GENEIDtoSNP[gid][rid] = [None,None,None,None]
+                self._GENEIDtoSNP[gid][rid] = [None,None,None,None,None]
                 
                 if wcol is not None:
                     self._GENEIDtoSNP[gid][rid][0] = float(line[wcol])
@@ -95,7 +96,10 @@ class mapper:
 
                 if bcol is not None:
                     self._GENEIDtoSNP[gid][rid][3] = float(line[bcol])
-                                 
+                 
+                if pcol is not None:
+                    self._GENEIDtoSNP[gid][rid][4] = float(line[pcol])
+                        
                 if line[rcol] not in self._SNPtoGENEID:
                     self._SNPtoGENEID[line[rcol]] = [gid]
                 else:
