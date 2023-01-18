@@ -24,6 +24,7 @@ from scipy.stats import chi2
 from abc import ABC
 
 import random
+import time
 
 class pathwayscorer(ABC):
     def __init__(self, genescorer, mergedist=100000,fuse=True):
@@ -142,12 +143,39 @@ class pathwayscorer(ABC):
             for G in TOSCORE:
                 F.append(G[4])
 
+                # Add to genome
                 if not G[4] in self._genescorer._GENESYMB:
                     # Add to annotation
                     self._genescorer._GENESYMB[G[4]] = G[4]
                     self._genescorer._GENEID[G[4]] = G
                     self._genescorer._GENEIDtoSYMB[G[4]] = G[4]
                 
+                # Add to Mapper
+                if G[4][:9] == 'METAGENE:' and self._genescorer._MAP is not None:
+                    # Get geneids
+                    symbs = G[4].split(":")[1].split("_")
+                    geneids = []
+                    dic = {}
+                    for s in symbs:
+                        if s in self._genescorer._GENESYMB:
+                            gid = self._genescorer._GENESYMB[s]
+                            geneids.append(gid)
+                            
+                            # Update Mapper
+                            if gid in self._genescorer._MAP:
+                                dic.update(self._genescorer._MAP[gid])
+                    
+                    # Set to mapper
+                    self._genescorer._MAP[G[4]] = dic
+                    
+                    # Set to inverse mapper
+                    for rid in dic.keys():
+                        if rid not in self._genescorer._iMAP:
+                            self._genescorer._iMAP[rid] = [G[4]]
+                        else:
+                            self._genescorer._iMAP[rid].append(G[4])
+                        
+                   
                 if G[0] not in COMPUTE_SET:
                     COMPUTE_SET[G[0]] = []
                    
@@ -241,6 +269,7 @@ class chi2rank(pathwayscorer):
             genes_only(bool): Compute only (fused)-genescores (accessible via genescorer method)
             chrs_only(list): Only consider genes on listed chromosomes. None for all.
         """
+        tic = time.time()
         
         # Compute fusion sets
         if self._fuse:
@@ -335,6 +364,10 @@ class chi2rank(pathwayscorer):
                     del self._genescorer._SCORES[G]
             
             
+            toc = time.time()
+        
+            print("[time]:",str(round(toc-tic,1))+"s;",round(len(modules)/(toc-tic),2),"pathways/s")
+       
             # Return
             return [RESULT,FAILS,META_DIC]
         

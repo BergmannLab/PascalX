@@ -1059,7 +1059,7 @@ class chi2sum(genescorer):
             else:
                 method = autorescore
             
-            print("Rescoreing failed genes with method",method)
+            print("Rescoring failed genes with method",method)
                 
             R = self.rescore(R,method=method,mode='auto',reqacc=1e-100,intlimit=10000000,parallel=parallel,nobar=nobar,keep_idx=keep_idx)
             if len(R[1])>0:
@@ -1192,7 +1192,7 @@ class chi2sum(genescorer):
         toc = time.time()
         
         if res is not None:
-            print("[time]:",str(round(toc-tic,2))+"s;",round(len(G)/(toc-tic),2),"genes/s")
+            print("[time]:",str(round(toc-tic,1))+"s;",round(len(G)/(toc-tic),2),"genes/s")
         
         return res
         
