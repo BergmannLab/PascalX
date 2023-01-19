@@ -631,6 +631,70 @@ class genescorer(ABC):
         self._SCORES = {}
         self._SKIPPED = {}
         
+               
+    def score_chr(self,chrs,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False,keep_idx=None):
+        """
+        Perform gene scoring for full chromosomes
+        
+        Args:
+        
+            chrs(list): List of chromosomes to score.
+            unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
+            mode(string): Precision mode to use ('','128b','100d','auto')
+            reqacc(float): requested accuracy 
+            intlimit(int) : Max # integration terms to use
+            parallel(int) : # of cores to use
+            nobar(bool): Do not show progress bar
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
+        
+        """
+        tic = time.time()
+        
+        S = np.array(chrs)
+        
+        RESULT = []
+        FAIL = []
+        TOTALFAIL = []
+        
+        lock = mp.Manager().Lock()
+        
+        # Build list of genes for chromosomes
+        G = []
+        for c in S:
+            G.extend(self._CHR[str(c)][0])
+        
+        res = self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)
+        
+        toc = time.time()
+        
+        if res is not None:
+            print("[time]:",str(round(toc-tic,1))+"s;",round(len(G)/(toc-tic),2),"genes/s")
+        
+        return res
+        
+
+    def score_all(self,parallel=1,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False,keep_idx=None):
+        """
+        Perform full gene scoring
+        
+        Args:
+        
+            parallel(int) : # of cores to use
+            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
+            mode(string): Precision mode to use ('','128b','100d','auto')
+            reqacc(float): requested accuracy 
+            intlimit(int) : Max # integration terms to use
+            nobar(bool): Do not show progress bar
+            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
+        
+        """
+        
+        self._SCORES = {}
+        
+        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore,keep_idx)
+        
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     
@@ -1155,68 +1219,6 @@ class chi2sum(genescorer):
         
         return RESULT
     
-    def score_chr(self,chrs,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,parallel=1,nobar=False,autorescore=False,keep_idx=None):
-        """
-        Perform gene scoring for full chromosomes
-        
-        Args:
-        
-            chrs(list): List of chromosomes to score.
-            unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
-            mode(string): Precision mode to use ('','128b','100d','auto')
-            reqacc(float): requested accuracy 
-            intlimit(int) : Max # integration terms to use
-            parallel(int) : # of cores to use
-            nobar(bool): Do not show progress bar
-            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
-        
-        """
-        tic = time.time()
-        
-        S = np.array(chrs)
-        
-        RESULT = []
-        FAIL = []
-        TOTALFAIL = []
-        
-        lock = mp.Manager().Lock()
-        
-        # Build list of genes for chromosomes
-        G = []
-        for c in S:
-            G.extend(self._CHR[str(c)][0])
-        
-        res = self.score(G,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)
-        
-        toc = time.time()
-        
-        if res is not None:
-            print("[time]:",str(round(toc-tic,1))+"s;",round(len(G)/(toc-tic),2),"genes/s")
-        
-        return res
-        
-
-    def score_all(self,parallel=1,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,nobar=False,autorescore=False,keep_idx=None):
-        """
-        Perform full gene scoring
-        
-        Args:
-        
-            parallel(int) : # of cores to use
-            method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson')
-            mode(string): Precision mode to use ('','128b','100d','auto')
-            reqacc(float): requested accuracy 
-            intlimit(int) : Max # integration terms to use
-            nobar(bool): Do not show progress bar
-            autorescore(bool): Automatically try to re-score failed genes via Pearson's algorithm
-        
-        """
-        
-        self._SCORES = {}
-        
-        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore,keep_idx)
-        
     
     
     def score_gene_bulk_chr(self,chrs,gene,data,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=100000,autorescore=False):
@@ -1757,3 +1759,281 @@ class wchi2sum(chi2sum):
                   
         else:
             return super().score(gene,parallel,unloadRef,method,mode,reqacc,intlimit,nobar,autorescore,keep_idx)
+        
+        
+        
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        
+class cauchysum(genescorer):
+    """
+    
+    Implementation of cauchy distribution based genescorer
+    
+    following math of Yaowu Liua and Jun Xie,
+    doi.org/10.1080/01621459.2018.1554485
+    
+    """
+    
+    def __init__(self,window=50000,varcutoff=0.99,MAF=0.05,genome=None,gpu=False):
+        """
+        Gene scoring via cauchy distribution
+        
+        Args:
+        
+            window(int): Window size around gene tx start and end
+            varcutoff(float): Variance to keep
+            MAF(double): MAF cutoff 
+            genome(Genome): Set gene annotation
+
+        """
+        
+        self._window = window
+        self._varcutoff = varcutoff
+        self._MAF = MAF
+
+        self._GWAS = {}
+        self._GWAS_beta = {}
+        self._GWAS_alleles = {}
+        
+        self._GENES = {}
+        self._CHR = {}
+        self._SKIPPED = {}
+        self._SCORES = {}
+        
+        self._joint = False
+        self._WEIGHT = {}
+                        
+        # Set annotation
+        if genome is not None:
+            self._GENEID = genome._GENEID
+            self._GENESYMB = genome._GENESYMB
+            self._GENEIDtoSYMB = genome._GENEIDtoSYMB
+            self._CHR = genome._CHR
+
+            self._SKIPPED = genome._SKIPPED
+
+            
+            
+    def _getSNPs(self,cr,gene,REF,useAll=False):
+        
+        if self._joint and self._MAP is not None:
+            G = self._GENEID[gene]
+            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+
+            if gene in self._MAP:
+                P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
+                #P = list(set(P))
+     
+        elif self._MAP is None:
+            G = self._GENEID[gene]
+
+            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+        else:
+            if gene in self._MAP:
+                P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
+                useAll = True
+            else:
+                P = []
+        
+        DATA = REF[str(cr)][0].get(list(P))
+           
+        filtered = {}
+         
+        # Sort out
+        for D in DATA:
+            # Select
+            if (D[0] in self._GWAS or useAll) and (D[1] > self._MAF) and (D[0] not in filtered or D[1] < filtered[D[0]][0]):
+                filtered[D[0]] = [D[1],D[2]]
+                #use.append(D[2])
+                #RID.append(s)
+                
+
+        # Calc corr
+        RID = list(filtered.keys())
+        
+        return np.array(RID)
+
+    
+    def _getSNPs_wAlleles(self,cr,gene,REF,useAll=False):
+        
+        if self._joint and self._MAP is not None:
+            G = self._GENEID[gene]
+            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+
+            if gene in self._MAP:
+                P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
+                #P = list(set(P))
+          
+        elif self._MAP is None:
+            G = self._GENEID[gene]
+
+            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+        else:
+            if gene in self._MAP:
+                P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))
+                useAll = True
+            else:
+                P = []
+        
+        DATA = REF[str(cr)][0].get(list(P))
+            
+        filtered = {}
+          
+        # Sort out
+        for D in DATA:
+            # Select
+            if (D[0] in self._GWAS or useAll) and D[1] > self._MAF and (D[0] not in filtered or D[1] < filtered[D[0]][0]) and self._GWAS_alleles[D[0]][0] == D[3] and self._GWAS_alleles[D[0]][1] == D[4]:
+                          
+                filtered[D[0]] = [D[1],D[2]]
+
+                #use.append(D[2])
+                #RID.append(s)
+
+        # Calc corr
+        RID = list(filtered.keys())
+        
+        return C,np.array(RID)
+        
+            
+        
+    def _scoremain(self,gene,unloadRef,label='',baroffset=0,nobar=False,lock=None):
+        
+        G = np.array(gene)
+        RESULT = []
+        FAIL = []
+        TOTALFAIL = []
+        
+        REF = {}
+        
+        if not nobar:
+            print(' ', end='', flush=True) # Hack to work with jupyter notebook 
+       
+        with lock:
+            pbar = tqdm(total=len(G), bar_format="{l_bar}{bar} [ estimated time left: {remaining} ]", position=baroffset, leave=True,disable=nobar)
+            pbar.set_description(label)#+"("+str(self._GENEID[G[i]][4]).ljust(15)+")")
+
+        for i in range(pbar.total):
+            #print(i)
+            if G[i] in self._GENEID:
+                
+                with lock:
+                    pbar.set_postfix_str(str(self._GENEID[G[i]][4]).ljust(15))
+   
+                cr = self._GENEID[G[i]][0]
+    
+                # Load Reference panel
+                if not cr in REF:
+                   
+                    if unloadRef:
+                        REF = {}
+
+                    REF[cr] = self._ref.load_pos_reference(cr)
+
+                
+                # Load SNPs
+                if len(self._GWAS_alleles)==0:
+                    R = self._getSNPs(cr,G[i],REF)
+                else:
+                    R = self._getSNPs_wAlleles(cr,G[i],REF)
+
+                if len(R) > 0:
+                    
+                    # Score
+                    if self._MAP is not None and self._joint == False:
+                        
+                        S = self._getChi2Sum_mapper(R,G[i]) 
+                    else:
+                        S = self._getChi2Sum(R)
+
+                    #RES = self._scoreThread(self._calcAndFilterEV(C),S,G[i],method,mode,reqacc,intlimit)
+
+                    RESULT.append( [self._GENEIDtoSYMB[RES[0]],float(RES[1][0]),len(R)])
+                    
+                    with lock:
+                        pbar.update(1)
+
+                else:
+
+                    TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"No SNPs"])
+
+                    with lock:
+                        pbar.update(1)
+            else:
+                TOTALFAIL.append([self._GENEIDtoSYMB[G[i]],"Not in annotation"])
+
+                with lock:
+                    pbar.update(1)
+
+                    
+        with lock:
+            pbar.set_postfix_str("done".ljust(15))
+            pbar.close()
+        
+        
+        return RESULT,FAIL,TOTALFAIL
+    
+    
+    
+    
+    def score(self,gene,parallel=1,unloadRef=False,method='saddle',mode='auto',reqacc=1e-100,intlimit=1000000,nobar=False,autorescore=False,keep_idx=None):
+        """
+        Performs gene scoring for a given list of gene symbols
+        
+        Args:
+        
+            gene(list): gene symbols to score.
+            parallel(int) : # of cores to use
+            unloadRef(bool): Keep only reference data for one chromosome in memory (True, False) per core
+            nobar(bool): Do not show progress bar
+           
+        """
+        
+        G = []
+        
+        for i in range(0,len(gene)):
+            if gene[i] in self._GENESYMB:
+                G.append(self._GENESYMB[gene[i]])
+            elif gene[i] in self._GENEID:
+                G.append(gene[i])        
+            else:
+                print("[WARNING]: "+gene[i]+" not in annotation -> ignoring")
+        
+        lock = mp.Manager().Lock()
+        
+        if parallel <= 1:
+            R = self._scoremain(G,unloadRef,'',0,nobar,lock)
+        else:
+            R = [[],[],[]]
+            S = np.array_split(G,parallel)
+            
+            result_objs = []
+            pool = mp.Pool(max(1,min(parallel,mp.cpu_count())))
+                
+            for i in range(0,len(S)): 
+
+                result = pool.apply_async(self._scoremain, (S[i],True,'',i,nobar,lock))
+                result_objs.append(result)
+
+            results = [result.get() for result in result_objs]    
+
+            for r in results:
+                R[0].extend(r[0])
+                R[1].extend(r[1])
+                R[2].extend(r[2])
+            
+            pool.close()
+     
+    
+        print(len(R[0]),"genes scored")
+        if len(R[1])>0:
+            print(len(R[1]),"genes failed (try to .rescore with other settings)")
+        if len(R[2])>0:
+            print(len(R[2]),"genes can not be scored (check annotation)")
+        
+        # Store in _SCORES:
+        for X in R[0]:
+            self._SCORES[X[0]] = float(X[1])
+               
+      
+        return R
