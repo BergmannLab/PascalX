@@ -1939,6 +1939,10 @@ class cauchysum(genescorer):
 
                 if len(R) > 0:
                     
+                    #hpstats.cauchytest_100d()
+                      
+                    return
+                        
                     # Score
                     if self._MAP is not None and self._joint == False:
                         

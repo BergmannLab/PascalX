@@ -29,3 +29,5 @@ extern double onemin_chi2cdf_100d(double x, int dof);
 
 extern double normcdf_100d(double x, double m, double s);
 extern double onemin_normcdf_100d(double x, double m, double s);
+
+extern double cauchytest_100d(double* x, int N);
