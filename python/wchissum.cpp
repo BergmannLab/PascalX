@@ -1060,9 +1060,10 @@ double oneminwchissum_m1nc0_saddle(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
+    
     
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
@@ -1109,9 +1110,10 @@ double oneminwchissum_m1nc0_saddle_float128(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
+    
     
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
@@ -1162,9 +1164,10 @@ double oneminwchissum_m1nc0_saddle_100d(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
+    
     
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
@@ -1215,9 +1218,10 @@ double oneminwchissum_m1nc0_saddle_200d(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
+    
     
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
@@ -1266,9 +1270,10 @@ double oneminwchissum_m1nc0_saddle_300d(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
+    
     
     const int digits = std::numeric_limits<double>::digits; 
     int get_digits = static_cast<int>(digits * 0.6);
@@ -1317,7 +1322,7 @@ double oneminwchissum_m1nc0_saddle_500d(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
     
@@ -1394,7 +1399,7 @@ double oneminwchissum_m1nc0_saddle_auto(double* lambda, int N, double X) {
     ma *= 0.5;
     
     // Do not use in unstable regime
-    if (abs(sum-X)/X < 1e-5) {
+    if (abs((sum-X)/X) < 1e-5) {
         return -1;
     }
     
