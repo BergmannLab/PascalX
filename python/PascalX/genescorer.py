@@ -1810,7 +1810,6 @@ class cauchysum(genescorer):
             self._GENESYMB = genome._GENESYMB
             self._GENEIDtoSYMB = genome._GENEIDtoSYMB
             self._CHR = genome._CHR
-
             self._SKIPPED = genome._SKIPPED
 
             
@@ -1832,7 +1831,6 @@ class cauchysum(genescorer):
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
-                useAll = True
             else:
                 P = []
         
@@ -1872,7 +1870,6 @@ class cauchysum(genescorer):
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))
-                useAll = True
             else:
                 P = []
         
@@ -1893,9 +1890,29 @@ class cauchysum(genescorer):
         # Calc corr
         RID = list(filtered.keys())
         
-        return C,np.array(RID)
+        return np.array(RID)
         
             
+            
+    def _getChi2Sum_mapper(self,RIDs,gene):
+        #print([GWAS[x] for x in RIDs])
+        ps = np.zeros(len(RIDs))
+        for i in range(0,len(ps)):
+            #ps = chi2.ppf(1- np.array([GWAS[x] for x in RIDs]),1)
+            if RIDs[i] in self._MAP[gene] and self._MAP[gene][RIDs[i]][4] is not None:
+                ps[i] = self._MAP[gene][RIDs[i]][4]
+            else:
+                ps[i] = self._GWAS[RIDs[i]]
+                
+        return ps
+        
+    def _getChi2Sum(self,RIDs):
+        #print([GWAS[x] for x in RIDs])
+        ps = np.zeros(len(RIDs))
+        for i in range(0,len(ps)):
+            #ps = chi2.ppf(1- np.array([GWAS[x] for x in RIDs]),1)
+            ps[i] = self._GWAS[RIDs[i]]
+        return ps      
         
     def _scoremain(self,gene,unloadRef,label='',baroffset=0,nobar=False,lock=None):
         
@@ -1938,11 +1955,7 @@ class cauchysum(genescorer):
                     R = self._getSNPs_wAlleles(cr,G[i],REF)
 
                 if len(R) > 0:
-                    
-                    #hpstats.cauchytest_100d()
-                      
-                    return
-                        
+                                    
                     # Score
                     if self._MAP is not None and self._joint == False:
                         
@@ -1950,7 +1963,7 @@ class cauchysum(genescorer):
                     else:
                         S = self._getChi2Sum(R)
 
-                    #RES = self._scoreThread(self._calcAndFilterEV(C),S,G[i],method,mode,reqacc,intlimit)
+                    RES = [G[i],[hpstats.cauchytest_300d(S)]]
 
                     RESULT.append( [self._GENEIDtoSYMB[RES[0]],float(RES[1][0]),len(R)])
                     
