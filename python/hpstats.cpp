@@ -26,6 +26,7 @@
 #include <boost/math/distributions/normal.hpp>
 using namespace boost::multiprecision;
 using namespace boost::math;
+using namespace boost::math::constants;
 
 extern "C"
 double invchi2cdf_1mx(double x, int dof) {
@@ -102,4 +103,36 @@ double onemin_normcdf_100d(double X, double m, double s) {
     x = cpp_bin_float_100(1.) - cdf(norm,x);
   
     return x.convert_to<double>();    
+}
+
+extern "C"
+double cauchytest_100d(double* x, int N) {
+
+    cpp_bin_float_100 MP = pi<cpp_bin_float_100>();
+    
+    cpp_bin_float_100 sum = 0;
+    for(int i = 0; i < N; i++) {
+        cpp_bin_float_100 X = cpp_bin_float_100(x[i]);
+        sum += tan((0.5-X)*MP);
+    }
+    
+    cpp_bin_float_100 t = 0.5 - atan(sum)/MP;
+    
+    return t.convert_to<double>();
+}
+
+extern "C"
+double cauchytest_300d(double* x, int N) {
+
+    number<cpp_bin_float<300>>  MP = pi<number<cpp_bin_float<300>>>();
+    
+    number<cpp_bin_float<300>>  sum = 0;
+    for(int i = 0; i < N; i++) {
+        number<cpp_bin_float<300>>  X = number<cpp_bin_float<300>> (x[i]);
+        sum += tan((0.5-X)*MP);
+    }
+    
+    number<cpp_bin_float<300>>  t = 0.5 - atan(sum)/MP;
+    
+    return t.convert_to<double>();
 }

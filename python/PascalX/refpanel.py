@@ -38,7 +38,7 @@ class refpanel:
     def __init__(self):
         pass
     
-    def load_pos_reference(self,cr):
+    def load_pos_reference(self,cr,keep_idx = None):
         """
         Returns a snpdb object for a chromosome and a sorted list of SNP positions on the chromosome
         
@@ -47,12 +47,16 @@ class refpanel:
             cr(int): Chromosome number
         
         """
-        db = snpdb.db()
+        if keep_idx is None:
+            db = snpdb.db()
+        else:
+            db = snpdb.db_subset(keep_idx)
+            
         db.open(self._refData+'.chr'+str(cr))
         
         return [db,db.getSortedKeys()]
     
-    def load_snp_reference(self,cr):
+    def load_snp_reference(self,cr,keep_idx = None):
         """
         Returns a snpdb object for a chromosome
         
@@ -61,7 +65,11 @@ class refpanel:
             cr(int): Chromosome number
         
         """
-        db = snpdb.db()
+        if keep_idx is None:
+            db = snpdb.db()
+        else:
+            db = snpdb.db_subset(keep_idx)
+            
         db.open(self._refData+'.chr'+str(cr))
         
         return db

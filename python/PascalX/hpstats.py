@@ -97,3 +97,37 @@ def onemin_norm_cdf_100d(x, m, s):
     return lib.onemin_normcdf_100d(x,m,s)
 
     
+def cauchytest_100d(x):
+    """
+    cauchy test statistics
+    
+    x : p-value input array
+    
+    """
+    
+    _L = np.ascontiguousarray(x, dtype='float64')
+
+    res = lib.cauchytest_100d(
+            ffi.cast("double *",_L.ctypes.data),
+            len(_L))
+  
+        
+    return max(res,1e-100)
+
+
+
+def cauchytest_300d(x):
+    """
+    cauchy test statistics
+    
+    x : p-value input array
+    
+    """
+    
+    _L = np.ascontiguousarray(x, dtype='float64')
+
+    res = lib.cauchytest_300d(
+            ffi.cast("double *",_L.ctypes.data),
+            len(_L))
+  
+    return max(res,1e-300)
