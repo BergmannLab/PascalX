@@ -2054,3 +2054,39 @@ class cauchysum(genescorer):
                
       
         return R
+    
+    
+    def _getMinSNP(self,cr,gene,REF):
+        
+        RID = self._getSNPs(cr,gene,REF)
+        
+        minp = 1
+        
+        for R in RID:
+            p = self._GWAS[R]
+            
+            if p < minp:
+                minp = p
+            
+        return minp
+    
+    def getMinSNPs(self):
+        """
+        Returns dictionary with minimal GWAS p-value for gene
+        """
+        RET = {}
+        REF = {}
+        for gid in self._GENEID:
+            cr = self._GENEID[gid][0]
+    
+            # Load Reference panel
+            if not cr in REF:
+                REF = {}
+                REF[cr] = self._ref.load_pos_reference(cr)
+
+            minp = self._getMinSNP(cr,gid,REF)
+            
+            RET[self._GENEID[gid][4]] = minp
+        
+        return RET
+    

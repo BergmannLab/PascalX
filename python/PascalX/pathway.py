@@ -53,7 +53,7 @@ class pathwayscorer(ABC):
         """
         self._genescorer = S
         
-    def load_modules(self,file,ncol=0,fcol=2):    
+    def load_modules(self,file,ncol=0,fcol=2,symbol=True):    
         """
         Load modules from tab separated file
 
@@ -62,7 +62,7 @@ class pathwayscorer(ABC):
             file(string): path/filename
             ncol(int): Column with name of module
             fcol(int): Column with first gene (symbol) in module. Remaining genes have to follow tab (\t) separated
-        
+            symbol(bool): Genes are given as gene symbols (False requires genome to be set in genescorer)
         """
         F = []
         
@@ -72,7 +72,16 @@ class pathwayscorer(ABC):
             
             L = line.rstrip('\n').split("\t")
             
-            F.append([L[ncol],L[fcol:]])
+            if symbol:
+                F.append([L[ncol],L[fcol:]])
+            else:
+                G = L[fcol:]
+                R = []
+                for x in G:
+                    if x in self._genescorer._GENEID:
+                        R.append(self._genescorer._GENEID[x][-1])
+                
+                F.append([L[ncol],R])
             
         f.close()
         
