@@ -35,12 +35,22 @@ _______________________
 
 Genescorer
 ----------
-.. autoclass:: PascalX.genescorer.chi2sum
+
+.. autoclass:: PascalX.genescorer.genescorer
    :members:
    :inherited-members:
    :exclude-members:
    :member-order: bysource
 
+.. autoclass:: PascalX.genescorer.chi2sum
+   :members:
+   :exclude-members:
+   :member-order: bysource
+
+.. autoclass:: PascalX.genescorer.wchi2sum
+   :members:
+   :exclude-members:
+   :member-order: bysource
 
 
 .. _Pathwayscorer:
