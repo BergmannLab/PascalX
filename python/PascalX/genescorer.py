@@ -1773,6 +1773,10 @@ class cauchysum(genescorer):
     following math of Yaowu Liua and Jun Xie,
     doi.org/10.1080/01621459.2018.1554485
     
+    Warning:
+        
+        The cauchy scorer is experimental !
+    
     """
     
     def __init__(self,window=50000,varcutoff=0.99,MAF=0.05,genome=None,gpu=False):

@@ -42,7 +42,8 @@ class genome:
     
     
     def get_ensembl_annotation(self,filename,genetype='protein_coding',version='GRCh38'):
-        """Gene annotation download function for ensembl.org BioMart data
+        """
+        Gene annotation download function for ensembl.org BioMart data
         
         Args:
             filename(string): File to store downloaded annotation in
@@ -54,6 +55,7 @@ class genome:
             from PascalX.genome import genome
             G = genome()
             G.get_ensemble_annotation('ensemble_hg38.txt')
+        
         """
         
         genetype = genetype.replace(" ","")
