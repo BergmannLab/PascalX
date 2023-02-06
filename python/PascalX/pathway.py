@@ -202,7 +202,7 @@ class pathwayscorer(ABC):
         
         return COMPUTE_SET, FUSION_SET
     
-    def _genefusion(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False,chrs=None):
+    def _genefusion(self,modules,method='auto',mode='auto',reqacc=1e-100,parallel=1,nobar=False,chrs=None,autorescore=False):
         
         COMPUTE_SET, FUSION_SET = self._genefusion_fuse(modules,chrs)
         
@@ -214,7 +214,7 @@ class pathwayscorer(ABC):
         print("Scoring",len(SET),"missing (meta)-genes")
         
         # Compute missing (meta)-genes
-        R = self._genescorer.score(SET,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,autorescore=True)
+        R = self._genescorer.score(SET,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,autorescore=autorescore)
       
         #print(R)
         #print(FUSION_SET)
@@ -263,7 +263,7 @@ class chi2rank(pathwayscorer):
         
     """
        
-    def score(self,modules,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False,genes_only=False,chrs_only=None):
+    def score(self,modules,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False,genes_only=False,chrs_only=None,autorescore=True):
         """
         Scores a set of pathways/modules
         
@@ -274,15 +274,17 @@ class chi2rank(pathwayscorer):
             method(string): Method to use to evaluate tail probability ('auto','davies','ruben','satterthwaite','pearson','saddle')
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
+            autorescore(bool): Automatically try to re-score failed genes
             nobar(bool): Show progress bar
             genes_only(bool): Compute only (fused)-genescores (accessible via genescorer method)
-            chrs_only(list): Only consider genes on listed chromosomes. None for all.
+            chrs_only(list): Only consider genes on listed chromosomes. None for all
         """
         tic = time.time()
         
+
         # Compute fusion sets
         if self._fuse:
-            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,chrs=chrs_only)
+            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,chrs=chrs_only,autorescore=autorescore)
         else:
             COMPUTE_SET,FUSION_SET,R = self._nogenefusion(modules)
             
@@ -400,7 +402,7 @@ class chi2perm(pathwayscorer):
         Genes in the background gene sets are NOT fused.
     """
     
-    def score(self,modules,samples=100000,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False):
+    def score(self,modules,samples=100000,method='saddle',mode='auto',reqacc=1e-100,parallel=1,nobar=False,autorescore=True):
         """
         Scores a set of pathways/modules
         
@@ -412,11 +414,12 @@ class chi2perm(pathwayscorer):
             mode(string): Precision mode to use ('','128b','100d','auto')
             reqacc(float): requested accuracy 
             nobar(bool): Show progress bar
-            
+            autorescore(bool): Automatically try to re-score failed genes
+         
         """
         # Compute fusion sets
         if self._fuse:
-            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar)
+            COMPUTE_SET,FUSION_SET,R = self._genefusion(modules,method=method,mode=mode,reqacc=reqacc,parallel=parallel,nobar=nobar,autorescore=autorescore)
         else:
             COMPUTE_SET,FUSION_SET,R = self._nogenefusion(modules)
         
