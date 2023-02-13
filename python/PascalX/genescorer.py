@@ -143,7 +143,7 @@ class genescorer(ABC):
         self._SKIPPED = GEN._SKIPPED
 
     
-    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,delimiter="\t",a1col=None,a2col=None,bcol=None,pcol=None,pfilter=1,header=False,joint=True,symbol=False):
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,delimiter="\t",a1col=None,a2col=None,bcol=None,pcol=None,pfilter=1,wfilter=0,header=False,joint=True,symbol=False):
         """
         Loads a SNP to gene mapping
         
@@ -157,7 +157,8 @@ class genescorer(ABC):
             a2col(int): Column of reference allele (None for ignoring alleles)
             bcol(int): Column with additional weight
             delimiter(string): Character used to separate columns
-            pfilter(float): Only include rows with wcol < pfilter
+            pfilter(float): Only include rows with pcol <= pfilter
+            wfilter(float): Only include rows with wcol > wfilter
             header(bool): Header present
             joint(bool): Use mapping SNPs and gene window based SNPs
             symbol(bool): True: Gene id is a gene symbol; False: Gene id is an ensembl gene id
@@ -172,7 +173,7 @@ class genescorer(ABC):
             print("For symbol==True a genome has to be loaded first (use .load_genome)")
         else:
             M = mapper(self._GENOME)
-            M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,pcol,delimiter,pfilter,header,symbol)
+            M.load_mapping(file,gcol,rcol,wcol,a1col,a2col,bcol,pcol,delimiter,pfilter,wfilter,header,symbol)
             self._MAP = M._GENEIDtoSNP
             self._iMAP = M._SNPtoGENEID
             self._joint = joint

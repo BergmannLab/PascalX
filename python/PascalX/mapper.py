@@ -28,7 +28,7 @@ class mapper:
 
         self._GENOME = genome
 
-    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,pcol=None,delimiter="\t",pfilter=1,header=False,symbol=False):
+    def load_mapping(self,file,gcol=0,rcol=1,wcol=None,a1col=None,a2col=None,bcol=None,pcol=None,delimiter="\t",pfilter=1,wfilter=0,header=False,symbol=False):
         """
         Loads a SNP to gene mapping
         
@@ -44,7 +44,8 @@ class mapper:
             pcol(int): Column with pvalue (For None p-value is taken from .load_GWAS data)
             delimiter(string): Character used to separate columns
             header(bool): Header present
-            pfilter(float): Only include rows with pcol < pfilter
+            pfilter(float): Only include rows with pcol <= pfilter
+            wfilter(float): Only include rows with wcol > wfilter
             symbol(bool): Gene id are gene symbols (requires genome to be set on init)
         """
         self._GENEIDtoSNP = {}
@@ -67,9 +68,11 @@ class mapper:
         s = 0
         for line in f:
             line = line.rstrip().split(delimiter)
-
-            if pcol is None or float(line[pcol]) <= pfilter:
-
+            
+            if ( (pcol is None or float(line[pcol]) <= pfilter)
+               and (wcol is None or float(line[wcol]) > wfilter)
+               ):
+                
                 gid = line[gcol]
 
                 if symbol:
@@ -84,6 +87,10 @@ class mapper:
                     c = c + 1
                 
                 rid = line[rcol]
+                
+                # Ignore none rsid lines
+                if rid[:2] != 'rs':
+                    continue
                 
                 self._GENEIDtoSNP[gid][rid] = [None,None,None,None,None]
                 
