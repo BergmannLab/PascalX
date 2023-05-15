@@ -17,11 +17,15 @@ The full documentation can be found [here](https://bergmannlab.github.io/PascalX
 
 ## Citation policy
 
-If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
+If you make use of PascalX for your research, please cite the PascalX publication 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg)](https://doi.org/10.5281/zenodo.4429922)
+*Krefl D., Brandulas Cammarata A., Bergmann S.*  
+*PascalX: a python library for GWAS gene and pathway enrichment tests*  
+*Bioinformatics, btad296*  
+[doi.org/10.1093/bioinformatics/btad296](https://doi.org/10.1093/bioinformatics/btad296)
 
-If you make use of the X-scorer (gene-wise coherence test between two GWAS), please cite the work 
+
+If you make use of the X-scorer (gene-wise coherence test between two GWAS based on the product-normal distribution), please also cite the work 
 
 *Krefl D., Bergmann S.*  
 *Cross-GWAS coherence test at the gene and pathway level*  
@@ -406,4 +410,4 @@ Scorer.plot_Manhattan(R[0])
 
 ### Disclaimer:
 
-PascalX is a research level tool. No warranty or guarantee whatsoever for its correct functionality is given. You should perform your own consistency checks on results PascalX implies.
+PASCALX IS A RESEARCH LEVEL TOOL. NO WARRANTY OR GUARANTEE WHATSOEVER FOR ITS CORRECT FUNCTIONALITY IS GIVEN. YOU SHOULD PERFORM YOUR OWN CONSISTENCY CHECKS ON RESULTS PASCALX IMPLIES.
