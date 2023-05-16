@@ -6,7 +6,7 @@
 Welcome to PascalX's documentation!
 ===================================
 
-PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_) for high precision gene and pathway scoring for GWAS summary statistics. Aggregation of SNP p-values to gene and pathway scores follows the `Pascal <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004714>`_ methodology, which is based on :math:`\chi^2` statistics. The cummulative distribution function of the weighted :math:`\chi^2` distribution can be calculated approximately or exactly via a multi-precision C++ implementation of Ruben's and Davies algorithm. This allows to apply the Pascal methodology to modern UK BioBank scale GWAS. In addition, PascalX offers a novel coherence test between two different GWAS on the level of genes, based on the product-normal distribution, as described `here <https://doi.org/10.1101/2021.05.16.21257289>`_.    
+PascalX is a python3 library (`source <https://github.com/BergmannLab/PascalX>`_) for high precision gene and pathway scoring for GWAS summary statistics. Aggregation of SNP p-values to gene and pathway scores follows the `Pascal <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004714>`_ methodology, which is based on :math:`\chi^2` statistics. The cumulative distribution function of the weighted :math:`\chi^2` distribution can be calculated approximately or exactly via a multi-precision C++ implementation of Ruben's and Davies algorithm. This allows to apply the Pascal methodology to modern UK BioBank scale GWAS. In addition, PascalX offers a novel coherence test between two different GWAS on the level of genes, based on the product-normal distribution, as described `here <https://doi.org/10.1101/2021.05.16.21257289>`_.    
 
 **Highlights:**
 
@@ -47,10 +47,14 @@ License and citation policy
 
 The PascalX package is an open-source package under AGPLv3. 
 
-If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
+If you make use of PascalX for your research, please cite the PascalX publication:
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg
-   :target: https://doi.org/10.5281/zenodo.4429922
+
+| *Krefl D., Brandulas Cammarata A., Bergmann S.*
+| *PascalX: a python library for GWAS gene and pathway enrichment tests*
+| *Bioinformatics, btad296*
+| *doi:10.1093/bioinformatics/btad296*
+
 
 If you make use of the X-scorer (gene-wise coherence test between GWAS), please cite the work:
 

@@ -47,10 +47,14 @@ License and citation policy
 
 The PascalX package is an open-source package under AGPLv3. 
 
-If you make use of PascalX for your research, please cite PascalX via the doi: 10.5281/zenodo.4429922
+If you make use of PascalX for your research, please cite the PascalX publication:
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4429922.svg
-   :target: https://doi.org/10.5281/zenodo.4429922
+
+| *Krefl D., Brandulas Cammarata A., Bergmann S.*
+| *PascalX: a python library for GWAS gene and pathway enrichment tests*
+| *Bioinformatics, btad296*
+| *doi:10.1093/bioinformatics/btad296*
+
 
 If you make use of the X-scorer (gene-wise coherence test between GWAS), please cite the work:
 
