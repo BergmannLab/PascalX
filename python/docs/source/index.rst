@@ -69,5 +69,3 @@ Contact
 -------
 
 * For all technical issues (bug reports, etc.), please open a ticket on the `GitHub <https://github.com/BergmannLab/PascalX/issues>`_ page. 
-
-* For general inquiries, please contact the main contributor: Daniel.Krefl(@unil.ch)
