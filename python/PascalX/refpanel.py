@@ -294,7 +294,7 @@ class refpanel:
                                 gd = np.zeros(len(sampleKeys),dtype='B')
         
                                 for j in range(0,len(sampleKeys)):
-                                    geno = genomap[sampleKeys[j]].split("|")
+                                    geno = genomap[sampleKeys[j]]
         
                                     # Ignore half-calls
                                     if geno[0] != '.' and geno[1] != '.':
