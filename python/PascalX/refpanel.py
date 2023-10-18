@@ -166,6 +166,9 @@ class refpanel:
         return True
         
     def _import_reference_thread_vcf(self,i,keepfile,qualityT,SNPonly,regEx=None):
+        # Pre-compile genotype splitter
+        Gsplitter = re.compile('/|\|')
+      
         # Load filter info
         keep = set([])
         if keepfile is not None:
@@ -265,7 +268,7 @@ class refpanel:
                     genomap = {}
                     for j in range(0,len(sampleKeys)):
                         
-                        geno = genotypes[sampleKeys[j]].split(":")[GT].split("|")
+                        geno = Gsplitter.split( genotypes[sampleKeys[j]].split(":")[GT] )
 
                         if len(geno) > 2:
                             mallelic = True
