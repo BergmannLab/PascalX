@@ -166,6 +166,9 @@ class refpanel:
         return True
         
     def _import_reference_thread_vcf(self,i,keepfile,qualityT,SNPonly,regEx=None):
+        # Pre-compile genotype splitter
+        Gsplitter = re.compile('/|\|')
+      
         # Load filter info
         keep = set([])
         if keepfile is not None:
@@ -230,83 +233,93 @@ class refpanel:
             
             # Main data import loop
             for line in f:
-
-                # Data line
-                data = line.split("\t")
-
-                # Get GT pos
-                tmp = data[8].split(":")
-                GT = -1
-                for j in range(0,len(tmp)):
-                    if tmp[j] == 'GT':
-                        GT = j
-                        break
-
-                # Checks
-                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS' and qualityT is not None and (int(data[5]) < qualityT)):
-                    continue
-
-                # Read genotype
-                genotypes = data[9:]
-
-                # Infer alternate alleles (pos 0: ref allele)
-                alleles = [data[3]]
-                alleles.extend(data[4].split(","))
-                
-                if SNPonly and (len(data[3]) > 1):
-                    continue
-                               
-                counter = np.zeros(len(alleles),dtype='int') 
-
-                # Only read samples in sampleMap
-                genomap = {}
-                for j in range(0,len(sampleKeys)):
+                try:
+                    # Data line
+                    data = line.split("\t")
+    
+                    # Get GT pos
+                    tmp = data[8].split(":")
+                    GT = -1
+                    for j in range(0,len(tmp)):
+                        if tmp[j] == 'GT':
+                            GT = j
+                            break
+    
+                    # Checks
+                    if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS' and qualityT is not None and (int(data[5]) < qualityT)):
+                        continue
+    
+                    # Infer alternate alleles (pos 0: ref allele)
+                    alleles = [data[3]]
+                    alleles.extend(data[4].split(","))
                     
-                    geno = genotypes[sampleKeys[j]].split(":")[GT]
-
-                    # Ignore half-calls
-                    if geno[0] != "." and geno[2] != ".":
-                        counter[int(geno[0])] += 1
-                        counter[int(geno[2])] += 1
+                    if SNPonly and (len(data[3]) > 1):
+                        continue
+                                   
+                    counter = np.zeros(len(alleles),dtype='int') 
                     
-                    genomap[sampleKeys[j]] = geno
+                    # Read genotype
+                    genotypes = data[9:]
+
+                    # Multi-allelic flag
+                    mallelic = False
                     
-                # Reference allele
-                refp = 0
-                
-                SC = np.argsort(counter) # Sort alleles count
-                for p in SC:
-                    
-                    if p != refp:
-                        if SNPonly and len(alleles[p]) > 1:
-                            continue
-
-                        minp = str(p)
-
-                        gd = np.zeros(len(sampleKeys),dtype='B')
-
-                        for j in range(0,len(sampleKeys)):
-                            #geno = genotypes[sampleKeys[j]].split(":")[GT]
-                            geno = genomap[sampleKeys[j]]
-
-                            # Ignore half-calls
-                            if geno[0] != '.' and geno[2] != '.':
-
-                                if geno[0] == minp:
-                                    gd[j] += 1
-
-                                if geno[2] == minp:
-                                    gd[j] += 1
-
-                        # Compute MAF
-                        MAF = np.mean(gd)/2.
-                        if (MAF > 0.5):
-                            MAF = 1.0 - MAF;
+                    # Only read samples in sampleMap
+                    genomap = {}
+                    for j in range(0,len(sampleKeys)):
                         
-                        T = [data[2],MAF,gd,alleles[p],alleles[refp]] # Stores alt and ref allele
+                        geno = Gsplitter.split( genotypes[sampleKeys[j]].split(":")[GT] )
 
-                        db.insert({int(data[1]):T})
+                        if len(geno) > 2:
+                            mallelic = True
+                            break
+                            
+                        # Ignore half-calls
+                        if geno[0] != "." and geno[1] != ".":
+                            counter[int(geno[0])] += 1
+                            counter[int(geno[1])] += 1
+                        
+                        genomap[sampleKeys[j]] = geno
+
+                    if not mallelic: # Skip if more than two alleles 
+                        # Reference allele
+                        refp = 0
+                        
+                        SC = np.argsort(counter) # Sort alleles count
+                        for p in SC:
+                            
+                            if p != refp:
+                                if SNPonly and len(alleles[p]) > 1:
+                                    continue
+        
+                                minp = str(p)
+        
+                                gd = np.zeros(len(sampleKeys),dtype='B')
+        
+                                for j in range(0,len(sampleKeys)):
+                                    geno = genomap[sampleKeys[j]]
+        
+                                    # Ignore half-calls
+                                    if geno[0] != '.' and geno[1] != '.':
+        
+                                        if geno[0] == minp:
+                                            gd[j] += 1
+        
+                                        if geno[1] == minp:
+                                            gd[j] += 1
+        
+                                # Compute MAF
+                                MAF = np.mean(gd)/2.
+                                if (MAF > 0.5):
+                                    MAF = 1.0 - MAF;
+                                
+                                T = [data[2],MAF,gd,alleles[p],alleles[refp]] # Stores alt and ref allele
+        
+                                db.insert({int(data[1]):T})
                 
+                except Exception as e:
+                    print("[WARNING] Data line broken:",line)   
+                    
             f.close()
             db.close()
             
