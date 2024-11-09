@@ -34,6 +34,7 @@ from fastnumbers import int
 import re
 
 class refpanel:
+    _CHR_LIST = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y']
     
     def __init__(self):
         pass
@@ -105,7 +106,7 @@ class refpanel:
         
         if chrlist is None:
             NF = []
-            for i in range(1,23):
+            for i in self._CHR_LIST:
                 if not os.path.isfile(filename+".chr"+str(i)+".idx.gz") or not os.path.isfile(filename+".chr"+str(i)+".db"):
                     NF.append(i)
         else: 
@@ -313,7 +314,7 @@ class refpanel:
         return True
         
 
-    def _import_reference(self,chrs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],parallel=1,keepfile=None,qualityT=100,SNPonly=False,regEx=None,nobar=True):
+    def _import_reference(self,chrs=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'],parallel=1,keepfile=None,qualityT=100,SNPonly=False,regEx=None,nobar=True):
         """
         Imports reference data from .tped.gz or .vcf.gz files.
         (Has only to be run once. The imported data is stored on disk for later usage.)
@@ -372,7 +373,7 @@ class refpanel:
         Returns a dictionary mapping SNP id to corresponding chromosome number
         """
         MAP = {}
-        for cr in range(1,23):
+        for cr in self._CHR_LIST:
             db = self.load_snp_reference(cr)
             snps = db.getSNPKeys()
             
@@ -387,10 +388,10 @@ class refpanel:
         
         Args:
             
-            cr(int): Chromosome number
+            cr(str): Chromosome number
             
         """
-        db = self.load_snp_reference(cr)
+        db = self.load_snp_reference(str(cr))
        
         return db.getSNPKeys()
        

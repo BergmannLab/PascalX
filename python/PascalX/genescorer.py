@@ -62,6 +62,7 @@ class genescorer(ABC):
     Genescorer base class
     
     """
+    _CHR_LIST = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y']
     
     # Mapper vars are static
     _MAP = None
@@ -84,7 +85,7 @@ class genescorer(ABC):
             keepfile: File with sample ids (one per line) to keep (only for .vcf) 
             qualityT: Quality threshold for variant to keep (only for .vcf)
             SNPonly : Import only SNPs (only for .vcf)
-            chrlist(list): List of chromosomes to import. (None to import 1-22)
+            chrlist(list): List of chromosomes to import. (None to import 1-22,X,Y)
             
         Note:
         
@@ -257,7 +258,7 @@ class genescorer(ABC):
             
         """
         db = {}
-        for i in range(1,23):
+        for i in self._CHR_LIST:
             db[i] = self._ref.load_snp_reference(i)
     
         todel = []
@@ -692,7 +693,7 @@ class genescorer(ABC):
         
         self._SCORES = {}
         
-        return self.score_chr([i for i in range(1,23)],True,method,mode,reqacc,intlimit,parallel,nobar,autorescore,keep_idx)
+        return self.score_chr(self._CHR_LIST,True,method,mode,reqacc,intlimit,parallel,nobar,autorescore,keep_idx)
         
     
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

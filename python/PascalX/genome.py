@@ -26,6 +26,7 @@ import io
 class genome:
     """This class handles the genome annotation. It provides functionality for import of data from text files and automatic download of annotation data from ensembl.org.
     """
+
     def __init__(self):
         pass
     
@@ -62,7 +63,7 @@ class genome:
         
         print("Downloading gene annotation from ensembl.org BioMart [",genetype,"] (",version,")")
         
-        cmd = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Filter name = "chromosome_name" value = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22"/><Filter name = "biotype" value = "'+genetype+'"/><Attribute name = "ensembl_gene_id" /><Attribute name = "chromosome_name" /><Attribute name = "transcript_start" /><Attribute name = "transcript_end" /><Attribute name = "strand" /><Attribute name = "external_gene_name" /><Attribute name = "band"/></Dataset></Query>'
+        cmd = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Filter name = "chromosome_name" value = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"/><Filter name = "biotype" value = "'+genetype+'"/><Attribute name = "ensembl_gene_id" /><Attribute name = "chromosome_name" /><Attribute name = "transcript_start" /><Attribute name = "transcript_end" /><Attribute name = "strand" /><Attribute name = "external_gene_name" /><Attribute name = "band"/></Dataset></Query>'
           
         if version == 'GRCh38':
             url = 'http://www.ensembl.org/biomart/martservice?query='
@@ -290,10 +291,6 @@ class genome:
                             del self._GENEIDtoSYMB[line[cid]]
 
 
-
-
-        # Add X,Y ?                
-
         # Calculate offsets (for plotting)
         last = 0
         for i in range(1,23):
@@ -301,8 +298,15 @@ class genome:
                 self._CHR[str(i)][3] = last
                 last = last + self._CHR[str(i)][2] - self._CHR[str(i)][1] + 1000
 
-
-
+        # X
+        if 'X' in self._CHR:
+            self._CHR['X'][3] = last
+            last = last + self._CHR['X'][2] - self._CHR['X'][1] + 1000
+        # Y
+        if 'Y' in self._CHR:
+            self._CHR['Y'][3] = last
+            last = last + self._CHR['Y'][2] - self._CHR['Y'][1] + 1000
+          
         print(len(self._GENEID),"active genes")
         if len(self._SKIPPED) > 0:
             print(len(self._SKIPPED),"inconsistent genes removed (retrieve via ._SKIPPED)")
