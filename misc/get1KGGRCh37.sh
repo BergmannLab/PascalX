@@ -1,5 +1,7 @@
 #!/bin/bash
 
+chrs=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22)
+
 # Make DIR and copy over
 mkdir -p $1/
 cp EUR_1KG_phase3_samples.tsv $1/
@@ -26,22 +28,39 @@ if [ $4 = "tped" ];
 then
 	if [ $2 = "EUR" ];
 	then
-		for i in {1..22}
+		for i in "${chrs[@]}"
 		do
 
 			# Plink convert
 			./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh37.chr$i &
 			pwait $3
 		done
+
+		# X,Y
+		./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chrX.phase3\_shapeit2\_mvncall\_integrated\_v1b.20130502.genotypes.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh37.chrX &
+		pwait $3
+		
+		./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chrY.phase3\_integrated\_v1b.20130502.genotypes.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh37.chrY &
+                pwait $3
+
 	else
 	
-		for i in {1..22}
+		for i in "${chrs[@]}"
         	do
 
 			# Plink convert
                 	./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz --out ALL.1KG.GRCh37.chr$i &
 			pwait $3
         	done
+		
+		# X,Y
+                ./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chrX.phase3\_shapeit2\_mvncall\_integrated\_v1b.20130502.genotypes.vcf.gz --out ALL.1KG.GRCh37.chrX &
+                pwait $3
+                
+                ./plink --recode 12 transpose --vcf-half-call missing --vcf ALL.chrY.phase3\_integrated\_v1b.20130502.genotypes.vcf.gz --out ALL.1KG.GRCh37.chrY &
+                pwait $3
+
+
 	fi
 
 	wait
@@ -49,8 +68,11 @@ then
 	gzip *.tped
 
 else
-        for i in {1..22}
+        for i in "${chrs[@]}"
         do
                 mv ALL.chr$i.phase3\_shapeit2\_mvncall\_integrated\_v5a.20130502.genotypes.vcf.gz $2.1KG.GRCh37.chr$i.vcf.gz
         done
+
+	mv ALL.chrX.phase3\_shapeit2\_mvncall\_integrated\_v1b.20130502.genotypes.vcf.gz $2.1KG.GRCh37.chrX.vcf.gz
+	mv ALL.chrY.phase3\_integrated\_v1b.20130502.genotypes.vcf.gz $2.1KG.GRCh37.chrY.vcf.gz
 fi

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+chrs=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X)
+
 # Make DIR and copy over
 mkdir -p $1/
 cp EUR_1KG_phase3_samples.tsv $1/
@@ -38,14 +40,14 @@ if [ $4 = "tped" ];
 then
 	if [ $2 = "EUR" ];
 	then
-		for i in {1..22}
+		for i in "${chrs[@]}"
 		do
 			./plink --recode 12 transpose --vcf-half-call missing --vcf CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz -keep EUR_1KG_phase3_samples.tsv --out EUR.1KG.GRCh38.chr$i &
 			pwait $3
 		done
 	else
 	
-		for i in {1..22}
+		for i in "${chrs[@]}"
         	do
                 	./plink --recode 12 transpose --vcf-half-call missing --vcf CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz --out ALL.1KG.GRCh38.chr$i &
 			pwait $3
@@ -56,7 +58,7 @@ then
 	gzip *.tped
 
 else
-        for i in {1..22}
+        for i in "${chrs[@]}"
         do
 		mv CCDG\_14151\_B01\_GRM\_WGS\_2020-08-05\_chr$i.filtered.shapeit2-duohmm-phased.snpid.vcf.gz $2.1KG.GRCh38.chr$i.vcf.gz
 	done

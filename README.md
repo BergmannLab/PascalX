@@ -60,7 +60,7 @@ git clone https://github.com/BergmannLab/PascalX.git
 cd PascalX
 make all
 cd python
-python3 setup.py install 
+pip3 install .
 ```
 
 ### Docker
