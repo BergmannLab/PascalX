@@ -72,6 +72,13 @@ cd PascalX
 docker build . -t pascalx:latest
 ```
 
+If it fails on the Mac platform:
+
+```bash
+DOCKER_BUILDKIT=1 docker build --platform linux/amd64 . -t pascalx:latest
+```
+
+
 Run the image in interactive mode with the host directory ```/your/workdir``` mounted as ```/data``` using the command
 ```bash
 docker run --mount src=/your/workdir,target=/data,type=bind -p 8888:8888 -it pascalx bash
