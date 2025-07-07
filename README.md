@@ -75,7 +75,7 @@ docker build . -t pascalx:latest
 If it fails on the Mac platform:
 
 ```bash
-DOCKER_BUILDKIT=1 docker build --platform linux/amd64 . -t pascalx:latest
+docker buildx build --platform=linux/amd64 --load -t pascalx:latest .
 ```
 
 
