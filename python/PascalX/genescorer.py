@@ -225,7 +225,7 @@ class genescorer(ABC):
                 if log10p:
                     p = 10**(-p)
                     
-                if p > 0 and p < 1 and L[rscol][:2]=='rs':
+                if p > 0 and p < 1 and refpanel.valid_snp_id(L[rscol]):
                     self._GWAS[L[rscol]] = p
                 else:
                     continue
@@ -1106,6 +1106,8 @@ class chi2sum(genescorer):
             print(len(R[1]),"genes failed (try to .rescore with other settings)")
         if len(R[2])>0:
             print(len(R[2]),"genes can not be scored (check annotation)")
+        if len(R[0]) == 0 and len(R[2]) > 0 and all(X[1] == "No SNPs" for X in R[2]):
+            print("[WARNING]: No GWAS SNP ids found in reference panel. Check that both use the same id format (e.g. rsid or chr:pos:ref:alt)")
         
         # Store in _SCORES:
         for X in R[0]:
@@ -2051,6 +2053,8 @@ class cauchysum(genescorer):
             print(len(R[1]),"genes failed (try to .rescore with other settings)")
         if len(R[2])>0:
             print(len(R[2]),"genes can not be scored (check annotation)")
+        if len(R[0]) == 0 and len(R[2]) > 0 and all(X[1] == "No SNPs" for X in R[2]):
+            print("[WARNING]: No GWAS SNP ids found in reference panel. Check that both use the same id format (e.g. rsid or chr:pos:ref:alt)")
         
         # Store in _SCORES:
         for X in R[0]:
