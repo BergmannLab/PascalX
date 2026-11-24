@@ -33,6 +33,16 @@ from fastnumbers import int
 
 import re
 
+def valid_snp_id(rid):
+    """
+    Checks if a variant id is usable (non-empty and not the VCF missing value '.')
+    
+    Args:
+        rid(string): Variant id (e.g. rsid or chr:pos:ref:alt)
+    """
+    return len(rid) > 0 and rid != '.'
+
+
 class refpanel:
     
     def __init__(self):
@@ -137,7 +147,7 @@ class refpanel:
                 L = line.split() # [chr,rid,irrelevant,pos,genotype]
             
                 # Get genotype and dephase
-                if L[1][0:2] == 'rs':
+                if valid_snp_id(L[1]):
                     
                     dephased = (np.array(L[4:],dtype='b') - 1)
                     genotype = np.sum(dephased.reshape((int(len(dephased)/2),2)),axis=1)
@@ -243,7 +253,7 @@ class refpanel:
                         break
 
                 # Checks
-                if (GT == -1) or (data[2][:2] != 'rs') or (data[6] != 'PASS' and qualityT is not None and (int(data[5]) < qualityT)):
+                if (GT == -1) or (not valid_snp_id(data[2])) or (data[6] != 'PASS' and qualityT is not None and (int(data[5]) < qualityT)):
                     continue
 
                 # Read genotype
