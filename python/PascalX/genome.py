@@ -23,6 +23,25 @@ from urllib.request import urlopen
 
 import io 
 
+def gene_window(G,window):
+    """
+    Returns the genomic interval [lo,hi] of a gene including its flanking window
+    
+    Args:
+        G(list): Gene entry from genome._GENEID ([chr,tx start,tx end,strand,...])
+        window(int|tuple): Symmetric flank size, or (upstream,downstream). Upstream and downstream follow the gene strand ('-' or '-1' for minus strand, anything else is treated as plus strand)
+    """
+    if isinstance(window,(tuple,list)):
+        up, down = window
+    else:
+        up = down = window
+    
+    if str(G[3]) in ('-','-1'):
+        return G[1] - down, G[2] + up
+    
+    return G[1] - up, G[2] + down
+
+
 class genome:
     """This class handles the genome annotation. It provides functionality for import of data from text files and automatic download of annotation data from ensembl.org.
     """
