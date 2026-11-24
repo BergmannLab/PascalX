@@ -711,7 +711,7 @@ class chi2sum(genescorer):
         
         Args:
         
-            window(int): Window size around gene tx start and end
+            window(int|tuple): Window size around gene tx start and end, or (upstream,downstream) flank sizes (strand aware)
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
             genome(Genome): Set gene annotation
@@ -757,7 +757,7 @@ class chi2sum(genescorer):
         
         if self._joint and self._MAP is not None:
             G = self._GENEID[gene]
-            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+            P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
             if gene in self._MAP:
                 P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -766,7 +766,7 @@ class chi2sum(genescorer):
         elif self._MAP is None:
             G = self._GENEID[gene]
 
-            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+            P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
@@ -813,7 +813,7 @@ class chi2sum(genescorer):
         
         if self._joint and self._MAP is not None:
             G = self._GENEID[gene]
-            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+            P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
             if gene in self._MAP:
                 P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -822,7 +822,7 @@ class chi2sum(genescorer):
         elif self._MAP is None:
             G = self._GENEID[gene]
 
-            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+            P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))
@@ -1310,7 +1310,7 @@ class chi2sum(genescorer):
             DATA = []
             if self._joint and self._MAP is not None:
                 G = self._GENEID[gene]
-                P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+                P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
                 if gene in self._MAP:
                     P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -1319,7 +1319,7 @@ class chi2sum(genescorer):
             elif self._MAP is None:
                 G = self._GENEID[gene]
 
-                P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+                P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
             else:
                 if gene in self._MAP:
                     P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
@@ -1597,7 +1597,7 @@ class wchi2sum(chi2sum):
         
         if self._joint and self._MAP is not None:
             G = self._GENEID[gene]
-            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+            P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
             if gene in self._MAP:
                 P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -1606,7 +1606,7 @@ class wchi2sum(chi2sum):
         elif self._MAP is None:
             G = self._GENEID[gene]
 
-            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+            P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
@@ -1663,7 +1663,7 @@ class wchi2sum(chi2sum):
         
         if self._joint and self._MAP is not None:
             G = self._GENEID[gene]
-            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+            P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
             if gene in self._MAP:
                 P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -1672,7 +1672,7 @@ class wchi2sum(chi2sum):
         elif self._MAP is None:
             G = self._GENEID[gene]
 
-            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+            P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))
@@ -1785,7 +1785,7 @@ class cauchysum(genescorer):
         
         Args:
         
-            window(int): Window size around gene tx start and end
+            window(int|tuple): Window size around gene tx start and end, or (upstream,downstream) flank sizes (strand aware)
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
             genome(Genome): Set gene annotation
@@ -1822,7 +1822,7 @@ class cauchysum(genescorer):
         
         if self._joint and self._MAP is not None:
             G = self._GENEID[gene]
-            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+            P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
             if gene in self._MAP:
                 P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -1831,7 +1831,7 @@ class cauchysum(genescorer):
         elif self._MAP is None:
             G = self._GENEID[gene]
 
-            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+            P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys())))
@@ -1861,7 +1861,7 @@ class cauchysum(genescorer):
         
         if self._joint and self._MAP is not None:
             G = self._GENEID[gene]
-            P = SortedSet(REF[str(cr)][1].irange(G[1]-self._window,G[2]+self._window))
+            P = SortedSet(REF[str(cr)][1].irange(*genome.gene_window(G,self._window)))
 
             if gene in self._MAP:
                 P.update(list(REF[str(cr)][0].getSNPsPos(list(self._MAP[gene].keys()))))
@@ -1870,7 +1870,7 @@ class cauchysum(genescorer):
         elif self._MAP is None:
             G = self._GENEID[gene]
 
-            P = REF[str(cr)][1].irange(G[1] - self._window, G[2] + self._window)
+            P = REF[str(cr)][1].irange(*genome.gene_window(G,self._window))
         else:
             if gene in self._MAP:
                 P = set(REF[str(cr)][0].getSNPsPos( list(self._MAP[gene].keys()) ))

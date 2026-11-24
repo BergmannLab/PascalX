@@ -279,7 +279,7 @@ class crosscorer(ABC):
     def _calcSNPcorr(self,g,SNPs,REF,MAF=0.05):
         
         
-        P = list(REF[1].irange(self._GENEID[g][1]-self._window,self._GENEID[g][2]+self._window))
+        P = list(REF[1].irange(*genome.gene_window(self._GENEID[g],self._window)))
         
         DATA = REF[0].get(list(P))     
         
@@ -317,7 +317,7 @@ class crosscorer(ABC):
 
     def _calcSNPcorr_wAlleles(self,g,SNPs,E_A,D,MAF=0.05):
         
-        P = list(D[1].irange(self._GENEID[g][1]-self._window,self._GENEID[g][2]+self._window))
+        P = list(D[1].irange(*genome.gene_window(self._GENEID[g],self._window)))
         
         DATA = D[0].get(P)     
         
@@ -841,7 +841,7 @@ class crosscorer(ABC):
         REF = DB.getSortedKeys()
         
         # Load SNPs from ref panel
-        P = list(REF.irange(self._GENEID[self._GENESYMB[G]][1]-self._window,self._GENEID[self._GENESYMB[G]][2]+self._window))
+        P = list(REF.irange(*genome.gene_window(self._GENEID[self._GENESYMB[G]],self._window)))
         #print(P[0],"-",P[-1])
             
         DATA = np.array(DB.getSNPatPos(P))
@@ -1328,7 +1328,7 @@ class zsum(crosscorer):
         
         Args:
         
-            window(int): Window size around gene tx start and end
+            window(int|tuple): Window size around gene tx start and end, or (upstream,downstream) flank sizes (strand aware)
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
             leftTail(bool): Perform a test on the left or right tail (True|False)
@@ -1439,7 +1439,7 @@ class zsum(crosscorer):
                   
                     G = self._GENEID[gene]
                     
-                    P = list(REF.irange(G[1]-self._window,G[2]+self._window))
+                    P = list(REF.irange(*genome.gene_window(G,self._window)))
             
                     DATA = np.array(db.getSNPatPos(P))
                     
@@ -1662,7 +1662,7 @@ class rsum(crosscorer):
         """
         Args:
         
-            window(int): Window size around gene tx start and end
+            window(int|tuple): Window size around gene tx start and end, or (upstream,downstream) flank sizes (strand aware)
             varcutoff(float): Variance to keep
             MAF(double): MAF cutoff 
             leftTail(bool): Perform a test on the left or right tail (True|False)
@@ -1769,7 +1769,7 @@ class rsum(crosscorer):
                   
                     G = self._GENEID[gene]
                     
-                    P = list(REF.irange(G[1]-self._window,G[2]+self._window))
+                    P = list(REF.irange(*genome.gene_window(G,self._window)))
             
                     DATA = np.array(db.getSNPatPos(P))
                     
